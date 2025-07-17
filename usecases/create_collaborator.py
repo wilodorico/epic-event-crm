@@ -11,6 +11,9 @@ class CreateCollaboratorUseCase:
     def execute(
         self, first_name: str, last_name: str, email: str, password: str, phone_number: str, role: str
     ) -> None:
+        if self._repository.find_by_email(email):
+            raise ValueError("Email already exists")
+
         id = self._id_generator.generate()
 
         collaborator = Collaborator(
