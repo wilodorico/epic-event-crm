@@ -12,6 +12,7 @@ class Collaborator:
     def __init__(
         self,
         id: str,
+        created_by_id: str,
         first_name: str,
         last_name: str,
         email: str,
@@ -20,6 +21,7 @@ class Collaborator:
         role: Role,
     ):
         self.id = id
+        self.created_by_id = created_by_id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
