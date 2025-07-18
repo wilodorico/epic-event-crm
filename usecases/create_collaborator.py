@@ -1,4 +1,4 @@
-from entities.collaborator import Collaborator, Role
+from entities.collaborator import Collaborator
 from ports.collaborator_repository_abc import CollaboratorRepositoryABC
 from ports.id_generator_abc import IdGeneratorABC
 
@@ -18,8 +18,7 @@ class CreateCollaboratorUseCase:
         phone_number: str,
         role: str,
     ) -> None:
-        if creator.role != Role.MANAGEMENT:
-            raise PermissionError("Only managers can create collaborators")
+        creator.ensure_can_create_collaborator()
 
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")

@@ -92,3 +92,5 @@ def test_non_manager_cannot_create_collaborator(use_case, repository, john_doe):
     )
     with pytest.raises(PermissionError, match="Only managers can create collaborators"):
         use_case.execute(creator=non_manager, **john_doe)
+
+    assert len(repository.collaborators) == 0
