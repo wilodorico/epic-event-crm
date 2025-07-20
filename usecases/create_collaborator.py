@@ -1,12 +1,16 @@
 from entities.collaborator import Collaborator
+from ports.auth_context_abc import AuthContextABC
 from ports.collaborator_repository_abc import CollaboratorRepositoryABC
 from ports.id_generator_abc import IdGeneratorABC
 
 
 class CreateCollaboratorUseCase:
-    def __init__(self, repository: CollaboratorRepositoryABC, id_generator: IdGeneratorABC):
+    def __init__(
+        self, repository: CollaboratorRepositoryABC, id_generator: IdGeneratorABC, auth_context: AuthContextABC
+    ):
         self._repository = repository
         self._id_generator = id_generator
+        self._auth_context = auth_context
 
     def execute(
         self,
@@ -18,7 +22,7 @@ class CreateCollaboratorUseCase:
         phone_number: str,
         role: str,
     ) -> None:
-        creator.ensure_can_create_collaborator()
+        self._auth_context.ensure_can_create_collaborator()
 
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")

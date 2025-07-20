@@ -30,7 +30,3 @@ class Collaborator:
         self.role = role
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
-
-    def ensure_can_create_collaborator(self):
-        if self.role != Role.MANAGEMENT:
-            raise PermissionError("Only managers can create collaborators")

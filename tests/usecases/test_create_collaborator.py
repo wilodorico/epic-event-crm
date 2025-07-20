@@ -1,5 +1,6 @@
 import pytest
 
+from adapters.auth_context import AuthContext
 from adapters.fixed_id_generator import FixedIdGenerator
 from adapters.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from entities.collaborator import Collaborator, Role
@@ -14,11 +15,6 @@ def repository():
 @pytest.fixture
 def fixed_id_generator():
     return FixedIdGenerator()
-
-
-@pytest.fixture
-def use_case(repository, fixed_id_generator):
-    return CreateCollaboratorUseCase(repository, fixed_id_generator)
 
 
 @pytest.fixture
@@ -47,7 +43,9 @@ def john_doe():
     }
 
 
-def test_create_collaborator_use_case_success(use_case, repository, john_doe, manager_creator):
+def test_manager_can_create_collaborator(repository, john_doe, manager_creator, fixed_id_generator):
+    auth_context = AuthContext(manager_creator)
+    use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
     use_case.execute(creator=manager_creator, **john_doe)
 
     collaborator = repository.find_by_email("john.doe@test.com")
@@ -61,7 +59,11 @@ def test_create_collaborator_use_case_success(use_case, repository, john_doe, ma
     assert collaborator.role == Role.MARKETING
 
 
-def test_cannot_create_collaborator_with_existing_email(use_case, repository, john_doe, manager_creator):
+def test_manager_cannot_create_collaborator_with_existing_email(
+    repository, john_doe, manager_creator, fixed_id_generator
+):
+    auth_context = AuthContext(manager_creator)
+    use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
     use_case.execute(creator=manager_creator, **john_doe)
     existing_email = john_doe["email"]
 
@@ -79,8 +81,8 @@ def test_cannot_create_collaborator_with_existing_email(use_case, repository, jo
     assert len(repository.collaborators) == 1
 
 
-def test_non_manager_cannot_create_collaborator(use_case, repository, john_doe):
-    non_manager = Collaborator(
+def test_non_manager_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
+    support_user = Collaborator(
         id="creator-1",
         created_by_id="1",
         first_name="Bob",
@@ -90,7 +92,11 @@ def test_non_manager_cannot_create_collaborator(use_case, repository, john_doe):
         phone_number="123456789",
         role=Role.SUPPORT,
     )
+
+    auth_context = AuthContext(support_user)
+    use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
+
     with pytest.raises(PermissionError, match="Only managers can create collaborators"):
-        use_case.execute(creator=non_manager, **john_doe)
+        use_case.execute(creator=support_user, **john_doe)
 
     assert len(repository.collaborators) == 0
