@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from entities.collaborator import Collaborator
+from collaborators.domain.entities.collaborator import Collaborator
 
 
 class CollaboratorRepositoryABC(ABC):

@@ -1,5 +1,5 @@
-from entities.collaborator import Collaborator, Role
-from ports.auth_context_abc import AuthContextABC
+from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.domain.entities.collaborator import Collaborator, Role
 
 
 class AuthContext(AuthContextABC):

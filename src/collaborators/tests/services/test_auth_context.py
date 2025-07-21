@@ -1,7 +1,7 @@
 import pytest
 
-from adapters.auth_context import AuthContext
-from entities.collaborator import Collaborator, Role
+from collaborators.application.services.auth_context import AuthContext
+from collaborators.domain.entities.collaborator import Collaborator, Role
 
 
 @pytest.fixture
@@ -66,4 +66,5 @@ def test_marketing_cannot_create_collaborator(marketing_user):
     assert auth_context.can_create_collaborator() is False
 
     with pytest.raises(PermissionError, match="Only managers can create collaborators"):
+        auth_context.ensure_can_create_collaborator()
         auth_context.ensure_can_create_collaborator()

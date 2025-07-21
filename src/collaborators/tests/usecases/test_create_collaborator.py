@@ -1,10 +1,10 @@
 import pytest
 
-from adapters.auth_context import AuthContext
-from adapters.fixed_id_generator import FixedIdGenerator
-from adapters.in_memory_collaborator_repository import InMemoryCollaboratorRepository
-from entities.collaborator import Collaborator, Role
-from usecases.create_collaborator import CreateCollaboratorUseCase
+from collaborators.application.services.auth_context import AuthContext
+from collaborators.application.usecases.create_collaborator import CreateCollaboratorUseCase
+from collaborators.domain.entities.collaborator import Collaborator, Role
+from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
+from commons.fixed_id_generator import FixedIdGenerator
 
 
 @pytest.fixture

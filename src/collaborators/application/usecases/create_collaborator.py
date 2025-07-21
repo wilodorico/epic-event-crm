@@ -1,7 +1,7 @@
-from entities.collaborator import Collaborator
-from ports.auth_context_abc import AuthContextABC
-from ports.collaborator_repository_abc import CollaboratorRepositoryABC
-from ports.id_generator_abc import IdGeneratorABC
+from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.domain.entities.collaborator import Collaborator
+from collaborators.domain.repositories.collaborator_repository_abc import CollaboratorRepositoryABC
+from commons.id_generator_abc import IdGeneratorABC
 
 
 class CreateCollaboratorUseCase:
@@ -39,4 +39,5 @@ class CreateCollaboratorUseCase:
             phone_number=phone_number,
             role=role,
         )
+        self._repository.create(collaborator)
         self._repository.create(collaborator)
