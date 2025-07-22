@@ -1,6 +1,7 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
+from collaborators.domain.collaborator.permissions import Permissions
 from commons.id_generator_abc import IdGeneratorABC
 
 
@@ -22,7 +23,7 @@ class CreateCollaboratorUseCase:
         phone_number: str,
         role: str,
     ) -> None:
-        self._auth_context.ensure_can_create_collaborator()
+        self._auth_context.ensure(Permissions.CREATE_COLLABORATOR)
 
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")
@@ -39,5 +40,4 @@ class CreateCollaboratorUseCase:
             phone_number=phone_number,
             role=role,
         )
-        self._repository.create(collaborator)
         self._repository.create(collaborator)

@@ -1,15 +1,11 @@
 from abc import ABC, abstractmethod
 
+from collaborators.domain.collaborator.permissions import Permissions
+
 
 class AuthContextABC(ABC):
-    """Interface for managing permissions and authorizations."""
+    @abstractmethod
+    def can(self, permission: Permissions) -> bool: ...
 
     @abstractmethod
-    def can_create_collaborator(self) -> bool:
-        """Checks if the collaborator can create another collaborator."""
-        pass
-
-    @abstractmethod
-    def ensure_can_create_collaborator(self) -> None:
-        """Ensures that the collaborator can create another collaborator, raises an exception otherwise."""
-        pass
+    def ensure(self, permission: Permissions) -> None: ...

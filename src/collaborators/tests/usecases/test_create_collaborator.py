@@ -81,7 +81,7 @@ def test_manager_cannot_create_collaborator_with_existing_email(
     assert len(repository.collaborators) == 1
 
 
-def test_non_manager_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
+def test_support_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
     support_user = Collaborator(
         id="creator-1",
         created_by_id="1",
@@ -96,7 +96,28 @@ def test_non_manager_cannot_create_collaborator(repository, john_doe, fixed_id_g
     auth_context = AuthContext(support_user)
     use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
 
-    with pytest.raises(PermissionError, match="Only managers can create collaborators"):
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
         use_case.execute(creator=support_user, **john_doe)
+
+    assert len(repository.collaborators) == 0
+
+
+def test_marketing_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
+    marketing_user = Collaborator(
+        id="creator-1",
+        created_by_id="1",
+        first_name="Carol",
+        last_name="Marketing",
+        email="marketing@test.com",
+        password="pass",
+        phone_number="123456789",
+        role=Role.MARKETING,
+    )
+
+    auth_context = AuthContext(marketing_user)
+    use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
+
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+        use_case.execute(creator=marketing_user, **john_doe)
 
     assert len(repository.collaborators) == 0

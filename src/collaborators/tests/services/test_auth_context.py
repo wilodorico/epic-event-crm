@@ -2,6 +2,7 @@ import pytest
 
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.permissions import Permissions
 
 
 @pytest.fixture
@@ -48,23 +49,22 @@ def marketing_user():
 
 def test_manager_can_create_collaborator(manager):
     auth_context = AuthContext(manager)
-    assert auth_context.can_create_collaborator() is True
+    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is True
 
-    auth_context.ensure_can_create_collaborator()
+    auth_context.ensure(Permissions.CREATE_COLLABORATOR)
 
 
 def test_support_cannot_create_collaborator(support_user):
     auth_context = AuthContext(support_user)
-    assert auth_context.can_create_collaborator() is False
+    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is False
 
-    with pytest.raises(PermissionError, match="Only managers can create collaborators"):
-        auth_context.ensure_can_create_collaborator()
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+        auth_context.ensure(Permissions.CREATE_COLLABORATOR)
 
 
 def test_marketing_cannot_create_collaborator(marketing_user):
     auth_context = AuthContext(marketing_user)
-    assert auth_context.can_create_collaborator() is False
+    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is False
 
-    with pytest.raises(PermissionError, match="Only managers can create collaborators"):
-        auth_context.ensure_can_create_collaborator()
-        auth_context.ensure_can_create_collaborator()
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+        auth_context.ensure(Permissions.CREATE_COLLABORATOR)

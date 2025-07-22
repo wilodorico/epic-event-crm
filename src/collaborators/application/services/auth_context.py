@@ -1,14 +1,20 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.permissions import Permissions
 
 
 class AuthContext(AuthContextABC):
+    _permissions = {
+        Role.MANAGEMENT: {Permissions.CREATE_COLLABORATOR},
+    }
+
     def __init__(self, user: Collaborator):
         self.user = user
 
-    def can_create_collaborator(self) -> bool:
-        return self.user.role == Role.MANAGEMENT
+    def can(self, permission: Permissions) -> bool:
+        allowed = self._permissions.get(self.user.role, set())
+        return permission in allowed
 
-    def ensure_can_create_collaborator(self) -> None:
-        if not self.can_create_collaborator():
-            raise PermissionError("Only managers can create collaborators")
+    def ensure(self, permission: Permissions) -> None:
+        if not self.can(permission):
+            raise PermissionError("You do not have permission to perform this action.")
