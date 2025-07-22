@@ -1,8 +1,8 @@
 import pytest
 
+from collaborators.application.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.application.usecases.create_collaborator import CreateCollaboratorUseCase
-from collaborators.domain.entities.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from commons.fixed_id_generator import FixedIdGenerator
 

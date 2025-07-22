@@ -1,6 +1,6 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
-from collaborators.domain.entities.collaborator import Collaborator
-from collaborators.domain.repositories.collaborator_repository_abc import CollaboratorRepositoryABC
+from collaborators.domain.collaborator.collaborator import Collaborator
+from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from commons.id_generator_abc import IdGeneratorABC
 
 

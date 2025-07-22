@@ -1,7 +1,7 @@
 import pytest
 
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.entities.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Collaborator, Role
 
 
 @pytest.fixture

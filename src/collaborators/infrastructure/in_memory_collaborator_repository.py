@@ -1,4 +1,4 @@
-from collaborators.domain.entities.collaborator import Collaborator
+from collaborators.domain.collaborator.collaborator import Collaborator
 
 
 class InMemoryCollaboratorRepository:
