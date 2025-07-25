@@ -32,7 +32,7 @@ def manager_alice():
 @pytest.fixture
 def john_doe():
     return Collaborator(
-        id="john-id-1",
+        id="john-marketing-1",
         first_name="John",
         last_name="Doe",
         email="john.doe@test.com",
@@ -40,4 +40,32 @@ def john_doe():
         phone_number="1234567890",
         role=Role.MARKETING,
         created_by_id="creator-id",
+    )
+
+
+@pytest.fixture
+def bob_support():
+    return Collaborator(
+        id="bob-support-1",
+        first_name="Bob",
+        last_name="Builder",
+        email="bob.builder@test.com",
+        password="securepassword",
+        phone_number="9876543210",
+        role=Role.SUPPORT,
+        created_by_id="creator-id",
+    )
+
+
+@pytest.fixture
+def carol_marketing():
+    return Collaborator(
+        id="carol-marketing-1",
+        created_by_id="1",
+        first_name="Carol",
+        last_name="Marketing",
+        email="marketing@test.com",
+        password="pass",
+        phone_number="123456789",
+        role=Role.MARKETING,
     )
