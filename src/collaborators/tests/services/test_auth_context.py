@@ -1,70 +1,51 @@
 import pytest
 
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.permissions import Permissions
 
 
-@pytest.fixture
-def manager():
-    return Collaborator(
-        id="manager-id",
-        created_by_id="admin-id",
-        first_name="Alice",
-        last_name="Manager",
-        email="alice.manager@test.com",
-        password="securepassword",
-        phone_number="1112223333",
-        role=Role.MANAGEMENT,
-    )
+@pytest.mark.parametrize(
+    "permission",
+    [
+        Permissions.CREATE_COLLABORATOR,
+        Permissions.UPDATE_COLLABORATOR,
+        Permissions.DELETE_COLLABORATOR,
+    ],
+)
+def test_manager_can_create_collaborator(manager_alice, permission):
+    auth_context = AuthContext(manager_alice)
+    assert auth_context.can(permission) is True
+
+    auth_context.ensure(permission)
 
 
-@pytest.fixture
-def support_user():
-    return Collaborator(
-        id="support-id",
-        created_by_id="admin-id",
-        first_name="Bob",
-        last_name="Support",
-        email="bob.support@test.com",
-        password="securepassword",
-        phone_number="4445556666",
-        role=Role.SUPPORT,
-    )
-
-
-@pytest.fixture
-def marketing_user():
-    return Collaborator(
-        id="marketing-id",
-        created_by_id="admin-id",
-        first_name="Carol",
-        last_name="Marketing",
-        email="carol.marketing@test.com",
-        password="securepassword",
-        phone_number="7778889999",
-        role=Role.MARKETING,
-    )
-
-
-def test_manager_can_create_collaborator(manager):
-    auth_context = AuthContext(manager)
-    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is True
-
-    auth_context.ensure(Permissions.CREATE_COLLABORATOR)
-
-
-def test_support_cannot_create_collaborator(support_user):
-    auth_context = AuthContext(support_user)
-    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is False
+@pytest.mark.parametrize(
+    "permission",
+    [
+        Permissions.CREATE_COLLABORATOR,
+        Permissions.UPDATE_COLLABORATOR,
+        Permissions.DELETE_COLLABORATOR,
+    ],
+)
+def test_support_cannot_create_collaborator(bob_support, permission):
+    auth_context = AuthContext(bob_support)
+    assert auth_context.can(permission) is False
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        auth_context.ensure(Permissions.CREATE_COLLABORATOR)
+        auth_context.ensure(permission)
 
 
-def test_marketing_cannot_create_collaborator(marketing_user):
-    auth_context = AuthContext(marketing_user)
-    assert auth_context.can(Permissions.CREATE_COLLABORATOR) is False
+@pytest.mark.parametrize(
+    "permission",
+    [
+        Permissions.CREATE_COLLABORATOR,
+        Permissions.UPDATE_COLLABORATOR,
+        Permissions.DELETE_COLLABORATOR,
+    ],
+)
+def test_marketing_cannot_create_collaborator(john_marketing, permission):
+    auth_context = AuthContext(john_marketing)
+    assert auth_context.can(permission) is False
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        auth_context.ensure(Permissions.CREATE_COLLABORATOR)
+        auth_context.ensure(permission)

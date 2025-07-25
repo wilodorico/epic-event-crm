@@ -19,7 +19,7 @@ def fixed_id_generator():
 def manager_alice():
     return Collaborator(
         id="creator-id",
-        created_by_id="1",
+        created_by_id="admin-id-1",
         first_name="Alice",
         last_name="Smith",
         email="alice.smith@test.com",
@@ -30,7 +30,7 @@ def manager_alice():
 
 
 @pytest.fixture
-def john_doe():
+def john_marketing():
     return Collaborator(
         id="john-marketing-1",
         first_name="John",
