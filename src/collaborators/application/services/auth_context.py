@@ -5,7 +5,11 @@ from collaborators.domain.collaborator.permissions import Permissions
 
 class AuthContext(AuthContextABC):
     _permissions = {
-        Role.MANAGEMENT: {Permissions.CREATE_COLLABORATOR, Permissions.UPDATE_COLLABORATOR},
+        Role.MANAGEMENT: {
+            Permissions.CREATE_COLLABORATOR,
+            Permissions.UPDATE_COLLABORATOR,
+            Permissions.DELETE_COLLABORATOR,
+        },
     }
 
     def __init__(self, user: Collaborator):

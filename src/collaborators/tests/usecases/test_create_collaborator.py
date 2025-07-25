@@ -3,36 +3,10 @@ import pytest
 from collaborators.application.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
-from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
-from commons.fixed_id_generator import FixedIdGenerator
 
 
 @pytest.fixture
-def repository():
-    return InMemoryCollaboratorRepository()
-
-
-@pytest.fixture
-def fixed_id_generator():
-    return FixedIdGenerator()
-
-
-@pytest.fixture
-def manager_creator():
-    return Collaborator(
-        id="creator-id",
-        created_by_id="1",
-        first_name="Alice",
-        last_name="Smith",
-        email="alice.smith@test.com",
-        password="securepassword",
-        phone_number="1112223333",
-        role=Role.MANAGEMENT,
-    )
-
-
-@pytest.fixture
-def john_doe():
+def data_john_doe():
     return {
         "first_name": "John",
         "last_name": "Doe",
@@ -43,10 +17,10 @@ def john_doe():
     }
 
 
-def test_manager_can_create_collaborator(repository, john_doe, manager_creator, fixed_id_generator):
-    auth_context = AuthContext(manager_creator)
+def test_manager_can_create_collaborator(repository, data_john_doe, manager_alice, fixed_id_generator):
+    auth_context = AuthContext(manager_alice)
     use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
-    use_case.execute(creator=manager_creator, **john_doe)
+    use_case.execute(creator=manager_alice, **data_john_doe)
 
     collaborator = repository.find_by_email("john.doe@test.com")
 
@@ -60,16 +34,16 @@ def test_manager_can_create_collaborator(repository, john_doe, manager_creator, 
 
 
 def test_manager_cannot_create_collaborator_with_existing_email(
-    repository, john_doe, manager_creator, fixed_id_generator
+    repository, data_john_doe, manager_alice, fixed_id_generator
 ):
-    auth_context = AuthContext(manager_creator)
+    auth_context = AuthContext(manager_alice)
     use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
-    use_case.execute(creator=manager_creator, **john_doe)
-    existing_email = john_doe["email"]
+    use_case.execute(creator=manager_alice, **data_john_doe)
+    existing_email = data_john_doe["email"]
 
     with pytest.raises(ValueError, match="Email already exists"):
         use_case.execute(
-            creator=manager_creator,
+            creator=manager_alice,
             first_name="Jane",
             last_name="Doe",
             email=existing_email,
@@ -81,9 +55,9 @@ def test_manager_cannot_create_collaborator_with_existing_email(
     assert len(repository.collaborators) == 1
 
 
-def test_support_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
+def test_support_cannot_create_collaborator(repository, data_john_doe, fixed_id_generator):
     support_user = Collaborator(
-        id="creator-1",
+        id="support-1",
         created_by_id="1",
         first_name="Bob",
         last_name="Support",
@@ -97,14 +71,14 @@ def test_support_cannot_create_collaborator(repository, john_doe, fixed_id_gener
     use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        use_case.execute(creator=support_user, **john_doe)
+        use_case.execute(creator=support_user, **data_john_doe)
 
     assert len(repository.collaborators) == 0
 
 
-def test_marketing_cannot_create_collaborator(repository, john_doe, fixed_id_generator):
+def test_marketing_cannot_create_collaborator(repository, data_john_doe, fixed_id_generator):
     marketing_user = Collaborator(
-        id="creator-1",
+        id="marketing-1",
         created_by_id="1",
         first_name="Carol",
         last_name="Marketing",
@@ -118,6 +92,6 @@ def test_marketing_cannot_create_collaborator(repository, john_doe, fixed_id_gen
     use_case = CreateCollaboratorUseCase(repository, fixed_id_generator, auth_context)
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        use_case.execute(creator=marketing_user, **john_doe)
+        use_case.execute(creator=marketing_user, **data_john_doe)
 
     assert len(repository.collaborators) == 0

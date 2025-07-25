@@ -15,3 +15,6 @@ class CollaboratorRepositoryABC(ABC):
 
     @abstractmethod
     def update(self, collaborator: Collaborator) -> None: ...
+
+    @abstractmethod
+    def delete(self, collaborator_id: str) -> None: ...

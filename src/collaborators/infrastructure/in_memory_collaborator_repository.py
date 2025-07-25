@@ -16,3 +16,6 @@ class InMemoryCollaboratorRepository:
 
     def update(self, collaborator: Collaborator) -> None:
         self.collaborators[collaborator.id] = collaborator
+
+    def delete(self, collaborator_id: str) -> None:
+        del self.collaborators[collaborator_id]
