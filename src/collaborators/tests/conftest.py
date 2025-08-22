@@ -6,7 +6,7 @@ from commons.fixed_id_generator import FixedIdGenerator
 
 
 @pytest.fixture
-def repository():
+def collaborator_repository():
     return InMemoryCollaboratorRepository()
 
 
@@ -30,15 +30,15 @@ def manager_alice():
 
 
 @pytest.fixture
-def john_marketing():
+def john_commercial():
     return Collaborator(
-        id="john-marketing-1",
+        id="john-commercial-1",
         first_name="John",
         last_name="Doe",
         email="john.doe@test.com",
         password="securepassword",
         phone_number="1234567890",
-        role=Role.MARKETING,
+        role=Role.COMMERCIAL,
         created_by_id="creator-id",
     )
 
@@ -67,5 +67,5 @@ def carol_marketing():
         email="marketing@test.com",
         password="pass",
         phone_number="123456789",
-        role=Role.MARKETING,
+        role=Role.COMMERCIAL,
     )
