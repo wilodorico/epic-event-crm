@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class Role(Enum):
-    MARKETING = "Marketing"
+    COMMERCIAL = "Commercial"
     MANAGEMENT = "Management"
     SUPPORT = "Support"
 
