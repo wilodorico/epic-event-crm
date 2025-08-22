@@ -43,8 +43,8 @@ def test_support_cannot_create_collaborator(bob_support, permission):
         Permissions.DELETE_COLLABORATOR,
     ],
 )
-def test_marketing_cannot_create_collaborator(john_marketing, permission):
-    auth_context = AuthContext(john_marketing)
+def test_marketing_cannot_create_collaborator(john_commercial, permission):
+    auth_context = AuthContext(john_commercial)
     assert auth_context.can(permission) is False
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
