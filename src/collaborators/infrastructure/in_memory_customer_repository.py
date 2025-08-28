@@ -10,3 +10,9 @@ class InMemoryCustomerRepository:
 
     def find_by_email(self, email: str) -> Customer | None:
         return next((c for c in self.customers.values() if c.email == email), None)
+
+    def find_by_id(self, customer_id: str) -> Customer | None:
+        return self.customers.get(customer_id)
+
+    def update(self, customer: Customer) -> None:
+        self.customers[customer.id] = customer

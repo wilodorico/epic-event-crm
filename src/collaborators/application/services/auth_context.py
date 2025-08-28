@@ -10,7 +10,7 @@ class AuthContext(AuthContextABC):
             Permissions.UPDATE_COLLABORATOR,
             Permissions.DELETE_COLLABORATOR,
         },
-        Role.COMMERCIAL: {Permissions.CREATE_CUSTOMER},
+        Role.COMMERCIAL: {Permissions.CREATE_CUSTOMER, Permissions.UPDATE_CUSTOMER},
     }
 
     def __init__(self, user: Collaborator):
