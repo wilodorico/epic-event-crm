@@ -22,7 +22,7 @@ class Customer:
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
-    def update(self, data: dict, updater_id: str):
+    def update(self, data: dict):
         for field in ["first_name", "last_name", "email", "phone_number", "company"]:
             if field in data:
                 setattr(self, field, data[field])
