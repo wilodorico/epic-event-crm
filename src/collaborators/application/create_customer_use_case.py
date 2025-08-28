@@ -35,7 +35,7 @@ class CreateCustomerUseCase:
             email=email,
             phone_number=phone_number,
             company=company,
-            commercial_contact=creator.id,
+            commercial_contact_id=creator.id,
         )
         self._repository.create(customer)
 
