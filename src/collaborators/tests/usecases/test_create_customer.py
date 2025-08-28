@@ -29,4 +29,15 @@ def test_commercial_can_create_customer(john_commercial, fixed_id_generator, tar
     assert customer.email == "tariq.elam@mail.com"
     assert customer.phone_number == "0601010101"
     assert customer.company == "TechCorp"
-    assert customer.commercial_contact == john_commercial.id
+    assert customer.commercial_contact_id == john_commercial.id
+
+
+def test_commercial_cannot_create_customer_with_existing_email(john_commercial, fixed_id_generator, tariq_customer):
+    auth_context = AuthContext(john_commercial)
+    repository = InMemoryCustomerRepository()
+    use_case = CreateCustomerUseCase(repository, fixed_id_generator, auth_context)
+
+    use_case.execute(creator=john_commercial, **tariq_customer)
+
+    with pytest.raises(ValueError, match="Email already exists"):
+        use_case.execute(creator=john_commercial, **tariq_customer)
