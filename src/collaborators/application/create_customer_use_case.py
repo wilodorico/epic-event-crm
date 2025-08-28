@@ -19,7 +19,7 @@ class CreateCustomerUseCase:
         last_name: str,
         email: str,
         phone_number: str,
-        entreprise: str,
+        company: str,
     ) -> None:
         self._auth_context.ensure(Permissions.CREATE_CUSTOMER)
 
@@ -34,7 +34,7 @@ class CreateCustomerUseCase:
             last_name=last_name,
             email=email,
             phone_number=phone_number,
-            entreprise=entreprise,
+            company=company,
             commercial_contact=creator.id,
         )
         self._repository.create(customer)

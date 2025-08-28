@@ -9,7 +9,7 @@ class Customer:
         last_name: str,
         email: str,
         phone_number: str,
-        entreprise: str,
+        company: str,
         commercial_contact: str,
     ):
         self.id = id
@@ -17,7 +17,7 @@ class Customer:
         self.last_name = last_name
         self.email = email
         self.phone_number = phone_number
-        self.entreprise = entreprise
+        self.company = company
         self.commercial_contact = commercial_contact
         self.created_at = datetime.now()
         self.updated_at = datetime.now()

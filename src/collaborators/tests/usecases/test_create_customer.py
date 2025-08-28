@@ -12,7 +12,7 @@ def tariq_customer():
         "last_name": "Elam",
         "email": "tariq.elam@mail.com",
         "phone_number": "0601010101",
-        "entreprise": "TechCorp",
+        "company": "TechCorp",
     }
 
 
@@ -28,5 +28,5 @@ def test_commercial_can_create_customer(john_commercial, fixed_id_generator, tar
     assert customer.last_name == "Elam"
     assert customer.email == "tariq.elam@mail.com"
     assert customer.phone_number == "0601010101"
-    assert customer.entreprise == "TechCorp"
+    assert customer.company == "TechCorp"
     assert customer.commercial_contact == john_commercial.id
