@@ -1,7 +1,7 @@
 import pytest
 
+from collaborators.application.collaborator.update_collaborator_use_case import UpdateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.application.update_collaborator_use_case import UpdateCollaboratorUseCase
 from collaborators.domain.collaborator.collaborator import Role
 
 

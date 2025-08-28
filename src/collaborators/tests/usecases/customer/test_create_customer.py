@@ -1,6 +1,6 @@
 import pytest
 
-from collaborators.application.create_customer_use_case import CreateCustomerUseCase
+from collaborators.application.customer.create_customer_use_case import CreateCustomerUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.infrastructure.in_memory_customer_repository import InMemoryCustomerRepository
 

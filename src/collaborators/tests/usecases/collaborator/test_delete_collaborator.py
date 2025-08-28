@@ -1,6 +1,6 @@
 import pytest
 
-from collaborators.application.delete_collaborator_use_case import DeleteCollaboratorUseCase
+from collaborators.application.collaborator.delete_collaborator_use_case import DeleteCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
 
 

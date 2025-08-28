@@ -1,6 +1,6 @@
 import pytest
 
-from collaborators.application.create_collaborator_use_case import CreateCollaboratorUseCase
+from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 
