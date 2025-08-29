@@ -17,32 +17,37 @@ class CreateContractUseCase:
         id_generator: IdGeneratorABC,
         auth_context: AuthContextABC,
     ):
-        self.customer_repository = customer_repository
-        self.contract_repository = contract_repository
-        self.id_generator = id_generator
-        self.auth_context = auth_context
+        self._customer_repository = customer_repository
+        self._contract_repository = contract_repository
+        self._id_generator = id_generator
+        self._auth_context = auth_context
 
     def execute(
         self,
         creator: Collaborator,
-        client_id: str,
+        customer_id: str,
         commercial_id: str,
         total_amount: Decimal,
         remaining_amount: Decimal,
     ) -> Contract:
-        self.auth_context.ensure(Permissions.CREATE_CONTRACT)
+        self._auth_context.ensure(Permissions.CREATE_CONTRACT)
 
-        id = self.id_generator.generate()
+        customer = self._customer_repository.find_by_id(customer_id)
+
+        if customer is None:
+            raise ValueError("Customer does not exist")
+
+        id = self._id_generator.generate()
 
         contract = Contract(
             id=id,
-            client_id=client_id,
+            customer_id=customer_id,
             commercial_id=commercial_id,
             created_by_id=creator.id,
             total_amount=total_amount,
             remaining_amount=remaining_amount,
         )
 
-        self.contract_repository.create(contract)
+        self._contract_repository.create(contract)
 
         return contract

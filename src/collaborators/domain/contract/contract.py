@@ -4,27 +4,26 @@ from enum import Enum
 
 
 class ContractStatus(Enum):
-    PENDING = "pending"
-    SIGNED = "signed"
+    PENDING = "Pending"
+    SIGNED = "Signed"
 
 
 class Contract:
     def __init__(
         self,
         id: str,
-        client_id: str,
+        customer_id: str,
         commercial_id: str,
         created_by_id: str,
         total_amount: Decimal,
         remaining_amount: Decimal,
     ):
         self.id = id
-        self.client_id = client_id
+        self.customer_id = customer_id
         self.commercial_id = commercial_id
         self.created_by_id = created_by_id
-        self.total_amount = total_amount
-        self.remaining_amount = remaining_amount
-        self.remaining_amount = remaining_amount
+        self.total_amount = Decimal(total_amount)
+        self.remaining_amount = Decimal(remaining_amount)
         self.status = ContractStatus.PENDING
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
