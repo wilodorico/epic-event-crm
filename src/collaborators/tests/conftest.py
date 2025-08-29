@@ -1,6 +1,7 @@
 import pytest
 
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.customer.customer import Customer
 from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from commons.fixed_id_generator import FixedIdGenerator
 
@@ -82,4 +83,17 @@ def carol_marketing():
         password="pass",
         phone_number="123456789",
         role=Role.COMMERCIAL,
+    )
+
+
+@pytest.fixture
+def karim_customer():
+    return Customer(
+        id="karim-customer-1",
+        first_name="Karim",
+        last_name="Denour",
+        email="karim.denour@test.com",
+        phone_number="1234567890",
+        company="Ks Corp",
+        commercial_contact_id="john-commercial-1",
     )

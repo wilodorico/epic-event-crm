@@ -7,3 +7,4 @@ class Permissions(Enum):
     DELETE_COLLABORATOR = auto()
     CREATE_CUSTOMER = auto()
     UPDATE_CUSTOMER = auto()
+    CREATE_CONTRACT = auto()
