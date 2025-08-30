@@ -19,13 +19,14 @@ def data_john_doe():
 
 def test_manager_can_create_collaborator(collaborator_repository, data_john_doe, manager_alice, fixed_id_generator):
     auth_context = AuthContext(manager_alice)
+    fixed_id_generator.hardcoded_id = "id-2"
     use_case = CreateCollaboratorUseCase(collaborator_repository, fixed_id_generator, auth_context)
     use_case.execute(creator=manager_alice, **data_john_doe)
 
     collaborator = collaborator_repository.find_by_email("john.doe@test.com")
 
     assert len(collaborator_repository.collaborators) == 1
-    assert collaborator.id == "id-1"
+    assert collaborator.id == "id-2"
     assert collaborator.first_name == "John"
     assert collaborator.last_name == "Doe"
     assert collaborator.email == "john.doe@test.com"
