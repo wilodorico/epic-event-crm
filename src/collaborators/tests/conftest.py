@@ -45,6 +45,20 @@ def john_commercial():
 
 
 @pytest.fixture
+def amel_commercial():
+    return Collaborator(
+        id="amel-commercial-1",
+        first_name="Amel",
+        last_name="Doe",
+        email="amel.doe@test.com",
+        password="securepassword",
+        phone_number="1234567890",
+        role=Role.COMMERCIAL,
+        created_by_id="creator-id",
+    )
+
+
+@pytest.fixture
 def jane_commercial():
     return Collaborator(
         id="jane-commercial-1",

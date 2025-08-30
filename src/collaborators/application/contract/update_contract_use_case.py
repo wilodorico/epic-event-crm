@@ -1,5 +1,5 @@
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator
+from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import Contract
 from collaborators.domain.contract.contract_repository_abc import ContractRepositoryABC
@@ -21,6 +21,9 @@ class UpdateContractUseCase:
 
         if not contract:
             raise ValueError("Contract not found.")
+
+        if updater.role == Role.COMMERCIAL and contract.commercial_id != updater.id:
+            raise PermissionError("Commercial can only update their own customers contracts")
 
         contract.update(data, updater.id)
 

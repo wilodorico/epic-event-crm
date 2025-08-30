@@ -88,3 +88,36 @@ def test_commercial_can_update_contract_for_own_customer(
 
     assert updated_contract.total_amount == Decimal("1200.00")
     assert updated_contract.remaining_amount == Decimal("1200.00")
+
+
+def test_commercial_cannot_update_contract_for_other_customer(
+    manager_alice, john_commercial, amel_commercial, karim_customer, fixed_id_generator
+):
+    customer_repository = InMemoryCustomerRepository()
+    customer_repository.create(karim_customer)
+    contract_repository = InMemoryContractRepository()
+    auth_context_manager_alice = AuthContext(manager_alice)
+
+    create_use_case = CreateContractUseCase(
+        customer_repository, contract_repository, fixed_id_generator, auth_context_manager_alice
+    )
+    contract = create_use_case.execute(
+        creator=manager_alice,
+        customer_id=karim_customer.id,
+        commercial_id=john_commercial.id,
+        total_amount=Decimal("1000.00"),
+        remaining_amount=Decimal("1000.00"),
+    )
+
+    auth_context_amel_commercial = AuthContext(amel_commercial)
+    update_use_case = UpdateContractUseCase(contract_repository, auth_context_amel_commercial)
+
+    with pytest.raises(PermissionError, match="Commercial can only update their own customers contracts"):
+        update_use_case.execute(
+            updater=amel_commercial,
+            contract_id=contract.id,
+            data={
+                "total_amount": Decimal("1200.00"),
+                "remaining_amount": Decimal("1200.00"),
+            },
+        )
