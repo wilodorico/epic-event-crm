@@ -55,23 +55,27 @@ def test_manager_cannot_update_non_existent_contract(manager_alice, fixed_id_gen
         )
 
 
-@pytest.mark.skip(reason="PermissionError not raised as expected")
-def test_commercial_can_update_contract_for_own_customer(john_commercial, karim_customer, fixed_id_generator):
+def test_commercial_can_update_contract_for_own_customer(
+    manager_alice, john_commercial, karim_customer, fixed_id_generator
+):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
     contract_repository = InMemoryContractRepository()
-    auth_context = AuthContext(john_commercial)
+    auth_context_manager_alice = AuthContext(manager_alice)
 
-    create_use_case = CreateContractUseCase(customer_repository, contract_repository, fixed_id_generator, auth_context)
+    create_use_case = CreateContractUseCase(
+        customer_repository, contract_repository, fixed_id_generator, auth_context_manager_alice
+    )
     contract = create_use_case.execute(
-        creator=john_commercial,
+        creator=manager_alice,
         customer_id=karim_customer.id,
         commercial_id=john_commercial.id,
         total_amount=Decimal("1000.00"),
         remaining_amount=Decimal("1000.00"),
     )
 
-    update_use_case = UpdateContractUseCase(contract_repository, auth_context)
+    auth_context_john_commercial = AuthContext(john_commercial)
+    update_use_case = UpdateContractUseCase(contract_repository, auth_context_john_commercial)
 
     updated_contract = update_use_case.execute(
         updater=john_commercial,

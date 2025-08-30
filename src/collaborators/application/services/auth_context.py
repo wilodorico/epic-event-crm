@@ -12,7 +12,7 @@ class AuthContext(AuthContextABC):
             Permissions.CREATE_CONTRACT,
             Permissions.UPDATE_CONTRACT,
         },
-        Role.COMMERCIAL: {Permissions.CREATE_CUSTOMER, Permissions.UPDATE_CUSTOMER},
+        Role.COMMERCIAL: {Permissions.CREATE_CUSTOMER, Permissions.UPDATE_CUSTOMER, Permissions.UPDATE_CONTRACT},
     }
 
     def __init__(self, user: Collaborator):
