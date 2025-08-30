@@ -9,3 +9,6 @@ class ContractRepositoryABC(ABC):
 
     @abstractmethod
     def find_by_id(self, contract_id: str) -> Contract | None: ...
+
+    @abstractmethod
+    def update(self, contract: Contract) -> None: ...

@@ -10,6 +10,7 @@ class AuthContext(AuthContextABC):
             Permissions.UPDATE_COLLABORATOR,
             Permissions.DELETE_COLLABORATOR,
             Permissions.CREATE_CONTRACT,
+            Permissions.UPDATE_CONTRACT,
         },
         Role.COMMERCIAL: {Permissions.CREATE_CUSTOMER, Permissions.UPDATE_CUSTOMER},
     }

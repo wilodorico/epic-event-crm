@@ -8,3 +8,4 @@ class Permissions(Enum):
     CREATE_CUSTOMER = auto()
     UPDATE_CUSTOMER = auto()
     CREATE_CONTRACT = auto()
+    UPDATE_CONTRACT = auto()

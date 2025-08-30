@@ -11,3 +11,6 @@ class InMemoryContractRepository(ContractRepositoryABC):
 
     def find_by_id(self, contract_id: str) -> Contract | None:
         return self.contracts.get(contract_id)
+
+    def update(self, contract: Contract) -> None:
+        self.contracts[contract.id] = contract
