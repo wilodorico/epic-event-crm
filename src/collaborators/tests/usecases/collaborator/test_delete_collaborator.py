@@ -10,9 +10,9 @@ def test_manager_can_delete_collaborator_success(
     auth_context = AuthContext(manager_alice)
     collaborator_repository.create(john_commercial)
     use_case = DeleteCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
-    collaborator_to_delete = collaborator_repository.find_by_id("john-commercial-1")
+    collaborator_to_delete = collaborator_repository.find_by_id(john_commercial.id)
     use_case.execute(manager_alice, collaborator_to_delete.id)
-    assert collaborator_repository.find_by_id("john-commercial-1") is None
+    assert collaborator_repository.find_by_id(john_commercial.id) is None
 
 
 def test_non_manager_cannot_delete_collaborator(collaborator_repository, uuid_generator, john_commercial, bob_support):
