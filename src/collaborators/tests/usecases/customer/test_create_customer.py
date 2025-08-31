@@ -2,7 +2,6 @@ import pytest
 
 from collaborators.application.customer.create_customer_use_case import CreateCustomerUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.infrastructure.in_memory_customer_repository import InMemoryCustomerRepository
 
 
 @pytest.fixture
@@ -16,14 +15,13 @@ def tariq_customer():
     }
 
 
-def test_commercial_can_create_customer(john_commercial, uuid_generator, tariq_customer):
+def test_commercial_can_create_customer(customer_repository, john_commercial, uuid_generator, tariq_customer):
     auth_context = AuthContext(john_commercial)
-    repository = InMemoryCustomerRepository()
-    use_case = CreateCustomerUseCase(repository, uuid_generator, auth_context)
-    use_case.execute(creator=john_commercial, **tariq_customer)
+    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    created_customer = use_case.execute(creator=john_commercial, **tariq_customer)
 
-    customer = repository.find_by_email("tariq.elam@mail.com")
-    assert customer is not None
+    customer = customer_repository.find_by_email(created_customer.email)
+    assert customer.id is not None
     assert customer.first_name == "Tariq"
     assert customer.last_name == "Elam"
     assert customer.email == "tariq.elam@mail.com"
@@ -32,10 +30,11 @@ def test_commercial_can_create_customer(john_commercial, uuid_generator, tariq_c
     assert customer.commercial_contact_id == john_commercial.id
 
 
-def test_commercial_cannot_create_customer_with_existing_email(john_commercial, uuid_generator, tariq_customer):
+def test_commercial_cannot_create_customer_with_existing_email(
+    customer_repository, john_commercial, uuid_generator, tariq_customer
+):
     auth_context = AuthContext(john_commercial)
-    repository = InMemoryCustomerRepository()
-    use_case = CreateCustomerUseCase(repository, uuid_generator, auth_context)
+    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
 
     use_case.execute(creator=john_commercial, **tariq_customer)
 
