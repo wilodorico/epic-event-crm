@@ -18,13 +18,13 @@ def contract_data():
     }
 
 
-def test_manager_can_create_contract(manager_alice, karim_customer, fixed_id_generator, contract_data):
+def test_manager_can_create_contract(manager_alice, karim_customer, uuid_generator, contract_data):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
 
     auth_context = AuthContext(manager_alice)
     contract_repository = InMemoryContractRepository()
-    use_case = CreateContractUseCase(customer_repository, contract_repository, fixed_id_generator, auth_context)
+    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
 
     contract = use_case.execute(creator=manager_alice, **contract_data)
 
@@ -37,11 +37,11 @@ def test_manager_can_create_contract(manager_alice, karim_customer, fixed_id_gen
     assert contract_db.remaining_amount == 1000.00
 
 
-def test_manager_cannot_create_contract_non_existent_customer(manager_alice, fixed_id_generator):
+def test_manager_cannot_create_contract_non_existent_customer(manager_alice, uuid_generator):
     customer_repository = InMemoryCustomerRepository()
     auth_context = AuthContext(manager_alice)
     contract_repository = InMemoryContractRepository()
-    use_case = CreateContractUseCase(customer_repository, contract_repository, fixed_id_generator, auth_context)
+    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
 
     with pytest.raises(ValueError, match="Customer does not exist"):
         use_case.execute(
@@ -53,13 +53,13 @@ def test_manager_cannot_create_contract_non_existent_customer(manager_alice, fix
         )
 
 
-def test_non_manager_cannot_create_contract(john_commercial, karim_customer, fixed_id_generator, contract_data):
+def test_non_manager_cannot_create_contract(john_commercial, karim_customer, uuid_generator, contract_data):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
 
     auth_context = AuthContext(john_commercial)
     contract_repository = InMemoryContractRepository()
-    use_case = CreateContractUseCase(customer_repository, contract_repository, fixed_id_generator, auth_context)
+    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
         use_case.execute(creator=john_commercial, **contract_data)

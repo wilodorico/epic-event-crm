@@ -3,7 +3,7 @@ import pytest
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.customer.customer import Customer
 from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
-from commons.fixed_id_generator import FixedIdGenerator
+from commons.uuid_generator import UuidGenerator
 
 
 @pytest.fixture
@@ -12,8 +12,8 @@ def collaborator_repository():
 
 
 @pytest.fixture
-def fixed_id_generator():
-    return FixedIdGenerator()
+def uuid_generator():
+    return UuidGenerator()
 
 
 @pytest.fixture

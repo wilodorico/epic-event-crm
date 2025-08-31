@@ -9,13 +9,13 @@ from collaborators.infrastructure.in_memory_contract_repository import InMemoryC
 from collaborators.infrastructure.in_memory_customer_repository import InMemoryCustomerRepository
 
 
-def test_manager_can_update_contract(manager_alice, john_commercial, karim_customer, fixed_id_generator):
+def test_manager_can_update_contract(manager_alice, john_commercial, karim_customer, uuid_generator):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
     contract_repository = InMemoryContractRepository()
     auth_context = AuthContext(manager_alice)
 
-    create_use_case = CreateContractUseCase(customer_repository, contract_repository, fixed_id_generator, auth_context)
+    create_use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
     contract = create_use_case.execute(
         creator=manager_alice,
         customer_id=karim_customer.id,
@@ -39,7 +39,7 @@ def test_manager_can_update_contract(manager_alice, john_commercial, karim_custo
     assert updated_contract.remaining_amount == Decimal("1200.00")
 
 
-def test_manager_cannot_update_non_existent_contract(manager_alice, fixed_id_generator):
+def test_manager_cannot_update_non_existent_contract(manager_alice, uuid_generator):
     contract_repository = InMemoryContractRepository()
     auth_context = AuthContext(manager_alice)
     update_use_case = UpdateContractUseCase(contract_repository, auth_context)
@@ -56,7 +56,7 @@ def test_manager_cannot_update_non_existent_contract(manager_alice, fixed_id_gen
 
 
 def test_commercial_can_update_contract_for_own_customer(
-    manager_alice, john_commercial, karim_customer, fixed_id_generator
+    manager_alice, john_commercial, karim_customer, uuid_generator
 ):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
@@ -64,7 +64,7 @@ def test_commercial_can_update_contract_for_own_customer(
     auth_context_manager_alice = AuthContext(manager_alice)
 
     create_use_case = CreateContractUseCase(
-        customer_repository, contract_repository, fixed_id_generator, auth_context_manager_alice
+        customer_repository, contract_repository, uuid_generator, auth_context_manager_alice
     )
     contract = create_use_case.execute(
         creator=manager_alice,
@@ -91,7 +91,7 @@ def test_commercial_can_update_contract_for_own_customer(
 
 
 def test_commercial_cannot_update_contract_for_other_customer(
-    manager_alice, john_commercial, amel_commercial, karim_customer, fixed_id_generator
+    manager_alice, john_commercial, amel_commercial, karim_customer, uuid_generator
 ):
     customer_repository = InMemoryCustomerRepository()
     customer_repository.create(karim_customer)
@@ -99,7 +99,7 @@ def test_commercial_cannot_update_contract_for_other_customer(
     auth_context_manager_alice = AuthContext(manager_alice)
 
     create_use_case = CreateContractUseCase(
-        customer_repository, contract_repository, fixed_id_generator, auth_context_manager_alice
+        customer_repository, contract_repository, uuid_generator, auth_context_manager_alice
     )
     contract = create_use_case.execute(
         creator=manager_alice,

@@ -16,10 +16,10 @@ def tariq_customer():
     }
 
 
-def test_commercial_can_create_customer(john_commercial, fixed_id_generator, tariq_customer):
+def test_commercial_can_create_customer(john_commercial, uuid_generator, tariq_customer):
     auth_context = AuthContext(john_commercial)
     repository = InMemoryCustomerRepository()
-    use_case = CreateCustomerUseCase(repository, fixed_id_generator, auth_context)
+    use_case = CreateCustomerUseCase(repository, uuid_generator, auth_context)
     use_case.execute(creator=john_commercial, **tariq_customer)
 
     customer = repository.find_by_email("tariq.elam@mail.com")
@@ -32,10 +32,10 @@ def test_commercial_can_create_customer(john_commercial, fixed_id_generator, tar
     assert customer.commercial_contact_id == john_commercial.id
 
 
-def test_commercial_cannot_create_customer_with_existing_email(john_commercial, fixed_id_generator, tariq_customer):
+def test_commercial_cannot_create_customer_with_existing_email(john_commercial, uuid_generator, tariq_customer):
     auth_context = AuthContext(john_commercial)
     repository = InMemoryCustomerRepository()
-    use_case = CreateCustomerUseCase(repository, fixed_id_generator, auth_context)
+    use_case = CreateCustomerUseCase(repository, uuid_generator, auth_context)
 
     use_case.execute(creator=john_commercial, **tariq_customer)
 
