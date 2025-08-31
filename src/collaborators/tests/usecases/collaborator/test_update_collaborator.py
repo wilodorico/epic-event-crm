@@ -9,7 +9,7 @@ def test_manager_can_update_collaborator_partial_success(collaborator_repository
     collaborator_repository.create(john_commercial)
     auth_context = AuthContext(manager_alice)
     use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
-    collaborator_to_update = collaborator_repository.find_by_id("john-commercial-1")
+    collaborator_to_update = collaborator_repository.find_by_id(john_commercial.id)
     updated_collaborator = use_case.execute(
         manager_alice, collaborator_to_update.id, {"first_name": "Johnny", "last_name": "Dep"}
     )
@@ -22,7 +22,7 @@ def test_manager_can_update_collaborator_full_success(collaborator_repository, m
     collaborator_repository.create(john_commercial)
     auth_context = AuthContext(manager_alice)
     use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
-    collaborator_to_update = collaborator_repository.find_by_id("john-commercial-1")
+    collaborator_to_update = collaborator_repository.find_by_id(john_commercial.id)
     updated_collaborator = use_case.execute(
         manager_alice,
         collaborator_to_update.id,
