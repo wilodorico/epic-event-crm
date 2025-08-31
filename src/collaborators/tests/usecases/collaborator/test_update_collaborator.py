@@ -1,6 +1,7 @@
 import pytest
 
 from collaborators.application.collaborator.update_collaborator_use_case import UpdateCollaboratorUseCase
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Role
 
@@ -47,8 +48,10 @@ def test_non_manager_cannot_update_collaborator(collaborator_repository, john_co
     auth_context = AuthContext(bob_support)
     use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
+    with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(bob_support, john_commercial.id, {"first_name": "Robert", "last_name": "Builder"})
+
+    assert bob_support.email in str(exc_info.value)
 
 
 def test_update_non_existent_collaborator_raises_error(collaborator_repository, manager_alice):

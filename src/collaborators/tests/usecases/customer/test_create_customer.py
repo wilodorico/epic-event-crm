@@ -1,6 +1,7 @@
 import pytest
 
 from collaborators.application.customer.create_customer_use_case import CreateCustomerUseCase
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 
 
@@ -46,5 +47,7 @@ def test_non_commercial_cannot_create_customer(customer_repository, manager_alic
     auth_context = AuthContext(manager_alice)
     use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
+    with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=manager_alice, **tariq_customer)
+
+    assert manager_alice.email in str(exc_info.value)

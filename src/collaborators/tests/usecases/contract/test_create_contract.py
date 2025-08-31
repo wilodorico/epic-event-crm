@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 
 from collaborators.application.contract.create_contract_use_case import CreateContractUseCase
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 
 
@@ -59,5 +60,7 @@ def test_non_manager_cannot_create_contract(
     auth_context = AuthContext(john_commercial)
     use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
+    with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=john_commercial, **contract_data)
+
+    assert john_commercial.email in str(exc_info.value)

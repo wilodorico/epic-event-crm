@@ -1,6 +1,7 @@
 import pytest
 
 from collaborators.application.collaborator.delete_collaborator_use_case import DeleteCollaboratorUseCase
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 
 
@@ -20,8 +21,10 @@ def test_non_manager_cannot_delete_collaborator(collaborator_repository, uuid_ge
     auth_context = AuthContext(bob_support)
     use_case = DeleteCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
+    with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(bob_support, john_commercial.id)
+
+    assert bob_support.email in str(exc_info.value)
 
 
 def test_delete_non_existent_collaborator(collaborator_repository, uuid_generator, manager_alice):

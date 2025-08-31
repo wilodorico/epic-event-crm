@@ -1,3 +1,4 @@
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.permissions import Permissions
@@ -24,4 +25,4 @@ class AuthContext(AuthContextABC):
 
     def ensure(self, permission: Permissions) -> None:
         if not self.can(permission):
-            raise PermissionError("You do not have permission to perform this action.")
+            raise AuthorizationError(self.user, permission)

@@ -1,5 +1,6 @@
 import pytest
 
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.permissions import Permissions
 
@@ -31,8 +32,10 @@ def test_support_cannot_create_collaborator(bob_support, permission):
     auth_context = AuthContext(bob_support)
     assert auth_context.can(permission) is False
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+    with pytest.raises(AuthorizationError) as exc_info:
         auth_context.ensure(permission)
+
+    assert bob_support.email in str(exc_info.value)
 
 
 @pytest.mark.parametrize(
@@ -47,5 +50,7 @@ def test_marketing_cannot_create_collaborator(john_commercial, permission):
     auth_context = AuthContext(john_commercial)
     assert auth_context.can(permission) is False
 
-    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+    with pytest.raises(AuthorizationError) as exc_info:
         auth_context.ensure(permission)
+
+    assert john_commercial.email in str(exc_info.value)
