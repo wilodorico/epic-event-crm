@@ -40,3 +40,11 @@ def test_commercial_cannot_create_customer_with_existing_email(
 
     with pytest.raises(ValueError, match="Email already exists"):
         use_case.execute(creator=john_commercial, **tariq_customer)
+
+
+def test_non_commercial_cannot_create_customer(customer_repository, manager_alice, uuid_generator, tariq_customer):
+    auth_context = AuthContext(manager_alice)
+    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action."):
+        use_case.execute(creator=manager_alice, **tariq_customer)
