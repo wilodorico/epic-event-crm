@@ -2,7 +2,7 @@ import pytest
 
 from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Role
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def test_manager_can_create_collaborator(collaborator_repository, data_john_doe,
     use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
     use_case.execute(creator=manager_alice, **data_john_doe)
 
-    collaborator = collaborator_repository.find_by_email("john.doe@test.com")
+    collaborator = collaborator_repository.find_by_email(data_john_doe["email"])
 
     assert len(collaborator_repository.collaborators) == 1
     assert collaborator.id is not None
@@ -49,49 +49,37 @@ def test_manager_cannot_create_collaborator_with_existing_email(
             email=existing_email,
             password="securepassword",
             phone_number="0987654321",
-            role="Management",
+            role=Role.MANAGEMENT,
         )
 
     assert len(collaborator_repository.collaborators) == 1
 
 
-def test_support_cannot_create_collaborator(collaborator_repository, data_john_doe, uuid_generator):
-    support_user = Collaborator(
-        id="support-1",
-        created_by_id="1",
-        first_name="Bob",
-        last_name="Support",
-        email="support@test.com",
-        password="pass",
-        phone_number="123456789",
-        role=Role.SUPPORT,
-    )
-
-    auth_context = AuthContext(support_user)
+def test_support_cannot_create_collaborator(bob_support, collaborator_repository, data_john_doe, uuid_generator):
+    auth_context = AuthContext(bob_support)
     use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        use_case.execute(creator=support_user, **data_john_doe)
+        use_case.execute(creator=bob_support, **data_john_doe)
+
+    assert len(collaborator_repository.collaborators) == 0
+
+    auth_context = AuthContext(bob_support)
+    use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
+
+    with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
+        use_case.execute(creator=bob_support, **data_john_doe)
 
     assert len(collaborator_repository.collaborators) == 0
 
 
-def test_marketing_cannot_create_collaborator(collaborator_repository, data_john_doe, uuid_generator):
-    marketing_user = Collaborator(
-        id="marketing-1",
-        created_by_id="1",
-        first_name="Carol",
-        last_name="Marketing",
-        email="marketing@test.com",
-        password="pass",
-        phone_number="123456789",
-        role=Role.COMMERCIAL,
-    )
-
-    auth_context = AuthContext(marketing_user)
+def test_commercial_cannot_create_collaborator(
+    john_commercial, collaborator_repository, data_john_doe, uuid_generator
+):
+    auth_context = AuthContext(john_commercial)
     use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context)
 
     with pytest.raises(PermissionError, match="You do not have permission to perform this action"):
-        use_case.execute(creator=marketing_user, **data_john_doe)
+        use_case.execute(creator=john_commercial, **data_john_doe)
 
     assert len(collaborator_repository.collaborators) == 0
