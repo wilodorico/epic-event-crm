@@ -1,11 +1,17 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
+from typing import TypedDict
 
 
 class ContractStatus(Enum):
     PENDING = "Pending"
     SIGNED = "Signed"
+
+
+class ContractUpdateData(TypedDict, total=False):
+    total_amount: Decimal
+    remaining_amount: Decimal
 
 
 class Contract:
@@ -29,10 +35,8 @@ class Contract:
         self.updated_at = datetime.now()
         self.updated_by_id = None
 
-    def update(self, data: dict, updater_id: str):
-        for field in ["total_amount", "remaining_amount"]:
-            if field in data:
-                value = data[field]
-                setattr(self, field, value)
+    def update(self, data: ContractUpdateData, updater_id: str):
+        for field, value in data.items():
+            setattr(self, field, value)
         self.updated_at = datetime.now()
         self.updated_by_id = updater_id

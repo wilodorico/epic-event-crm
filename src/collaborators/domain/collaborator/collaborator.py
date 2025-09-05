@@ -1,11 +1,20 @@
 from datetime import datetime
 from enum import Enum
+from typing import TypedDict
 
 
 class Role(Enum):
     COMMERCIAL = "Commercial"
     MANAGEMENT = "Management"
     SUPPORT = "Support"
+
+
+class CollaboratorUpdateData(TypedDict, total=False):
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: str
+    role: Role
 
 
 class Collaborator:
@@ -32,12 +41,10 @@ class Collaborator:
         self.updated_at = datetime.now()
         self.updated_by_id = None
 
-    def update(self, data: dict, updater_id: str):
-        for field in ["first_name", "last_name", "email", "phone_number", "role"]:
-            if field in data:
-                value = data[field]
-                if field == "role" and isinstance(value, str):
-                    value = Role(value)
-                setattr(self, field, value)
+    def update(self, data: CollaboratorUpdateData, updater_id: str):
+        for field, value in data.items():
+            if field == "role" and isinstance(value, str):
+                value = Role(value)
+            setattr(self, field, value)
         self.updated_at = datetime.now()
         self.updated_by_id = updater_id

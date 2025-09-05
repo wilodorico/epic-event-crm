@@ -1,4 +1,13 @@
 from datetime import datetime
+from typing import TypedDict
+
+
+class CustomerUpdateData(TypedDict, total=False):
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: str
+    company: str
 
 
 class Customer:
@@ -22,8 +31,8 @@ class Customer:
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
-    def update(self, data: dict):
-        for field in ["first_name", "last_name", "email", "phone_number", "company"]:
-            if field in data:
-                setattr(self, field, data[field])
+    def update(self, data: CustomerUpdateData):
+        """Update allowed fields only"""
+        for field, value in data.items():
+            setattr(self, field, value)
         self.updated_at = datetime.now()
