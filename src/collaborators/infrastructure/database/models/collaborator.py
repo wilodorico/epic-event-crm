@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import Column, DateTime, Enum, String
+from sqlalchemy import Column, DateTime, Enum, String, func
 
 from collaborators.domain.collaborator.collaborator import Role
 
@@ -18,5 +16,5 @@ class CollaboratorModel(Base):
     password = Column(String, nullable=False)
     phone_number = Column(String, nullable=False)
     role = Column(Enum(Role), nullable=False)
-    created_at = Column(DateTime, default=datetime.timezone.utc)
-    updated_at = Column(DateTime, default=datetime.timezone.utc, onupdate=datetime.timezone.utc)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
