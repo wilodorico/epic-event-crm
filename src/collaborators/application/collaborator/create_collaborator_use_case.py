@@ -1,5 +1,5 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
-from collaborators.domain.collaborator.collaborator import Collaborator
+from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from collaborators.domain.collaborator.permissions import Permissions
 from commons.id_generator_abc import IdGeneratorABC
@@ -30,6 +30,8 @@ class CreateCollaboratorUseCase:
 
         id = self._id_generator.generate()
 
+        role_enum = Role(role)
+
         collaborator = Collaborator(
             id=id,
             created_by_id=creator.id,
@@ -38,6 +40,6 @@ class CreateCollaboratorUseCase:
             email=email,
             password=password,
             phone_number=phone_number,
-            role=role,
+            role=role_enum,
         )
         self._repository.create(collaborator)
