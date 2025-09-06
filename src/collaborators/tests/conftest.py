@@ -2,9 +2,9 @@ import pytest
 
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.customer.customer import Customer
-from collaborators.infrastructure.in_memory_collaborator_repository import InMemoryCollaboratorRepository
-from collaborators.infrastructure.in_memory_contract_repository import InMemoryContractRepository
-from collaborators.infrastructure.in_memory_customer_repository import InMemoryCustomerRepository
+from collaborators.infrastructure.repositories.in_memory_collaborator_repository import InMemoryCollaboratorRepository
+from collaborators.infrastructure.repositories.in_memory_contract_repository import InMemoryContractRepository
+from collaborators.infrastructure.repositories.in_memory_customer_repository import InMemoryCustomerRepository
 from commons.uuid_generator import UuidGenerator
 
 
