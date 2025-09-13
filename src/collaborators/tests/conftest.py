@@ -1,15 +1,39 @@
+import os
+
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import clear_mappers, sessionmaker
 
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.customer.customer import Customer
+from collaborators.infrastructure.database.db import Base
 from collaborators.infrastructure.repositories.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from collaborators.infrastructure.repositories.in_memory_contract_repository import InMemoryContractRepository
 from collaborators.infrastructure.repositories.in_memory_customer_repository import InMemoryCustomerRepository
+from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
+    SqlalchemyCollaboratorRepository,
+)
 from commons.uuid_generator import UuidGenerator
 
 
 @pytest.fixture
-def collaborator_repository():
+def session():
+    """Session SQLite in-memory isolée pour chaque test."""
+    engine = create_engine("sqlite:///:memory:", echo=False)
+    TestingSessionLocal = sessionmaker(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    session = TestingSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+        clear_mappers()
+
+
+@pytest.fixture
+def collaborator_repository(session):
+    if os.getenv("USE_SQLALCHEMY_REPO") == "1":
+        return SqlalchemyCollaboratorRepository(session)
     return InMemoryCollaboratorRepository()
 
 
