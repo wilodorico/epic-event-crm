@@ -1,3 +1,5 @@
+import re
+
 import click
 
 from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
@@ -23,12 +25,26 @@ def init_db_command():
     click.echo("✅ Database initialized!")
 
 
+def validate_email(ctx, param, value):
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    if not re.match(email_regex, value):
+        raise click.BadParameter("Invalid email address")
+    return value
+
+
+def validate_phone(ctx, param, value):
+    phone_regex = r"^\d{10}$"  # Exemple : numéro français à 10 chiffres
+    if not re.match(phone_regex, value):
+        raise click.BadParameter("Numéro de téléphone invalide (10 chiffres attendus)")
+    return value
+
+
 @cli.command("create-collaborator")
-@click.option("--first-name", prompt=True)
-@click.option("--last-name", prompt=True)
-@click.option("--email", prompt=True)
+@click.option("--first-name", prompt=True, type=str)
+@click.option("--last-name", prompt=True, type=str)
+@click.option("--email", prompt=True, callback=validate_email)
 @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
-@click.option("--phone-number", prompt=True)
+@click.option("--phone-number", prompt=True, callback=validate_phone)
 @click.option("--role", prompt=True, type=click.Choice([r.value for r in Role]))
 def create_collaborator(first_name, last_name, email, password, phone_number, role):
     """Create a new collaborator."""
