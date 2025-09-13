@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import StaticPool, create_engine
 from sqlalchemy.orm import clear_mappers, sessionmaker
 
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
@@ -18,9 +18,14 @@ from commons.uuid_generator import UuidGenerator
 
 @pytest.fixture
 def session():
-    """Session SQLite in-memory isolée pour chaque test."""
-    engine = create_engine("sqlite:///:memory:", echo=False)
-    TestingSessionLocal = sessionmaker(bind=engine)
+    """Session SQLite in-memory isolée partageable pour chaque test."""
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+        echo=False,
+    )
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     Base.metadata.create_all(bind=engine)
     session = TestingSessionLocal()
     try:

@@ -33,7 +33,8 @@ def validate_phone(ctx, param, value):
 @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
 @click.option("--phone-number", prompt=True, callback=validate_phone)
 @click.option("--role", prompt=True, type=click.Choice([r.value for r in Role]))
-def create_collaborator(first_name, last_name, email, password, phone_number, role):
+@click.pass_context
+def create_collaborator(ctx, first_name, last_name, email, password, phone_number, role):
     """
     Create a new collaborator.
     This command prompts for collaborator details and creates a new collaborator in the system.
@@ -48,7 +49,7 @@ def create_collaborator(first_name, last_name, email, password, phone_number, ro
         - Phone Number
         - Role (choices: Commercial, Management, Support)
     """
-    session = SessionLocal()
+    session = ctx.obj.get("session") if ctx.obj else SessionLocal()
     try:
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
