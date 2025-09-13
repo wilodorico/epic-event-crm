@@ -1,11 +1,11 @@
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.infrastructure.database.models.collaborator import CollaboratorModel
 
 
 class CollaboratorMapper:
     @staticmethod
     def to_entity(model: CollaboratorModel) -> Collaborator:
-        return Collaborator(
+        collaborator = Collaborator(
             id=model.id,
             created_by_id=model.created_by_id,
             first_name=model.first_name,
@@ -13,11 +13,13 @@ class CollaboratorMapper:
             email=model.email,
             password=model.password,
             phone_number=model.phone_number,
-            role=Role(model.role),
-            created_at=model.created_at,
-            updated_at=model.updated_at,
-            updated_by_id=model.updated_by_id,
+            role=model.role,
         )
+        # Override the auto-generated timestamps with DB values
+        collaborator.created_at = model.created_at
+        collaborator.updated_at = model.updated_at
+        collaborator.updated_by_id = model.updated_by_id
+        return collaborator
 
     @staticmethod
     def to_model(entity: Collaborator) -> CollaboratorModel:

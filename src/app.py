@@ -1,4 +1,4 @@
-from collaborators.infrastructure import cli
+from collaborators.infrastructure.cli import cli
 
 if __name__ == "__main__":
     cli.cli()
