@@ -49,7 +49,8 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
         - Phone Number
         - Role (choices: Commercial, Management, Support)
     """
-    session = ctx.obj.get("session") if ctx.obj else SessionLocal()
+    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+
     try:
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
@@ -86,4 +87,5 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
         click.echo(f"❌ Error creating collaborator: {str(e)}")
         raise
     finally:
-        session.close()
+        if not (ctx.obj and "session" in ctx.obj):
+            session.close()
