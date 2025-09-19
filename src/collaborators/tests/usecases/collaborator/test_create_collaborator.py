@@ -25,7 +25,7 @@ def test_manager_can_create_collaborator(collaborator_repository, data_john_doe,
 
     collaborator = collaborator_repository.find_by_email(data_john_doe["email"])
 
-    assert len(collaborator_repository.collaborators) == 1
+    assert collaborator_repository.count() == 1
     assert collaborator.id is not None
     assert collaborator.first_name == "John"
     assert collaborator.last_name == "Doe"
@@ -53,7 +53,7 @@ def test_manager_cannot_create_collaborator_with_existing_email(
             role=Role.MANAGEMENT,
         )
 
-    assert len(collaborator_repository.collaborators) == 1
+    assert collaborator_repository.count() == 1
 
 
 def test_support_cannot_create_collaborator(bob_support, collaborator_repository, data_john_doe, uuid_generator):
@@ -63,7 +63,7 @@ def test_support_cannot_create_collaborator(bob_support, collaborator_repository
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=bob_support, **data_john_doe)
 
-    assert len(collaborator_repository.collaborators) == 0
+    assert collaborator_repository.count() == 0
     assert bob_support.email in str(exc_info.value)
 
 
@@ -76,5 +76,5 @@ def test_commercial_cannot_create_collaborator(
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=john_commercial, **data_john_doe)
 
-    assert len(collaborator_repository.collaborators) == 0
+    assert collaborator_repository.count() == 0
     assert john_commercial.email in str(exc_info.value)
