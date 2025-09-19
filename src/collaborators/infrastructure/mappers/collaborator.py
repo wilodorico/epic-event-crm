@@ -23,7 +23,7 @@ class CollaboratorMapper:
 
     @staticmethod
     def to_model(entity: Collaborator) -> CollaboratorModel:
-        return CollaboratorModel(
+        model = CollaboratorModel(
             id=entity.id,
             created_by_id=entity.created_by_id,
             first_name=entity.first_name,
@@ -32,7 +32,11 @@ class CollaboratorMapper:
             password=entity.password,
             phone_number=entity.phone_number,
             role=entity.role.value,
-            created_at=entity.created_at,
-            updated_at=entity.updated_at,
             updated_by_id=entity.updated_by_id,
         )
+        # Set timestamps manually if they exist
+        if entity.created_at:
+            model.created_at = entity.created_at
+        if entity.updated_at:
+            model.updated_at = entity.updated_at
+        return model
