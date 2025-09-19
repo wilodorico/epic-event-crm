@@ -34,3 +34,16 @@ def test_delete_collaborator_success_cli(session):
 
     deleted_collaborator = repo.find_by_id("id-collaborator-to-delete")
     assert deleted_collaborator is None
+
+
+def test_delete_collaborator_non_existent_id_cli(session):
+    """Test deletion of a non-existent collaborator through CLI."""
+    runner = CliRunner()
+    result = runner.invoke(
+        collaborator,
+        ["delete-collaborator", "--id", "non-existent-id"],
+        obj={"session": session},
+    )
+
+    assert result.exit_code == 0
+    assert "❌ Collaborator with ID 'non-existent-id' not found." in result.output
