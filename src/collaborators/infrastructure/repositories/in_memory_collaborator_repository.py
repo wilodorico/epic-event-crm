@@ -14,6 +14,10 @@ class InMemoryCollaboratorRepository:
     def find_by_id(self, collaborator_id: str) -> Collaborator | None:
         return self.collaborators.get(collaborator_id)
 
+    def count(self) -> int:
+        """Count all collaborators in memory."""
+        return len(self.collaborators)
+
     def update(self, collaborator: Collaborator) -> None:
         self.collaborators[collaborator.id] = collaborator
 
