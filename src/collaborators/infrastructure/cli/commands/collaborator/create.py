@@ -1,29 +1,14 @@
-import re
-
 import click
 
 from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
 from commons.uuid_generator import UuidGenerator
-
-
-def validate_email(ctx, param, value):
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    if not re.match(email_regex, value):
-        raise click.BadParameter("Invalid email address")
-    return value
-
-
-def validate_phone(ctx, param, value):
-    phone_regex = r"^\d{10}$"  # Exemple : numéro français à 10 chiffres
-    if not re.match(phone_regex, value):
-        raise click.BadParameter("Invalid phone number (10 digits expected)")
-    return value
 
 
 @click.command("create-collaborator")
