@@ -45,7 +45,7 @@ def collaborator_repository(session):
 
 @pytest.fixture
 def customer_repository(session):
-    if session:
+    if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyCustomerRepository(session)
     return InMemoryCustomerRepository()
 

@@ -21,3 +21,17 @@ class SqlalchemyCustomerRepository:
         if customer_model:
             return CustomerMapper.to_entity(customer_model)
         return None
+
+    def find_by_id(self, customer_id: str) -> Customer | None:
+        stmt = select(CustomerModel).where(CustomerModel.id == customer_id)
+        customer_model = self.session.execute(stmt).scalar_one_or_none()
+        if customer_model:
+            return CustomerMapper.to_entity(customer_model)
+        return None
+
+    def update(self, customer: Customer) -> None:
+        """Update an existing customer."""
+        model = CustomerMapper.to_model(customer)
+        # Merge updates the existing record with the same primary key
+        self.session.merge(model)
+        self.session.commit()
