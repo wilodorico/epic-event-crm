@@ -14,6 +14,9 @@ class CollaboratorRepositoryABC(ABC):
     def find_by_id(self, collaborator_id: str) -> Collaborator | None: ...
 
     @abstractmethod
+    def count(self) -> int: ...
+
+    @abstractmethod
     def update(self, collaborator: Collaborator) -> None: ...
 
     @abstractmethod
