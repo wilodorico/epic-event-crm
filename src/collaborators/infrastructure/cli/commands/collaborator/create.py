@@ -22,7 +22,7 @@ def validate_email(ctx, param, value):
 def validate_phone(ctx, param, value):
     phone_regex = r"^\d{10}$"  # Exemple : numéro français à 10 chiffres
     if not re.match(phone_regex, value):
-        raise click.BadParameter("Numéro de téléphone invalide (10 chiffres attendus)")
+        raise click.BadParameter("Invalid phone number (10 digits expected)")
     return value
 
 
