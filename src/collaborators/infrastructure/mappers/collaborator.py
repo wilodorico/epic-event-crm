@@ -1,4 +1,4 @@
-from collaborators.domain.collaborator.collaborator import Collaborator
+from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.infrastructure.database.models.collaborator import CollaboratorModel
 
 
@@ -13,7 +13,7 @@ class CollaboratorMapper:
             email=model.email,
             password=model.password,
             phone_number=model.phone_number,
-            role=model.role,
+            role=Role(model.role),
         )
         # Override the auto-generated timestamps with DB values
         collaborator.created_at = model.created_at
