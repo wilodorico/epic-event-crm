@@ -20,7 +20,7 @@ class CreateCustomerUseCase:
         email: str,
         phone_number: str,
         company: str,
-    ) -> None:
+    ) -> Customer:
         self._auth_context.ensure(Permissions.CREATE_CUSTOMER)
 
         if self._repository.find_by_email(email):
