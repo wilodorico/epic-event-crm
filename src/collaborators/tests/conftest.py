@@ -1,4 +1,5 @@
 import os
+from contextlib import closing
 
 import pytest
 from sqlalchemy import StaticPool, create_engine
@@ -29,11 +30,8 @@ def session():
 
     Base.metadata.create_all(bind=engine)
     TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = TestSessionLocal()
-    try:
+    with closing(TestSessionLocal()) as session:
         yield session
-    finally:
-        session.close()
 
 
 @pytest.fixture
