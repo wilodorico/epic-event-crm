@@ -22,6 +22,13 @@ class SqlalchemyContractRepository:
             return ContractMapper.to_entity(contract_model)
         return None
 
+    def find_by_customer_id(self, customer_id: str) -> list[Contract] | None:
+        stmt = select(ContractModel).where(ContractModel.customer_id == customer_id)
+        contract_models = self.session.execute(stmt).scalars().all()
+        if contract_models:
+            return [ContractMapper.to_entity(model) for model in contract_models]
+        return None
+
     def update(self, contract: Contract) -> None:
         model = ContractMapper.to_model(contract)
         self.session.merge(model)
