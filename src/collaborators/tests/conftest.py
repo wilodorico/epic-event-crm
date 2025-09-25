@@ -14,6 +14,7 @@ from collaborators.infrastructure.repositories.in_memory_customer_repository imp
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 from commons.uuid_generator import UuidGenerator
 
@@ -49,7 +50,9 @@ def customer_repository(session):
 
 
 @pytest.fixture
-def contract_repository():
+def contract_repository(session):
+    if os.getenv("USE_SQLALCHEMY_REPO") == "1":
+        return SqlalchemyContractRepository(session)
     return InMemoryContractRepository()
 
 
