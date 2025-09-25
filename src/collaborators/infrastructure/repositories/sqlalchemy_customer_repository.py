@@ -35,3 +35,9 @@ class SqlalchemyCustomerRepository:
         # Merge updates the existing record with the same primary key
         self.session.merge(model)
         self.session.commit()
+
+    def count(self) -> int:
+        """Count all customers in the database."""
+        stmt = select(CustomerModel)
+        result = self.session.execute(stmt)
+        return len(result.scalars().all())

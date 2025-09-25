@@ -15,3 +15,6 @@ class CustomerRepositoryABC(ABC):
 
     @abstractmethod
     def find_by_id(self, customer_id: str) -> Customer | None: ...
+
+    @abstractmethod
+    def count(self) -> int: ...

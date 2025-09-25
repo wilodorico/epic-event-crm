@@ -16,3 +16,7 @@ class InMemoryCustomerRepository:
 
     def update(self, customer: Customer) -> None:
         self.customers[customer.id] = customer
+
+    def count(self) -> int:
+        """Count all customers in memory."""
+        return len(self.customers)
