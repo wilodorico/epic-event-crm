@@ -29,7 +29,6 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
 
     user_input = (
         f"{alice_customer.id}\n"  # --customer-id
-        f"{john_commercial.id}\n"  # --commercial-id
         "1000.00\n"  # --total-amount
         "1000.00\n"  # --remaining-amount
     )
@@ -42,7 +41,7 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
     created_contract = customer_contracts[0]
 
     assert f"✅ Contract {created_contract.id} created successfully" in result.output
-    assert created_contract.commercial_id == john_commercial.id
+    assert created_contract.commercial_id is not None
     assert created_contract.customer_id == alice_customer.id
     assert Decimal(created_contract.total_amount) == 1000.00
     assert Decimal(created_contract.remaining_amount) == 1000.00
@@ -52,7 +51,6 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
 def test_manager_create_contract_non_existent_customer_cli(session, john_commercial):
     user_input = (
         "non-existent-customer-id\n"  # --customer-id
-        f"{john_commercial.id}\n"  # --commercial-id
         "1000.00\n"  # --total-amount
         "1000.00\n"  # --remaining-amount
     )

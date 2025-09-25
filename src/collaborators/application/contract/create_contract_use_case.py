@@ -26,7 +26,6 @@ class CreateContractUseCase:
         self,
         creator: Collaborator,
         customer_id: str,
-        commercial_id: str,
         total_amount: Decimal,
         remaining_amount: Decimal,
     ) -> Contract:
@@ -42,7 +41,7 @@ class CreateContractUseCase:
         contract = Contract(
             id=id,
             customer_id=customer_id,
-            commercial_id=commercial_id,
+            commercial_id=customer.commercial_contact_id,
             created_by_id=creator.id,
             total_amount=total_amount,
             remaining_amount=remaining_amount,

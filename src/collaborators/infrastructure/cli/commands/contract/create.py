@@ -10,11 +10,10 @@ from commons.uuid_generator import UuidGenerator
 
 @click.command("create-contract", help="Create a new contract")
 @click.option("--customer-id", prompt="Customer ID", type=str, help="ID of the customer")
-@click.option("--commercial-id", prompt="Commercial ID", type=str, help="ID of the commercial")
 @click.option("--total-amount", prompt="Total Amount", type=float, help="Total amount of the contract")
 @click.option("--remaining-amount", prompt="Remaining Amount", type=float, help="Remaining amount of the contract")
 @click.pass_context
-def create_contract(ctx, customer_id, commercial_id, total_amount, remaining_amount):
+def create_contract(ctx, customer_id, total_amount, remaining_amount):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else None
 
     try:
@@ -39,7 +38,6 @@ def create_contract(ctx, customer_id, commercial_id, total_amount, remaining_amo
         contract = use_case.execute(
             creator=temp_manager,
             customer_id=customer_id,
-            commercial_id=commercial_id,
             total_amount=total_amount,
             remaining_amount=remaining_amount,
         )

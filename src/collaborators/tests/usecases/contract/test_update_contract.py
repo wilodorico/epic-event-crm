@@ -17,7 +17,6 @@ def test_manager_can_update_contract(
     contract = create_use_case.execute(
         creator=manager_alice,
         customer_id=karim_customer.id,
-        commercial_id=john_commercial.id,
         total_amount=Decimal("1000.00"),
         remaining_amount=Decimal("1000.00"),
     )
@@ -64,7 +63,6 @@ def test_commercial_can_update_contract_for_own_customer(
     contract = create_use_case.execute(
         creator=manager_alice,
         customer_id=karim_customer.id,
-        commercial_id=john_commercial.id,
         total_amount=Decimal("1000.00"),
         remaining_amount=Decimal("1000.00"),
     )
@@ -103,7 +101,6 @@ def test_commercial_cannot_update_contract_for_other_customer(
     contract = create_use_case.execute(
         creator=manager_alice,
         customer_id=karim_customer.id,
-        commercial_id=john_commercial.id,
         total_amount=Decimal("1000.00"),
         remaining_amount=Decimal("1000.00"),
     )
