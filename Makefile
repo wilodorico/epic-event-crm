@@ -10,7 +10,6 @@ TEST_DIR=collaborators/tests
 
 help:
 	@echo "Commandes disponibles :"
-	@echo "  make activate     		-> Indique comment activer le venv (Git Bash)"
 	@echo "  make test         		-> Lance les tests unitaires (sans SQLAlchemy repo)"
 	@echo "  make integration  		-> Lance les tests d'integration (USE_SQLALCHEMY_REPO=1)"
 	@echo "  make e2e          		-> Lance les tests end-to-end (USE_SQLALCHEMY_REPO=1)"
