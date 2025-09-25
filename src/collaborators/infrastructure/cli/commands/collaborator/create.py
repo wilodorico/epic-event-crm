@@ -36,6 +36,8 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
+    # TODO: Refactorer les try except finally avec un context manager
+
     try:
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
