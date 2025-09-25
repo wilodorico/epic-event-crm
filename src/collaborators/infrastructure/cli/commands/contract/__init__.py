@@ -1,6 +1,7 @@
 import click
 
 from collaborators.infrastructure.cli.commands.contract.create import create_contract
+from collaborators.infrastructure.cli.commands.contract.update import update_contract
 
 
 @click.group()
@@ -10,3 +11,4 @@ def contract():
 
 
 contract.add_command(create_contract)
+contract.add_command(update_contract)
