@@ -8,7 +8,7 @@ from collaborators.application.services.auth_context import AuthContext
 
 
 def test_manager_can_update_contract(
-    customer_repository, contract_repository, manager_alice, john_commercial, karim_customer, uuid_generator
+    customer_repository, contract_repository, manager_alice, karim_customer, uuid_generator
 ):
     customer_repository.create(karim_customer)
     auth_context = AuthContext(manager_alice)
@@ -36,7 +36,7 @@ def test_manager_can_update_contract(
     assert updated_contract.remaining_amount == Decimal("1200.00")
 
 
-def test_manager_cannot_update_non_existent_contract(contract_repository, manager_alice, uuid_generator):
+def test_manager_cannot_update_non_existent_contract(contract_repository, manager_alice):
     auth_context = AuthContext(manager_alice)
     update_use_case = UpdateContractUseCase(contract_repository, auth_context)
 
@@ -87,7 +87,6 @@ def test_commercial_cannot_update_contract_for_other_customer(
     customer_repository,
     contract_repository,
     manager_alice,
-    john_commercial,
     amel_commercial,
     karim_customer,
     uuid_generator,
