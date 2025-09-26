@@ -6,6 +6,7 @@ from sqlalchemy import StaticPool, create_engine
 from sqlalchemy.orm import sessionmaker
 
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.contract.contract import Contract
 from collaborators.domain.customer.customer import Customer
 from collaborators.infrastructure.database.models.base import Base
 from collaborators.infrastructure.repositories.in_memory_collaborator_repository import InMemoryCollaboratorRepository
@@ -168,4 +169,28 @@ def marie_customer(amel_commercial):
         phone_number="1234567890",
         company="Test Corp",
         commercial_contact_id=amel_commercial.id,
+    )
+
+
+@pytest.fixture
+def karim_contract(manager_alice, karim_customer, john_commercial):
+    return Contract(
+        id="karim-contract-1",
+        customer_id=karim_customer.id,
+        commercial_id=john_commercial.id,
+        created_by_id=manager_alice.id,
+        total_amount=1000.00,
+        remaining_amount=1000.00,
+    )
+
+
+@pytest.fixture
+def marie_contract(manager_alice, marie_customer, amel_commercial):
+    return Contract(
+        id="marie-contract-1",
+        customer_id=marie_customer.id,
+        commercial_id=amel_commercial.id,
+        created_by_id=manager_alice.id,
+        total_amount=2000.00,
+        remaining_amount=2000.00,
     )
