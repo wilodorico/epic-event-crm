@@ -146,7 +146,7 @@ def carol_marketing():
 
 
 @pytest.fixture
-def karim_customer():
+def karim_customer(john_commercial):
     return Customer(
         id="karim-customer-1",
         first_name="Karim",
@@ -154,5 +154,18 @@ def karim_customer():
         email="karim.denour@test.com",
         phone_number="1234567890",
         company="Ks Corp",
-        commercial_contact_id="john-commercial-1",
+        commercial_contact_id=john_commercial.id,
+    )
+
+
+@pytest.fixture
+def marie_customer(amel_commercial):
+    return Customer(
+        id="marie-customer-1",
+        first_name="Marie",
+        last_name="Legrand",
+        email="marie.legrand@test.com",
+        phone_number="1234567890",
+        company="Test Corp",
+        commercial_contact_id=amel_commercial.id,
     )
