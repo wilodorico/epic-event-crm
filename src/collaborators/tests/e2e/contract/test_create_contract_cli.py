@@ -22,7 +22,7 @@ def alice_customer(john_commercial):
     )
 
 
-def test_manager_create_contract_success_cli(session, alice_customer, john_commercial):
+def test_manager_create_contract_success_cli(session, alice_customer, john_commercial, manager_alice):
     customer_repo = SqlalchemyCustomerRepository(session)
     contract_repo = SqlalchemyContractRepository(session)
     customer_repo.create(alice_customer)
@@ -34,7 +34,9 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
     )
 
     runner = CliRunner()
-    result = runner.invoke(contract, ["create-contract"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        contract, ["create-contract"], input=user_input, obj={"session": session, "current_user": manager_alice}
+    )
 
     assert result.exit_code == 0
     customer_contracts = contract_repo.find_by_customer_id(alice_customer.id)
@@ -48,7 +50,7 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
     assert created_contract.status.name == "PENDING"
 
 
-def test_manager_create_contract_non_existent_customer_cli(session, john_commercial):
+def test_manager_create_contract_non_existent_customer_cli(session, john_commercial, manager_alice):
     user_input = (
         "non-existent-customer-id\n"  # --customer-id
         "1000.00\n"  # --total-amount
@@ -56,7 +58,9 @@ def test_manager_create_contract_non_existent_customer_cli(session, john_commerc
     )
 
     runner = CliRunner()
-    result = runner.invoke(contract, ["create-contract"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        contract, ["create-contract"], input=user_input, obj={"session": session, "current_user": manager_alice}
+    )
 
     assert result.exit_code == 1
     assert "❌ Error creating contract: Customer does not exist" in result.output

@@ -21,22 +21,27 @@ def create_contract(ctx, customer_id, total_amount, remaining_amount):
         contract_repository = SqlalchemyContractRepository(session)
         id_generator = UuidGenerator()
 
-        temp_manager = Collaborator(
-            id="cli-temp-manager",
-            created_by_id="system",
-            first_name="CLI",
-            last_name="Manager",
-            email="cli.manager@system.com",
-            password="temp",
-            phone_number="0000000000",
-            role=Role.MANAGEMENT,
-        )
+        # Get user from context (for tests) or use default
+        current_user = ctx.obj.get("current_user") if ctx.obj and "current_user" in ctx.obj else None
 
-        auth_context = AuthContext(temp_manager)
+        if not current_user:
+            # Default user for CLI usage (when no authentication system)
+            current_user = Collaborator(
+                id="cli-temp-manager",
+                created_by_id="system",
+                first_name="CLI",
+                last_name="Manager",
+                email="cli.manager@system.com",
+                password="temp",
+                phone_number="0000000000",
+                role=Role.MANAGEMENT,
+            )
+
+        auth_context = AuthContext(current_user)
         use_case = CreateContractUseCase(customer_repository, contract_repository, id_generator, auth_context)
 
         contract = use_case.execute(
-            creator=temp_manager,
+            creator=current_user,
             customer_id=customer_id,
             total_amount=total_amount,
             remaining_amount=remaining_amount,
