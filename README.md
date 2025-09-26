@@ -12,6 +12,14 @@ collaborator create-collaborator
 collaborator update-collaborator --id "collaborator_id"
 collaborator delete-collaborator --id "collaborator_id"
 
+customer create-customer
+customer update-customer --id "customer_id"
+customer get-customers
+
+contract create-contract --id "customer_id"
+contract update-contract --id "contract_id"
+contract get-contracts
+
 ```
 
 ## make commands
