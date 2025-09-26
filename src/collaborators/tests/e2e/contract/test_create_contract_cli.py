@@ -88,6 +88,28 @@ def test_manager_create_contract_with_negative_total_amount_cli(session, alice_c
     assert len(customer_contracts) == 0
 
 
+def test_manager_create_contract_with_non_numeric_total_amount_cli(session, alice_customer, manager_alice):
+    customer_repo = SqlalchemyCustomerRepository(session)
+    contract_repo = SqlalchemyContractRepository(session)
+    customer_repo.create(alice_customer)
+
+    user_input = (
+        f"{alice_customer.id}\n"  # --customer-id
+        "abc\n"  # Invalid --total-amount
+        "1000.00\n"  # --remaining-amount
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract, ["create-contract"], input=user_input, obj={"session": session, "current_user": manager_alice}
+    )
+
+    assert result.exit_code == 1
+    assert "Error: Value must be a valid decimal number" in result.output
+    customer_contracts = contract_repo.find_by_customer_id(alice_customer.id)
+    assert len(customer_contracts) == 0
+
+
 def test_non_manager_cannot_create_contract_cli(session, alice_customer, john_commercial):
     customer_repo = SqlalchemyCustomerRepository(session)
     contract_repo = SqlalchemyContractRepository(session)
