@@ -15,7 +15,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 @click.pass_context
 def update_collaborator(ctx, id):
     """
-    Update an existing collaborator.
+    Update an existing by ID --id "<collaborator_id>".
     The command will load the current data and allow you to modify each field.
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
