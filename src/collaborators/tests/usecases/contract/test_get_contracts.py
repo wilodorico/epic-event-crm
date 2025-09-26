@@ -20,3 +20,14 @@ def test_collaborator_can_get_contracts(
     assert contract_repository.count() == 2
     assert any(c.id == "karim-contract-1" for c in contracts)
     assert any(c.id == "marie-contract-1" for c in contracts)
+
+
+@pytest.mark.parametrize("collaborator_fixture", ["john_commercial", "manager_alice", "bob_support"])
+def test_collaborator_get_contracts_empty_repository(contract_repository, request, collaborator_fixture):
+    auth_context = AuthContext(request.getfixturevalue(collaborator_fixture))
+    use_case = GetContractsUseCase(contract_repository, auth_context)
+
+    contracts = use_case.execute()
+
+    assert contract_repository.count() == 0
+    assert contracts == []
