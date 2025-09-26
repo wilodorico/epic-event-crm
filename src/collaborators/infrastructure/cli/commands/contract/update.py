@@ -38,18 +38,23 @@ def update_contract(ctx, id):
             click.echo(f"❌ {e}")
             return
 
-        temp_manager = Collaborator(
-            id="cli-temp-manager",
-            created_by_id="system",
-            first_name="CLI",
-            last_name="Manager",
-            email="cli.manager@example.com",
-            password="securepassword",
-            phone_number="0000000000",
-            role=Role.MANAGEMENT,
-        )
+        # Get user from context (for tests) or use default
+        current_user = ctx.obj.get("current_user") if ctx.obj and "current_user" in ctx.obj else None
 
-        auth_context = AuthContext(temp_manager)
+        if not current_user:
+            # Default user for CLI usage (when no authentication system)
+            current_user = Collaborator(
+                id="cli-temp-manager",
+                created_by_id="system",
+                first_name="CLI",
+                last_name="Manager",
+                email="cli.manager@example.com",
+                password="securepassword",
+                phone_number="0000000000",
+                role=Role.MANAGEMENT,
+            )
+
+        auth_context = AuthContext(current_user)
         use_case = UpdateContractUseCase(contract_repository, auth_context)
 
         update_data = {}
@@ -61,7 +66,7 @@ def update_contract(ctx, id):
             click.echo("No changes detected. Contract not updated.")
             return
 
-        updated_contract = use_case.execute(updater=temp_manager, contract_id=id, data=update_data)
+        updated_contract = use_case.execute(updater=current_user, contract_id=id, data=update_data)
         click.echo(f"✅ Contract {updated_contract.id} updated successfully")
     except Exception as e:
         click.echo(f"❌ Error updating contract: {str(e)}")
