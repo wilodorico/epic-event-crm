@@ -66,6 +66,28 @@ def test_manager_create_contract_non_existent_customer_cli(session, john_commerc
     assert "❌ Error creating contract: Customer does not exist" in result.output
 
 
+def test_manager_create_contract_with_negative_total_amount_cli(session, alice_customer, manager_alice):
+    customer_repo = SqlalchemyCustomerRepository(session)
+    contract_repo = SqlalchemyContractRepository(session)
+    customer_repo.create(alice_customer)
+
+    user_input = (
+        f"{alice_customer.id}\n"  # --customer-id
+        "-1000.00\n"  # Invalid --total-amount
+        "1000.00\n"  # --remaining-amount
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract, ["create-contract"], input=user_input, obj={"session": session, "current_user": manager_alice}
+    )
+
+    assert result.exit_code == 1
+    assert "Error: Value must be a positive decimal number" in result.output
+    customer_contracts = contract_repo.find_by_customer_id(alice_customer.id)
+    assert len(customer_contracts) == 0
+
+
 def test_non_manager_cannot_create_contract_cli(session, alice_customer, john_commercial):
     customer_repo = SqlalchemyCustomerRepository(session)
     contract_repo = SqlalchemyContractRepository(session)
