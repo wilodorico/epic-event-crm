@@ -45,6 +45,60 @@ def test_manager_update_contract_success_cli(session, contract_to_update, manage
     assert updated_contract.remaining_amount == 1200.00
 
 
+def test_manager_update_contract_with_negative_total_amount_cli(session, contract_to_update, manager_alice):
+    repo = SqlalchemyContractRepository(session)
+    repo.create(contract_to_update)
+
+    user_input = (
+        "id-contract-to-update\n"  # Contract ID prompt
+        "-500.00\n"  # Invalid Total Amount prompt
+        "1200.00\n"  # Remaining Amount prompt
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract,
+        ["update-contract"],
+        input=user_input,
+        obj={"session": session, "current_user": manager_alice},
+    )
+
+    assert result.exit_code == 0
+    assert "❌ Value must be a positive decimal number" in result.output
+
+    updated_contract = repo.find_by_id("id-contract-to-update")
+    assert updated_contract is not None
+    assert updated_contract.total_amount == 1000.00  # No change
+    assert updated_contract.remaining_amount == 1000.00  # No change
+
+
+def test_manager_update_contract_with_non_digital_total_amount_cli(session, contract_to_update, manager_alice):
+    repo = SqlalchemyContractRepository(session)
+    repo.create(contract_to_update)
+
+    user_input = (
+        "id-contract-to-update\n"  # Contract ID prompt
+        "abc\n"  # Non-digital Total Amount prompt
+        "1200.00\n"  # Remaining Amount prompt
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract,
+        ["update-contract"],
+        input=user_input,
+        obj={"session": session, "current_user": manager_alice},
+    )
+
+    assert result.exit_code == 0  # Erreur gérée gracieusement
+    assert "❌ Value must be a valid decimal number" in result.output
+
+    updated_contract = repo.find_by_id("id-contract-to-update")
+    assert updated_contract is not None
+    assert updated_contract.total_amount == 1000.00  # No change
+    assert updated_contract.remaining_amount == 1000.00  # No change
+
+
 def test_commercial_update_his_customer_contract_success_cli(session, contract_to_update, john_commercial):
     repo = SqlalchemyContractRepository(session)
     repo.create(contract_to_update)
