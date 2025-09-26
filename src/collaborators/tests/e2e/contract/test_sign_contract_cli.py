@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 
 from collaborators.domain.contract.contract import ContractStatus
@@ -5,9 +6,12 @@ from collaborators.infrastructure.cli.commands.contract import contract
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
-def test_manager_can_sign_contract_cli(session, karim_contract, manager_alice):
+@pytest.mark.parametrize("collaborator_fixture", ["john_commercial", "manager_alice"])
+def test_collaborator_can_sign_contract_cli(session, karim_contract, collaborator_fixture, request):
     repo = SqlalchemyContractRepository(session)
     repo.create(karim_contract)
+
+    collaborator = request.getfixturevalue(collaborator_fixture)
 
     user_input = "yes\n"  # Confirm signing prompt
 
@@ -16,7 +20,7 @@ def test_manager_can_sign_contract_cli(session, karim_contract, manager_alice):
         contract,
         ["sign-contract", "--id", karim_contract.id],
         input=user_input,
-        obj={"session": session, "current_user": manager_alice},
+        obj={"session": session, "current_user": collaborator},
     )
 
     assert result.exit_code == 0
