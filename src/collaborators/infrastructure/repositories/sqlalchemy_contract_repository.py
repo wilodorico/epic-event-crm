@@ -34,6 +34,12 @@ class SqlalchemyContractRepository:
         self.session.merge(model)
         self.session.commit()
 
+    def count(self) -> int:
+        """Count all contracts in the database."""
+        stmt = select(ContractModel)
+        result = self.session.execute(stmt)
+        return len(result.scalars().all())
+
     def get_all(self) -> list[Contract] | list:
         """Retrieve all contracts from the database."""
         stmt = select(ContractModel)
