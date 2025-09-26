@@ -72,7 +72,7 @@ def test_commercial_update_his_customer_contract_success_cli(session, contract_t
     assert updated_contract.remaining_amount == 1500.00
 
 
-def test_other_commercial_cant_update_customer_contract_cli(session, contract_to_update, amel_commercial):
+def test_commercial_cannot_update_contract_of_unassigned_customer_cli(session, contract_to_update, amel_commercial):
     repo = SqlalchemyContractRepository(session)
     repo.create(contract_to_update)
 
