@@ -23,6 +23,7 @@ from commons.uuid_generator import UuidGenerator
 )
 @click.pass_context
 def create_contract(ctx, customer_id, total_amount, remaining_amount):
+    """Create a new contract for a customer"""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
