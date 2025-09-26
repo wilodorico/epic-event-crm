@@ -41,3 +41,10 @@ class SqlalchemyCustomerRepository:
         stmt = select(CustomerModel)
         result = self.session.execute(stmt)
         return len(result.scalars().all())
+
+    def get_all(self) -> list[Customer] | list:
+        """Retrieve all customers from the database."""
+        stmt = select(CustomerModel)
+        result = self.session.execute(stmt)
+        customer_models = result.scalars().all()
+        return [CustomerMapper.to_entity(model) for model in customer_models]

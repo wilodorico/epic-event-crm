@@ -18,3 +18,6 @@ class CustomerRepositoryABC(ABC):
 
     @abstractmethod
     def count(self) -> int: ...
+
+    @abstractmethod
+    def get_all(self) -> list[Customer] | list: ...
