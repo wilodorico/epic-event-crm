@@ -15,3 +15,6 @@ class ContractRepositoryABC(ABC):
 
     @abstractmethod
     def update(self, contract: Contract) -> None: ...
+
+    @abstractmethod
+    def get_all(self) -> list[Contract] | list: ...
