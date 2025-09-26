@@ -43,7 +43,7 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
     created_contract = customer_contracts[0]
 
     assert f"✅ Contract {created_contract.id} created successfully" in result.output
-    assert created_contract.commercial_id is not None
+    assert created_contract.commercial_id == john_commercial.id
     assert created_contract.customer_id == alice_customer.id
     assert Decimal(created_contract.total_amount) == 1000.00
     assert Decimal(created_contract.remaining_amount) == 1000.00
@@ -64,3 +64,28 @@ def test_manager_create_contract_non_existent_customer_cli(session, john_commerc
 
     assert result.exit_code == 1
     assert "❌ Error creating contract: Customer does not exist" in result.output
+
+
+def test_non_manager_cannot_create_contract_cli(session, alice_customer, john_commercial):
+    customer_repo = SqlalchemyCustomerRepository(session)
+    contract_repo = SqlalchemyContractRepository(session)
+    customer_repo.create(alice_customer)
+
+    user_input = (
+        f"{alice_customer.id}\n"  # --customer-id
+        "1000.00\n"  # --total-amount
+        "1000.00\n"  # --remaining-amount
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract, ["create-contract"], input=user_input, obj={"session": session, "current_user": john_commercial}
+    )
+
+    assert result.exit_code == 1
+    assert (
+        "❌ Error creating contract: User 'john.doe@test.com' with role 'Commercial' does not have permission"
+        in result.output
+    )
+    customer_contracts = contract_repo.find_by_customer_id(alice_customer.id)
+    assert len(customer_contracts) == 0
