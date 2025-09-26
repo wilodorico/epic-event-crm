@@ -37,3 +37,15 @@ def test_support_cannot_sign_contract(contract_repository, karim_contract, bob_s
     unsigned_contract = contract_repository.find_by_id(karim_contract.id)
     assert unsigned_contract is not None
     assert unsigned_contract.status == ContractStatus.PENDING
+
+
+def test_manager_cannot_sign_non_existent_contract(contract_repository, manager_alice):
+    auth_context = AuthContext(manager_alice)
+
+    use_case = SignContractUseCase(contract_repository, auth_context)
+
+    with pytest.raises(ValueError) as exc_info:
+        use_case.execute(updater_id=manager_alice.id, contract_id="non-existent-id")
+
+    assert "Contract not found." in str(exc_info.value)
+    assert contract_repository.count() == 0
