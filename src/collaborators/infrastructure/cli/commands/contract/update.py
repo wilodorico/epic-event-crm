@@ -12,6 +12,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_contract_repository im
 @click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to update")
 @click.pass_context
 def update_contract(ctx, id):
+    """Update an existing contract by ID --id "<contract_id>"."""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
