@@ -41,7 +41,10 @@ def get_contracts(ctx):
 
         click.echo("List of Contracts:")
         for contract in contracts:
-            click.echo(f" - {contract.id}: {contract.customer_id} - {contract.total_amount}")
+            click.echo(
+                f"Contract_id : {contract.id} - Customer_id : {contract.customer_id} - "
+                f"Total_amount : {contract.total_amount} - Remaining_amount : {contract.remaining_amount}"
+            )
 
     except Exception as e:
         click.echo(f"❌ Error retrieving contracts: {str(e)}")
