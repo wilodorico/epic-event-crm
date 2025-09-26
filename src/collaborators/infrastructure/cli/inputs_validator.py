@@ -1,5 +1,5 @@
 import re
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 import click
 
@@ -24,6 +24,6 @@ def validate_positive_decimal(ctx, param, value):
         decimal_value = Decimal(value)
         if decimal_value < 0:
             raise click.BadParameter("Value must be a positive decimal number")
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, InvalidOperation):
         raise click.BadParameter("Value must be a valid decimal number")
     return value
