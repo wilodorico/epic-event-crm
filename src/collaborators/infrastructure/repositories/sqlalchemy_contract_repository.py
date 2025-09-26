@@ -33,3 +33,10 @@ class SqlalchemyContractRepository:
         model = ContractMapper.to_model(contract)
         self.session.merge(model)
         self.session.commit()
+
+    def get_all(self) -> list[Contract] | list:
+        """Retrieve all contracts from the database."""
+        stmt = select(ContractModel)
+        result = self.session.execute(stmt)
+        contract_models = result.scalars().all()
+        return [ContractMapper.to_entity(model) for model in contract_models]
