@@ -17,3 +17,9 @@ class InMemoryContractRepository(ContractRepositoryABC):
 
     def update(self, contract: Contract) -> None:
         self.contracts[contract.id] = contract
+
+    def count(self) -> int:
+        return len(self.contracts)
+
+    def get_all(self) -> list[Contract] | list:
+        return list(self.contracts.values())
