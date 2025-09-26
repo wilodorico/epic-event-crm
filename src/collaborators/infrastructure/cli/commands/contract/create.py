@@ -4,6 +4,7 @@ from collaborators.application.contract.create_contract_use_case import CreateCo
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.infrastructure.cli.inputs_validator import validate_positive_decimal
+from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 from commons.uuid_generator import UuidGenerator
@@ -22,7 +23,7 @@ from commons.uuid_generator import UuidGenerator
 )
 @click.pass_context
 def create_contract(ctx, customer_id, total_amount, remaining_amount):
-    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else None
+    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
         customer_repository = SqlalchemyCustomerRepository(session)

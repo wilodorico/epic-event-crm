@@ -3,13 +3,15 @@ import click
 from collaborators.application.contract.get_contracts_use_case import GetContractsUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
 @click.command(name="get-contracts", help="Retrieve and display all contracts")
 @click.pass_context
 def get_contracts(ctx):
-    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else None
+    # Get session from context (for tests) or create a new one
+    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
         repository = SqlalchemyContractRepository(session)

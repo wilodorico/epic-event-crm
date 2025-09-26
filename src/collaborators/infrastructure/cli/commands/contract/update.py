@@ -4,6 +4,7 @@ from collaborators.application.contract.update_contract_use_case import UpdateCo
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.infrastructure.cli.inputs_validator import validate_positive_decimal
+from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
@@ -11,7 +12,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_contract_repository im
 @click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to update")
 @click.pass_context
 def update_contract(ctx, id):
-    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else None
+    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
         contract_repository = SqlalchemyContractRepository(session)

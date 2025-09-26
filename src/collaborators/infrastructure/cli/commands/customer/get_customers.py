@@ -3,13 +3,14 @@ import click
 from collaborators.application.customer.get_customers_use_case import GetCustomersUseCase
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 
 
 @click.command("get-customers", help="Retrieve and display all customers")
 @click.pass_context
 def get_customers(ctx):
-    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else None
+    session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
 
     try:
         repository = SqlalchemyCustomerRepository(session)
