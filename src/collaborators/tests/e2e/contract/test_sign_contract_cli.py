@@ -53,3 +53,20 @@ def test_support_cannot_sign_contract_cli(session, karim_contract, bob_support):
     unsigned_contract = repo.find_by_id(karim_contract.id)
     assert unsigned_contract is not None
     assert unsigned_contract.status == ContractStatus.PENDING
+
+
+def test_manager_cannot_sign_non_existent_contract_cli(session, manager_alice):
+    user_input = "yes\n"  # Confirm signing prompt
+
+    runner = CliRunner()
+    result = runner.invoke(
+        contract,
+        ["sign-contract", "--id", "non-existent-id"],
+        input=user_input,
+        obj={"session": session, "current_user": manager_alice},
+    )
+
+    assert result.exit_code == 0
+    assert "Contract with ID 'non-existent-id' not found." in result.output
+    repo = SqlalchemyContractRepository(session)
+    assert repo.count() == 0
