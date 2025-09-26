@@ -1,4 +1,4 @@
-from collaborators.domain.contract.contract import Contract
+from collaborators.domain.contract.contract import Contract, ContractStatus
 from collaborators.infrastructure.database.models.contract import ContractModel
 
 
@@ -13,9 +13,11 @@ class ContractMapper:
             total_amount=model.total_amount,
             remaining_amount=model.remaining_amount,
         )
-        # Override the auto-generated timestamps with DB values
+        # Override the auto-generated values with DB values
         contract.created_at = model.created_at
         contract.updated_at = model.updated_at
+        contract.updated_by_id = model.updated_by_id
+        contract.status = ContractStatus(model.status)
         return contract
 
     @staticmethod

@@ -40,3 +40,8 @@ class Contract:
             setattr(self, field, value)
         self.updated_at = datetime.now()
         self.updated_by_id = updater_id
+
+    def sign_contract(self, updater_id: str):
+        self.status = ContractStatus.SIGNED
+        self.updated_at = datetime.now()
+        self.updated_by_id = updater_id

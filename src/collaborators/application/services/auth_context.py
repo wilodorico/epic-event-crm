@@ -14,6 +14,7 @@ class AuthContext(AuthContextABC):
             Permissions.UPDATE_CONTRACT,
             Permissions.READ_CUSTOMERS,
             Permissions.READ_CONTRACTS,
+            Permissions.SIGN_CONTRACT,
         },
         Role.COMMERCIAL: {
             Permissions.CREATE_CUSTOMER,
@@ -21,6 +22,7 @@ class AuthContext(AuthContextABC):
             Permissions.UPDATE_CONTRACT,
             Permissions.READ_CUSTOMERS,
             Permissions.READ_CONTRACTS,
+            Permissions.SIGN_CONTRACT,
         },
         Role.SUPPORT: {Permissions.READ_CUSTOMERS, Permissions.READ_CONTRACTS},
     }
