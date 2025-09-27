@@ -22,7 +22,7 @@ class SqlalchemyContractRepository:
             return ContractMapper.to_entity(contract_model)
         return None
 
-    def find_by_customer_id(self, customer_id: str) -> list[Contract] | list:
+    def find_by_customer_id(self, customer_id: str) -> list[Contract]:
         stmt = select(ContractModel).where(ContractModel.customer_id == customer_id)
         contract_models = self.session.execute(stmt).scalars().all()
         if contract_models:
@@ -40,7 +40,7 @@ class SqlalchemyContractRepository:
         result = self.session.execute(stmt)
         return len(result.scalars().all())
 
-    def get_all(self) -> list[Contract] | list:
+    def get_all(self) -> list[Contract]:
         """Retrieve all contracts from the database."""
         stmt = select(ContractModel)
         result = self.session.execute(stmt)

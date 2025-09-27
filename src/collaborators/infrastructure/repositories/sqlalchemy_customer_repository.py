@@ -42,7 +42,7 @@ class SqlalchemyCustomerRepository:
         result = self.session.execute(stmt)
         return len(result.scalars().all())
 
-    def get_all(self) -> list[Customer] | list:
+    def get_all(self) -> list[Customer]:
         """Retrieve all customers from the database."""
         stmt = select(CustomerModel)
         result = self.session.execute(stmt)

@@ -21,6 +21,6 @@ class InMemoryCustomerRepository:
         """Count all customers in memory."""
         return len(self.customers)
 
-    def get_all(self) -> list[Customer] | list:
+    def get_all(self) -> list[Customer]:
         """Retrieve all customers from memory."""
         return list(self.customers.values())

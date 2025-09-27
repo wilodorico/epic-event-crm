@@ -21,5 +21,5 @@ class InMemoryContractRepository(ContractRepositoryABC):
     def count(self) -> int:
         return len(self.contracts)
 
-    def get_all(self) -> list[Contract] | list:
+    def get_all(self) -> list[Contract]:
         return list(self.contracts.values())
