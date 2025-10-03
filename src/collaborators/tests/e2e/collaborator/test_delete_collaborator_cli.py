@@ -7,7 +7,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 )
 
 
-def test_delete_collaborator_success_cli(session):
+def test_delete_collaborator_success_cli(session, manager_alice):
     """Test successful deletion of a collaborator through CLI."""
     repo = SqlalchemyCollaboratorRepository(session)
     collaborator_to_delete = Collaborator(
@@ -22,11 +22,12 @@ def test_delete_collaborator_success_cli(session):
     )
     repo.create(collaborator_to_delete)
 
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["delete-collaborator", "--id", "id-collaborator-to-delete"],
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
@@ -36,13 +37,14 @@ def test_delete_collaborator_success_cli(session):
     assert deleted_collaborator is None
 
 
-def test_delete_collaborator_non_existent_id_cli(session):
+def test_delete_collaborator_non_existent_id_cli(session, manager_alice):
     """Test deletion of a non-existent collaborator through CLI."""
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["delete-collaborator", "--id", "non-existent-id"],
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
