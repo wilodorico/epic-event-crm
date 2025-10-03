@@ -2,8 +2,8 @@ import click
 
 from collaborators.application.contract.sign_contract_use_case import SignContractUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.contract.contract import ContractStatus
+from collaborators.infrastructure.cli.decorators import require_login
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
@@ -11,8 +11,10 @@ from collaborators.infrastructure.repositories.sqlalchemy_contract_repository im
 @click.command("sign-contract")
 @click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to sign")
 @click.pass_context
+@require_login
 def sign_contract(ctx, id):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    current_user = ctx.obj.get("current_user")
 
     try:
         contract_repository = SqlalchemyContractRepository(session)
@@ -30,22 +32,6 @@ def sign_contract(ctx, id):
         if confirm.lower() != "yes":
             click.echo("Signing operation cancelled.")
             return
-
-        # Get user from context (for tests) or use default
-        current_user = ctx.obj.get("current_user") if ctx.obj and "current_user" in ctx.obj else None
-
-        if not current_user:
-            # Default user for CLI usage (when no authentication system)
-            current_user = Collaborator(
-                id="cli-temp-manager",
-                created_by_id="system",
-                first_name="CLI",
-                last_name="Manager",
-                email="cli.manager@example.com",
-                password="securepassword",
-                phone_number="0000000000",
-                role=Role.MANAGEMENT,
-            )
 
         auth_context = AuthContext(current_user)
         use_case = SignContractUseCase(contract_repository, auth_context)
