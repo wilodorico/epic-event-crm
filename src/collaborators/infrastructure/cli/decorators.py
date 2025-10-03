@@ -41,7 +41,7 @@ def _get_user_from_test_context(ctx) -> dict | None:
     return None
 
 
-def _get_user_from_session() -> dict | None:
+def _get_user_from_session():
     """
     Retrieves the user from the session file in production mode.
 
@@ -50,7 +50,7 @@ def _get_user_from_session() -> dict | None:
     checks that the user still exists in the database.
 
     Returns:
-        dict | None: The user data or None if not found/invalid
+        Collaborator | None: The Collaborator object or None if not found/invalid
     """
     session_data = SessionManager.load_session()
     if not session_data:
@@ -60,15 +60,8 @@ def _get_user_from_session() -> dict | None:
     db = SessionLocal()
     try:
         repo = SqlalchemyCollaboratorRepository(db)
-        user = repo.get_by_id(session_data["id"])
-        if user:
-            return {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "role": user.role,
-            }
-        return None
+        user = repo.find_by_id(session_data["id"])
+        return user
     finally:
         db.close()
 
