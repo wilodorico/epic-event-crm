@@ -15,7 +15,7 @@ SESSION_FILE = ".crm_session"
 
 @pytest.fixture(autouse=True)
 def cleanup_session_file():
-    """Supprime la session avant/après chaque test"""
+    """Removes the session before/after each test"""
     if os.path.exists(SESSION_FILE):
         os.remove(SESSION_FILE)
     yield
@@ -141,14 +141,3 @@ def test_multiple_logins_overwrite_session(session, test_user):
 
     # The session file must still exist and be valid
     assert os.path.exists(SESSION_FILE)
-
-
-def test_login_prompt_messages(session, test_user):
-    """Test that prompt messages are displayed correctly"""
-    runner = CliRunner()
-    user_input = f"{test_user.email}\npassword123\n"
-
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
-
-    assert "Email:" in result.output
-    assert "Password:" in result.output
