@@ -2,7 +2,8 @@ import click
 
 from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Role
+from collaborators.infrastructure.cli.decorators import require_login
 from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
@@ -19,6 +20,7 @@ from commons.uuid_generator import UuidGenerator
 @click.option("--phone-number", prompt=True, callback=validate_phone)
 @click.option("--role", prompt=True, type=click.Choice([r.value for r in Role]))
 @click.pass_context
+@require_login
 def create_collaborator(ctx, first_name, last_name, email, password, phone_number, role):
     """
     Create a new collaborator.
@@ -35,6 +37,7 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
         - Role (choices: Commercial, Management, Support)
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    current_user = ctx.obj["current_user"]
 
     # TODO: Refactorer les try except finally avec un context manager
 
@@ -42,26 +45,13 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
 
-        # TODO: Replace with proper authentication system
-        # For now, using a temporary manager for CLI operations
-        temp_manager = Collaborator(
-            id="cli-temp-manager",
-            created_by_id="system",
-            first_name="CLI",
-            last_name="Manager",
-            email="cli.manager@system.com",
-            password="temp",
-            phone_number="0000000000",
-            role=Role.MANAGEMENT,
-        )
-
-        auth_context = AuthContext(temp_manager)
+        auth_context = AuthContext(current_user)
 
         use_case = CreateCollaboratorUseCase(repository, id_generator, auth_context)
         # Convert string role to Role enum
         role_enum = Role(role)
         use_case.execute(
-            creator=temp_manager,
+            creator=current_user,
             first_name=first_name,
             last_name=last_name,
             email=email,

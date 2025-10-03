@@ -7,7 +7,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 )
 
 
-def test_create_collaborator_success_cli(session):
+def test_create_collaborator_success_cli(session, manager_alice):
     """Test successful creation of a collaborator through CLI."""
     user_input = (
         "Wilfried\n"  # --first-name
@@ -18,9 +18,12 @@ def test_create_collaborator_success_cli(session):
         "0601020304\n"  # --phone-number
         f"{Role.COMMERCIAL.value}\n"  # --role
     )
+    logged_user = manager_alice
 
     runner = CliRunner()
-    result = runner.invoke(collaborator, ["create-collaborator"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        collaborator, ["create-collaborator"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     # Verify the command succeeded
     assert result.exit_code == 0
@@ -37,10 +40,10 @@ def test_create_collaborator_success_cli(session):
     assert created_collaborator.phone_number == "0601020304"
     assert created_collaborator.role == Role.COMMERCIAL
     assert created_collaborator.id is not None  # UUID should be generated
-    assert created_collaborator.created_by_id == "cli-temp-manager"
+    assert created_collaborator.created_by_id == manager_alice.id
 
 
-def test_create_collaborator_wrong_email_cli(session):
+def test_create_collaborator_wrong_email_cli(session, manager_alice):
     user_input = (
         "wilfried\n"  # --first-name
         "peter\n"  # --last-name
@@ -50,8 +53,11 @@ def test_create_collaborator_wrong_email_cli(session):
         "0601020304\n"  # --phone-number
         f"{Role.MANAGEMENT.value}\n"  # --role
     )
+    logged_user = manager_alice
     runner = CliRunner()
-    result = runner.invoke(collaborator, ["create-collaborator"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        collaborator, ["create-collaborator"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
     assert result.exit_code == 1
     assert "Invalid email address" in result.output
 
@@ -59,7 +65,7 @@ def test_create_collaborator_wrong_email_cli(session):
     assert repo.find_by_email("wrong-email") is None
 
 
-def test_create_collaborator_wrong_phone_cli(session):
+def test_create_collaborator_wrong_phone_cli(session, manager_alice):
     """Test creation fails with invalid phone number."""
     user_input = (
         "John\n"  # --first-name
@@ -70,9 +76,11 @@ def test_create_collaborator_wrong_phone_cli(session):
         "123456789\n"  # --phone-number (invalid - only 9 digits)
         f"{Role.SUPPORT.value}\n"  # --role
     )
-
+    logged_user = manager_alice
     runner = CliRunner()
-    result = runner.invoke(collaborator, ["create-collaborator"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        collaborator, ["create-collaborator"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     assert result.exit_code == 1
     assert "Invalid phone number (10 digits expected)" in result.output
@@ -81,7 +89,7 @@ def test_create_collaborator_wrong_phone_cli(session):
     assert repo.find_by_email("john.doe@example.com") is None
 
 
-def test_create_collaborator_duplicate_email_cli(session):
+def test_create_collaborator_duplicate_email_cli(session, manager_alice):
     """Test creation fails when email already exists."""
     repo = SqlalchemyCollaboratorRepository(session)
 
@@ -107,9 +115,11 @@ def test_create_collaborator_duplicate_email_cli(session):
         "0987654321\n"  # --phone-number
         f"{Role.COMMERCIAL.value}\n"  # --role
     )
-
+    logged_user = manager_alice
     runner = CliRunner()
-    result = runner.invoke(collaborator, ["create-collaborator"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        collaborator, ["create-collaborator"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     assert result.exit_code == 1
     assert "❌ Error creating collaborator:" in result.output
