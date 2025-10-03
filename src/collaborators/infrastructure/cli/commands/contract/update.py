@@ -2,7 +2,7 @@ import click
 
 from collaborators.application.contract.update_contract_use_case import UpdateContractUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.infrastructure.cli.decorators import require_login
 from collaborators.infrastructure.cli.inputs_validator import validate_positive_decimal
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
@@ -11,9 +11,11 @@ from collaborators.infrastructure.repositories.sqlalchemy_contract_repository im
 @click.command("update-contract", help="Update an existing contract")
 @click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to update")
 @click.pass_context
+@require_login
 def update_contract(ctx, id):
     """Update an existing contract by ID --id "<contract_id>"."""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    current_user = ctx.obj.get("current_user")
 
     try:
         contract_repository = SqlalchemyContractRepository(session)
@@ -39,22 +41,6 @@ def update_contract(ctx, id):
         except click.BadParameter as e:
             click.echo(f"❌ {e}")
             return
-
-        # Get user from context (for tests) or use default
-        current_user = ctx.obj.get("current_user") if ctx.obj and "current_user" in ctx.obj else None
-
-        if not current_user:
-            # Default user for CLI usage (when no authentication system)
-            current_user = Collaborator(
-                id="cli-temp-manager",
-                created_by_id="system",
-                first_name="CLI",
-                last_name="Manager",
-                email="cli.manager@example.com",
-                password="securepassword",
-                phone_number="0000000000",
-                role=Role.MANAGEMENT,
-            )
 
         auth_context = AuthContext(current_user)
         use_case = UpdateContractUseCase(contract_repository, auth_context)
