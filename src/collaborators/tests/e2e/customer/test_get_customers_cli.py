@@ -8,12 +8,13 @@ def test_collaborator_get_customers_cli(session, john_commercial, karim_customer
     repo = SqlalchemyCustomerRepository(session)
     repo.create(karim_customer)
     repo.create(marie_customer)
+    logged_user = john_commercial
 
     runner = CliRunner()
     result = runner.invoke(
         customer,
         ["get-customers"],
-        obj={"session": session, "current_user": john_commercial},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
