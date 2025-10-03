@@ -1,5 +1,6 @@
 import click
 
+from collaborators.infrastructure.cli.commands.auth import auth
 from collaborators.infrastructure.cli.commands.collaborator import collaborator
 from collaborators.infrastructure.cli.commands.contract import contract
 from collaborators.infrastructure.cli.commands.customer import customer
@@ -16,3 +17,4 @@ cli.add_command(init_db_command)
 cli.add_command(collaborator)
 cli.add_command(customer)
 cli.add_command(contract)
+cli.add_command(auth)
