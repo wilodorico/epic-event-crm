@@ -50,7 +50,7 @@ def test_manager_create_contract_success_cli(session, alice_customer, john_comme
     assert created_contract.status.name == "PENDING"
 
 
-def test_manager_create_contract_non_existent_customer_cli(session, john_commercial, manager_alice):
+def test_manager_create_contract_non_existent_customer_cli(session, manager_alice):
     user_input = (
         "non-existent-customer-id\n"  # --customer-id
         "1000.00\n"  # --total-amount

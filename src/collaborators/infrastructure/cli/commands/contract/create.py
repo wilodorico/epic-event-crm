@@ -2,7 +2,7 @@ import click
 
 from collaborators.application.contract.create_contract_use_case import CreateContractUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.infrastructure.cli.decorators import require_login
 from collaborators.infrastructure.cli.inputs_validator import validate_positive_decimal
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
@@ -22,30 +22,16 @@ from commons.uuid_generator import UuidGenerator
     help="Remaining amount of the contract",
 )
 @click.pass_context
+@require_login
 def create_contract(ctx, customer_id, total_amount, remaining_amount):
     """Create a new contract for a customer"""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    current_user = ctx.obj.get("current_user")
 
     try:
         customer_repository = SqlalchemyCustomerRepository(session)
         contract_repository = SqlalchemyContractRepository(session)
         id_generator = UuidGenerator()
-
-        # Get user from context (for tests) or use default
-        current_user = ctx.obj.get("current_user") if ctx.obj and "current_user" in ctx.obj else None
-
-        if not current_user:
-            # Default user for CLI usage (when no authentication system)
-            current_user = Collaborator(
-                id="cli-temp-manager",
-                created_by_id="system",
-                first_name="CLI",
-                last_name="Manager",
-                email="cli.manager@system.com",
-                password="temp",
-                phone_number="0000000000",
-                role=Role.MANAGEMENT,
-            )
 
         auth_context = AuthContext(current_user)
         use_case = CreateContractUseCase(customer_repository, contract_repository, id_generator, auth_context)
