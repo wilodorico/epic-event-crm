@@ -5,7 +5,8 @@ from collaborators.infrastructure.cli.commands.customer import customer
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 
 
-def test_create_customer_success_cli(session):
+def test_create_customer_success_cli(session, john_commercial):
+    logged_user = john_commercial
     user_input = (
         "Karim\n"  # --first-name
         "Smith\n"  # --last-name
@@ -15,7 +16,9 @@ def test_create_customer_success_cli(session):
     )
 
     runner = CliRunner()
-    result = runner.invoke(customer, ["create-customer"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        customer, ["create-customer"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     assert result.exit_code == 0
     assert "✅ Customer Karim Smith created successfully" in result.output
@@ -29,11 +32,12 @@ def test_create_customer_success_cli(session):
     assert created_customer.email == "karim.smith@example.com"
     assert created_customer.phone_number == "0601020304"
     assert created_customer.company == "Techland"
-    assert created_customer.commercial_contact_id == "cli-temp-commercial"
+    assert created_customer.commercial_contact_id == john_commercial.id
     assert created_customer.id is not None  # UUID should be generated
 
 
-def test_create_customer_wrong_email_cli(session):
+def test_create_customer_wrong_email_cli(session, john_commercial):
+    logged_user = john_commercial
     user_input = (
         "Karim\n"  # --first-name
         "Smith\n"  # --last-name
@@ -43,7 +47,9 @@ def test_create_customer_wrong_email_cli(session):
     )
 
     runner = CliRunner()
-    result = runner.invoke(customer, ["create-customer"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        customer, ["create-customer"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     assert result.exit_code != 0
     assert "Invalid email address" in result.output
@@ -67,7 +73,7 @@ def test_cant_create_customer_with_existing_email_cli(session, john_commercial):
         commercial_contact_id=john_commercial.id,
     )
     repo.create(existing_customer)
-
+    logged_user = john_commercial
     user_input = (
         "Karim\n"  # --first-name
         "Smith\n"  # --last-name
@@ -77,7 +83,9 @@ def test_cant_create_customer_with_existing_email_cli(session, john_commercial):
     )
 
     runner = CliRunner()
-    result = runner.invoke(customer, ["create-customer"], input=user_input, obj={"session": session})
+    result = runner.invoke(
+        customer, ["create-customer"], input=user_input, obj={"session": session, "current_user": logged_user}
+    )
 
     assert result.exit_code == 1
     assert "Email already exists" in result.output
