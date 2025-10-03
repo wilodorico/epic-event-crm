@@ -35,6 +35,7 @@ def amel_customer_to_update(amel_commercial):
 def test_update_customer_success_cli(session, john_customer_to_update, john_commercial):
     repo = SqlalchemyCustomerRepository(session)
     repo.create(john_customer_to_update)
+    logged_user = john_commercial
 
     user_input = (
         "Alicia\n"  # --first-name (new value)
@@ -49,7 +50,7 @@ def test_update_customer_success_cli(session, john_customer_to_update, john_comm
         customer,
         ["update-customer", "--id", "id-john-customer-to-update"],
         input=user_input,
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
@@ -65,23 +66,25 @@ def test_update_customer_success_cli(session, john_customer_to_update, john_comm
     assert updated_customer.commercial_contact_id == john_commercial.id
 
 
-def test_update_customer_non_existent_id_cli(session):
+def test_update_customer_non_existent_id_cli(session, john_commercial):
+    logged_user = john_commercial
     runner = CliRunner()
     result = runner.invoke(
         customer,
         ["update-customer", "--id", "non-existent-id"],
         input="",
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
     assert "❌ Customer with ID 'non-existent-id' not found." in result.output
 
 
-def test_cant_update_customer_if_not_my_customer_cli(session, amel_customer_to_update):
+def test_cant_update_customer_if_not_my_customer_cli(session, amel_customer_to_update, john_commercial):
     """Test that updating a customer not assigned to the commercial fails."""
     repo = SqlalchemyCustomerRepository(session)
     repo.create(amel_customer_to_update)
+    logged_user = john_commercial  # Using a different commercial user for this test
 
     user_input = (
         "Alicia\n"  # --first-name (new value)
@@ -96,7 +99,7 @@ def test_cant_update_customer_if_not_my_customer_cli(session, amel_customer_to_u
         customer,
         ["update-customer", "--id", "id-amel-customer-to-update"],
         input=user_input,
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 1
