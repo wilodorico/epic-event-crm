@@ -9,10 +9,10 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 
 
 @pytest.fixture
-def collaborator_to_update():
+def collaborator_to_update(manager_alice):
     return Collaborator(
         id="id-collaborator-to-update",
-        created_by_id="system",
+        created_by_id=manager_alice.id,
         first_name="John",
         last_name="Doe",
         email="john.doe@example.com",
@@ -22,7 +22,7 @@ def collaborator_to_update():
     )
 
 
-def test_update_collaborator_success_cli(session, collaborator_to_update):
+def test_update_collaborator_success_cli(session, manager_alice, collaborator_to_update):
     """Test successful update of a collaborator through CLI."""
     repo = SqlalchemyCollaboratorRepository(session)
     repo.create(collaborator_to_update)
@@ -36,13 +36,13 @@ def test_update_collaborator_success_cli(session, collaborator_to_update):
         "0987654321\n"  # --phone-number (new value)
         f"{Role.SUPPORT.value}\n"  # --role (new value)
     )
-
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["update-collaborator", "--id", "id-collaborator-to-update"],
         input=user_input,
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
@@ -60,21 +60,22 @@ def test_update_collaborator_success_cli(session, collaborator_to_update):
     assert updated_collaborator.updated_at is not None  # Should be updated
 
 
-def test_update_collaborator_non_existent_id_cli(session):
+def test_update_collaborator_non_existent_id_cli(session, manager_alice):
     """Test updating a collaborator with a non-existent ID through CLI."""
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["update-collaborator", "--id", "non-existent-id"],
         input="\n\n\n\n\n",  # Just pressing Enter for all prompts
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0
     assert "❌ Collaborator with ID 'non-existent-id' not found." in result.output
 
 
-def test_update_collaborator_invalid_email_cli(session):
+def test_update_collaborator_invalid_email_cli(session, manager_alice):
     """Test updating a collaborator with an invalid email through CLI."""
     repo = SqlalchemyCollaboratorRepository(session)
     existing_collaborator = Collaborator(
@@ -95,18 +96,19 @@ def test_update_collaborator_invalid_email_cli(session):
         "\n"  # --phone-number (keep current)
         "\n"  # --role (keep current)
     )
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["update-collaborator", "--id", "id-collaborator-to-update"],
         input=user_input,
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
     assert result.exit_code == 0
     assert "Invalid email address" in result.output
 
 
-def test_update_collaborator_invalid_phone_cli(session, collaborator_to_update):
+def test_update_collaborator_invalid_phone_cli(session, manager_alice, collaborator_to_update):
     """Test updating a collaborator with an invalid phone number through CLI."""
     repo = SqlalchemyCollaboratorRepository(session)
     repo.create(collaborator_to_update)
@@ -119,12 +121,13 @@ def test_update_collaborator_invalid_phone_cli(session, collaborator_to_update):
         "\n"  # --role (keep current)
     )
 
+    logged_user = manager_alice
     runner = CliRunner()
     result = runner.invoke(
         collaborator,
         ["update-collaborator", "--id", "id-collaborator-to-update"],
         input=user_input,
-        obj={"session": session},
+        obj={"session": session, "current_user": logged_user},
     )
 
     assert result.exit_code == 0

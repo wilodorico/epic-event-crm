@@ -2,7 +2,8 @@ import click
 
 from collaborators.application.collaborator.update_collaborator_use_case import UpdateCollaboratorUseCase
 from collaborators.application.services.auth_context import AuthContext
-from collaborators.domain.collaborator.collaborator import Collaborator, Role
+from collaborators.domain.collaborator.collaborator import Role
+from collaborators.infrastructure.cli.decorators import require_login
 from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
@@ -13,12 +14,14 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 @click.command("update-collaborator")
 @click.option("--id", prompt=True, type=str, help="ID of the collaborator to update")
 @click.pass_context
+@require_login
 def update_collaborator(ctx, id):
     """
     Update an existing by ID --id "<collaborator_id>".
     The command will load the current data and allow you to modify each field.
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    current_user = ctx.obj["current_user"]
 
     try:
         repository = SqlalchemyCollaboratorRepository(session)
@@ -55,19 +58,7 @@ def update_collaborator(ctx, id):
             type=click.Choice([r.value for r in Role]),
         )
 
-        # TODO: Replace with proper authentication system
-        temp_manager = Collaborator(
-            id="cli-temp-manager",
-            created_by_id="system",
-            first_name="CLI",
-            last_name="Manager",
-            email="cli.manager@system.com",
-            password="temp",
-            phone_number="0000000000",
-            role=Role.MANAGEMENT,
-        )
-
-        auth_context = AuthContext(temp_manager)
+        auth_context = AuthContext(current_user)
         use_case = UpdateCollaboratorUseCase(repository, auth_context)
 
         # Prepare update data (only include changed fields)
@@ -87,7 +78,7 @@ def update_collaborator(ctx, id):
             click.echo("No changes detected. Collaborator not updated.")
             return
 
-        updated_collaborator = use_case.execute(temp_manager, id, update_data)
+        updated_collaborator = use_case.execute(current_user, id, update_data)
         click.echo(
             f"✅ Collaborator {updated_collaborator.first_name} {updated_collaborator.last_name} updated successfully!"
         )
