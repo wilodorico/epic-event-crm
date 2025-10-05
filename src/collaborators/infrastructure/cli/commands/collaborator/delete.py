@@ -1,8 +1,8 @@
 import click
 
 from collaborators.application.collaborator.delete_collaborator_use_case import DeleteCollaboratorUseCase
-from collaborators.application.services.auth_context import AuthContext
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
@@ -11,9 +11,9 @@ from commons.uuid_generator import UuidGenerator
 
 
 @click.command("delete-collaborator")
-@click.option("--id", "collaborator_id", prompt=True, type=str, help="ID of the collaborator to delete")
 @click.pass_context
-@require_login
+@require_auth(Permissions.DELETE_COLLABORATOR)
+@click.option("--id", "collaborator_id", prompt=True, type=str, help="ID of the collaborator to delete")
 def delete_collaborator(ctx, collaborator_id: str):
     """
     Delete an existing by ID --id "<collaborator_id>".
@@ -21,6 +21,7 @@ def delete_collaborator(ctx, collaborator_id: str):
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
     current_user = ctx.obj.get("current_user")
+    auth_context = ctx.obj.get("auth_context")
 
     try:
         repository = SqlalchemyCollaboratorRepository(session)
@@ -30,7 +31,6 @@ def delete_collaborator(ctx, collaborator_id: str):
             click.echo(f"❌ Collaborator with ID '{collaborator_id}' not found.")
             return
 
-        auth_context = AuthContext(current_user)
         use_case = DeleteCollaboratorUseCase(repository, id_generator, auth_context)
         use_case.execute(current_user, collaborator_id)
 

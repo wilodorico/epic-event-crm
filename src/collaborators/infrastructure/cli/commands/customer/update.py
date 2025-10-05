@@ -1,20 +1,22 @@
 import click
 
 from collaborators.application.customer.update_customer_use_case import UpdateCustomerUseCase
-from collaborators.application.services.auth_context import AuthContext
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 
 
 @click.command("update-customer")
-@click.option("--id", prompt=True, type=str, help="ID of the customer to update")
 @click.pass_context
-@require_login
+@require_auth(Permissions.UPDATE_CUSTOMER)
+@click.option("--id", prompt=True, type=str, help="ID of the customer to update")
 def update_customer(ctx, id):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
-    current_user = ctx.obj["current_user"]
+    current_user = ctx.obj.get("current_user")
+    auth_context = ctx.obj.get("auth_context")
+
     try:
         repository = SqlalchemyCustomerRepository(session)
 
@@ -45,7 +47,6 @@ def update_customer(ctx, id):
 
         company = click.prompt("Company", default=existing_customer.company, show_default=True)
 
-        auth_context = AuthContext(current_user)
         use_case = UpdateCustomerUseCase(repository, auth_context)
 
         update_data = {}

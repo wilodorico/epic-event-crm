@@ -1,20 +1,21 @@
 import click
 
 from collaborators.application.contract.sign_contract_use_case import SignContractUseCase
-from collaborators.application.services.auth_context import AuthContext
+from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import ContractStatus
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
 @click.command("sign-contract")
-@click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to sign")
 @click.pass_context
-@require_login
+@require_auth(Permissions.UPDATE_CONTRACT)
+@click.option("--id", prompt="Contract ID", type=str, help="ID of the contract to sign")
 def sign_contract(ctx, id):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
     current_user = ctx.obj.get("current_user")
+    auth_context = ctx.obj.get("auth_context")
 
     try:
         contract_repository = SqlalchemyContractRepository(session)
@@ -33,7 +34,6 @@ def sign_contract(ctx, id):
             click.echo("Signing operation cancelled.")
             return
 
-        auth_context = AuthContext(current_user)
         use_case = SignContractUseCase(contract_repository, auth_context)
 
         use_case.execute(current_user.id, existing_contract.id)

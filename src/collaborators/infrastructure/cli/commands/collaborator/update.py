@@ -1,9 +1,9 @@
 import click
 
 from collaborators.application.collaborator.update_collaborator_use_case import UpdateCollaboratorUseCase
-from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Role
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
@@ -12,16 +12,17 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 
 
 @click.command("update-collaborator")
-@click.option("--id", prompt=True, type=str, help="ID of the collaborator to update")
 @click.pass_context
-@require_login
+@require_auth(Permissions.UPDATE_COLLABORATOR)
+@click.option("--id", prompt=True, type=str, help="ID of the collaborator to update")
 def update_collaborator(ctx, id):
     """
     Update an existing by ID --id "<collaborator_id>".
     The command will load the current data and allow you to modify each field.
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
-    current_user = ctx.obj["current_user"]
+    current_user = ctx.obj.get("current_user")
+    auth_context = ctx.obj.get("auth_context")
 
     try:
         repository = SqlalchemyCollaboratorRepository(session)
@@ -58,7 +59,6 @@ def update_collaborator(ctx, id):
             type=click.Choice([r.value for r in Role]),
         )
 
-        auth_context = AuthContext(current_user)
         use_case = UpdateCollaboratorUseCase(repository, auth_context)
 
         # Prepare update data (only include changed fields)

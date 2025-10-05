@@ -1,24 +1,22 @@
 import click
 
 from collaborators.application.customer.get_customers_use_case import GetCustomersUseCase
-from collaborators.application.services.auth_context import AuthContext
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
 
 
 @click.command("get-customers", help="Retrieve and display all customers")
 @click.pass_context
-@require_login
+@require_auth(Permissions.READ_CUSTOMERS)
 def get_customers(ctx):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
-    current_user = ctx.obj["current_user"]
+    auth_context = ctx.obj.get("auth_context")
 
     try:
         repository = SqlalchemyCustomerRepository(session)
-        auth_context = AuthContext(current_user)
         use_case = GetCustomersUseCase(repository, auth_context)
-
         customers = use_case.execute()
 
         if not customers:

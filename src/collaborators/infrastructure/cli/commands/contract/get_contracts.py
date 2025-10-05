@@ -1,22 +1,21 @@
 import click
 
 from collaborators.application.contract.get_contracts_use_case import GetContractsUseCase
-from collaborators.application.services.auth_context import AuthContext
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_auth
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
 @click.command(name="get-contracts", help="Retrieve and display all contracts")
 @click.pass_context
-@require_login
+@require_auth(Permissions.READ_CONTRACTS)
 def get_contracts(ctx):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
-    current_user = ctx.obj.get("current_user")
+    auth_context = ctx.obj.get("auth_context")
 
     try:
         repository = SqlalchemyContractRepository(session)
-        auth_context = AuthContext(current_user)
         use_case = GetContractsUseCase(repository, auth_context)
 
         contracts = use_case.execute()
