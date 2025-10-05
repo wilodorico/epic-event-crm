@@ -1,9 +1,9 @@
 import click
 
 from collaborators.application.collaborator.create_collaborator_use_case import CreateCollaboratorUseCase
-from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.collaborator import Role
-from collaborators.infrastructure.cli.decorators import require_login
+from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.cli.decorators import require_login_and_permission
 from collaborators.infrastructure.cli.inputs_validator import validate_email, validate_phone
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
@@ -13,14 +13,14 @@ from commons.uuid_generator import UuidGenerator
 
 
 @click.command("create-collaborator")
+@click.pass_context
+@require_login_and_permission(Permissions.CREATE_COLLABORATOR)
 @click.option("--first-name", prompt=True, type=str)
 @click.option("--last-name", prompt=True, type=str)
 @click.option("--email", prompt=True, callback=validate_email)
 @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
 @click.option("--phone-number", prompt=True, callback=validate_phone)
 @click.option("--role", prompt=True, type=click.Choice([r.value for r in Role]))
-@click.pass_context
-@require_login
 def create_collaborator(ctx, first_name, last_name, email, password, phone_number, role):
     """
     Create a new collaborator.
@@ -38,14 +38,13 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
     current_user = ctx.obj["current_user"]
+    auth_context = ctx.obj["auth_context"]
 
     # TODO: Refactorer les try except finally avec un context manager
 
     try:
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
-
-        auth_context = AuthContext(current_user)
 
         use_case = CreateCollaboratorUseCase(repository, id_generator, auth_context)
         # Convert string role to Role enum

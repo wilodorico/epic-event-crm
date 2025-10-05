@@ -124,3 +124,23 @@ def test_create_collaborator_duplicate_email_cli(session, manager_alice):
     assert result.exit_code == 1
     assert "❌ Error creating collaborator:" in result.output
     assert "Email already exists" in result.output
+
+
+def test_create_collaborator_without_permission_cli(session, jane_commercial):
+    """Test that a commercial user cannot create a collaborator."""
+    # Jane is a commercial user and should not have CREATE_COLLABORATOR permission
+    logged_user = jane_commercial
+
+    runner = CliRunner()
+    result = runner.invoke(
+        collaborator,
+        ["create-collaborator"],
+        input="",  # No input - should be rejected before prompts
+        obj={"session": session, "current_user": logged_user},
+    )
+
+    # The user should be rejected immediately without prompts
+    assert result.exit_code == 1
+    assert "❌ You don't have permission to perform this action" in result.output
+    # Check that no prompt was displayed
+    assert "First name" not in result.output
