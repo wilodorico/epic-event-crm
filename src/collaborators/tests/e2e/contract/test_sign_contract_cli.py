@@ -45,10 +45,8 @@ def test_support_cannot_sign_contract_cli(session, karim_contract, bob_support):
         obj={"session": session, "current_user": bob_support},
     )
 
-    assert result.exit_code == 0
-    assert (
-        f"An error occurred: User '{bob_support.email}' with role 'Support' does not have permission" in result.output
-    )
+    assert result.exit_code == 1
+    assert "You don't have permission to perform this action" in result.output
 
     unsigned_contract = repo.find_by_id(karim_contract.id)
     assert unsigned_contract is not None
