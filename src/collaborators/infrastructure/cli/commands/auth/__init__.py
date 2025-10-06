@@ -1,6 +1,7 @@
 import click
 
 from collaborators.infrastructure.cli.commands.auth.login import login
+from collaborators.infrastructure.cli.commands.auth.logout import logout
 
 
 @click.group()
@@ -10,3 +11,4 @@ def auth():
 
 
 auth.add_command(login)
+auth.add_command(logout)
