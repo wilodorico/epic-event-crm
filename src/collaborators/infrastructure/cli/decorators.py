@@ -1,8 +1,8 @@
-import functools
 import os
 
 import click
 
+from collaborators.application.exceptions.authorization_error import AuthorizationError
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.infrastructure.cli.services.session_manager import SessionManager
@@ -59,7 +59,7 @@ def require_auth(permission: Permissions | None = None):
             ...
     """
 
-    def decorator(f):
+    def decorator(func):
         def check_auth_callback(ctx, param, value):
             user = _resolve_user(ctx)
 
@@ -68,15 +68,18 @@ def require_auth(permission: Permissions | None = None):
                 ctx.abort()
 
             auth_context = AuthContext(user)
-            if permission and not auth_context.can(permission):
-                click.echo("❌ You don't have permission to perform this action")
-                ctx.abort()
+            if permission:
+                try:
+                    auth_context.ensure(permission)
+                except AuthorizationError as e:
+                    click.echo(f"❌ {str(e)}")
+                    ctx.abort()
 
             ctx.obj["auth_context"] = auth_context
             return value
 
         # Hidden option to perform this check before prompts
-        f = click.option(
+        func = click.option(
             "--auth-check",
             is_flag=True,
             default=True,
@@ -84,8 +87,8 @@ def require_auth(permission: Permissions | None = None):
             expose_value=False,
             is_eager=True,
             callback=check_auth_callback,
-        )(f)
+        )(func)
 
-        return functools.wraps(f)(f)
+        return func
 
     return decorator
