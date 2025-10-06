@@ -46,7 +46,9 @@ def test_support_cannot_sign_contract_cli(session, karim_contract, bob_support):
     )
 
     assert result.exit_code == 1
-    assert "You don't have permission to perform this action" in result.output
+    assert "does not have permission" in result.output
+    assert bob_support.email in result.output
+    assert bob_support.role.value in result.output
 
     unsigned_contract = repo.find_by_id(karim_contract.id)
     assert unsigned_contract is not None

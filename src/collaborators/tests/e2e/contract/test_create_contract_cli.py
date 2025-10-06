@@ -127,6 +127,9 @@ def test_non_manager_cannot_create_contract_cli(session, alice_customer, john_co
     )
 
     assert result.exit_code == 1
-    assert "You don't have permission to perform this action" in result.output
+    assert "does not have permission" in result.output
+    assert john_commercial.email in result.output
+    assert john_commercial.role.value in result.output
+
     customer_contracts = contract_repo.find_by_customer_id(alice_customer.id)
     assert len(customer_contracts) == 0
