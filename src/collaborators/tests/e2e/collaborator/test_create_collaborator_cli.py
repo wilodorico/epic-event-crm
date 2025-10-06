@@ -141,6 +141,9 @@ def test_create_collaborator_without_permission_cli(session, jane_commercial):
 
     # The user should be rejected immediately without prompts
     assert result.exit_code == 1
-    assert "❌ You don't have permission to perform this action" in result.output
+    # Vérifier que le message d'erreur contient les informations clés
+    assert "does not have permission" in result.output
+    assert jane_commercial.email in result.output
+    assert jane_commercial.role.value in result.output
     # Check that no prompt was displayed
     assert "First name" not in result.output
