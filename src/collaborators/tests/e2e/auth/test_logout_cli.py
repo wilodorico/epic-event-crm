@@ -30,3 +30,15 @@ def test_logout_cli(session, john_commercial):
 
     # Verify the session file has been deleted
     assert SessionManager.load_session() is None
+
+
+def test_logout_not_logged_in_cli(session):
+    runner = CliRunner()
+    result = runner.invoke(
+        auth,
+        ["logout"],
+        obj={"session": session, "current_user": None},
+    )
+
+    assert result.exit_code == 0
+    assert "❌ You are not logged in" in result.output
