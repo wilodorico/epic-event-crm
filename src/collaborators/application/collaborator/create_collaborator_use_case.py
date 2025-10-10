@@ -1,4 +1,5 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.services.password_hasher_abc import PasswordHasherABC
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from collaborators.domain.collaborator.permissions import Permissions
@@ -7,11 +8,16 @@ from commons.id_generator_abc import IdGeneratorABC
 
 class CreateCollaboratorUseCase:
     def __init__(
-        self, repository: CollaboratorRepositoryABC, id_generator: IdGeneratorABC, auth_context: AuthContextABC
+        self,
+        repository: CollaboratorRepositoryABC,
+        id_generator: IdGeneratorABC,
+        auth_context: AuthContextABC,
+        password_hasher: PasswordHasherABC,
     ):
         self._repository = repository
         self._id_generator = id_generator
         self._auth_context = auth_context
+        self._password_hasher = password_hasher
 
     def execute(
         self,
@@ -29,7 +35,7 @@ class CreateCollaboratorUseCase:
             raise ValueError("Email already exists")
 
         id = self._id_generator.generate()
-
+        hashed_password = self._password_hasher.hash(password)
         role_enum = Role(role)
 
         collaborator = Collaborator(
@@ -38,7 +44,7 @@ class CreateCollaboratorUseCase:
             first_name=first_name,
             last_name=last_name,
             email=email,
-            password=password,
+            password=hashed_password,
             phone_number=phone_number,
             role=role_enum,
         )

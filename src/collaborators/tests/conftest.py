@@ -17,6 +17,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 )
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
+from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 from commons.uuid_generator import UuidGenerator
 
 
@@ -60,6 +61,11 @@ def contract_repository(session):
 @pytest.fixture
 def uuid_generator():
     return UuidGenerator()
+
+
+@pytest.fixture
+def password_hasher():
+    return FakePasswordHasher()
 
 
 @pytest.fixture

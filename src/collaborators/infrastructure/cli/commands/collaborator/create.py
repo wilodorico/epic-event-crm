@@ -9,6 +9,7 @@ from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.infrastructure.security.password_hasher import BcryptPasswordHasher
 from commons.uuid_generator import UuidGenerator
 
 
@@ -44,8 +45,9 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
     try:
         repository = SqlalchemyCollaboratorRepository(session)
         id_generator = UuidGenerator()
+        password_hasher = BcryptPasswordHasher()
 
-        use_case = CreateCollaboratorUseCase(repository, id_generator, auth_context)
+        use_case = CreateCollaboratorUseCase(repository, id_generator, auth_context, password_hasher)
         # Convert string role to Role enum
         role_enum = Role(role)
         use_case.execute(
