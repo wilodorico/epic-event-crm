@@ -16,8 +16,9 @@ from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 def login(ctx, email, password):
     """Authenticate and store a session token locally."""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+
     # Use FakePasswordHasher in test env, BcryptPasswordHasher in production
-    password_hasher = FakePasswordHasher() if ctx.obj.get("test_env") else BcryptPasswordHasher()
+    password_hasher = FakePasswordHasher() if (ctx.obj and ctx.obj.get("test_env")) else BcryptPasswordHasher()
 
     try:
         repo = SqlalchemyCollaboratorRepository(session)

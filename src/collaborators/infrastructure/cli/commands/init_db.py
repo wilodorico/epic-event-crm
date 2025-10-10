@@ -19,7 +19,6 @@ def init_db_command():
         repo = SqlalchemyCollaboratorRepository(session)
         password_hasher = BcryptPasswordHasher()
 
-        # Vérifie si un manager existe déjà
         existing_manager = repo.find_by_email("admin@crm.com")
         if existing_manager:
             click.echo("ℹ️ Default manager already exists.")
