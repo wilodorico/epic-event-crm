@@ -2,21 +2,22 @@ from click.testing import CliRunner
 
 from collaborators.infrastructure.cli.commands.auth import auth
 from collaborators.infrastructure.cli.services.session_manager import SessionManager
+from collaborators.infrastructure.security.jwt_service import JWTService
 
 
 def test_logout_cli(session, john_commercial):
     logged_user = john_commercial
+    jwt_service = JWTService()
 
-    # Create a session file to simulate a logged-in user
-    SessionManager.save_session(
+    token = jwt_service.encode(
         {
-            "user_id": logged_user.id,
+            "id": logged_user.id,
             "email": logged_user.email,
-            "first_name": logged_user.first_name,
-            "last_name": logged_user.last_name,
             "role": logged_user.role.value,
         }
     )
+
+    SessionManager.save_session({"token": token})
 
     runner = CliRunner()
     result = runner.invoke(
@@ -27,8 +28,6 @@ def test_logout_cli(session, john_commercial):
 
     assert result.exit_code == 0
     assert "✅ Logged out successfully" in result.output
-
-    # Verify the session file has been deleted
     assert SessionManager.load_session() is None
 
 

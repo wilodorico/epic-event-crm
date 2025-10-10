@@ -9,6 +9,7 @@ from collaborators.infrastructure.cli.commands.customer import customer
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.infrastructure.security.jwt_service import JWTService
 from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 
 SESSION_FILE = ".crm_session"
@@ -102,9 +103,14 @@ def test_login_creates_valid_session_file(session, test_user):
     with open(SESSION_FILE, "r") as f:
         session_data = json.load(f)
 
-    assert session_data["id"] == test_user.id
-    assert session_data["email"] == test_user.email
-    assert session_data["role"] == test_user.role.value
+    assert "token" in session_data
+
+    jwt_service = JWTService()
+    decoded_token = jwt_service.decode(session_data["token"])
+
+    assert decoded_token["id"] == test_user.id
+    assert decoded_token["email"] == test_user.email
+    assert decoded_token["role"] == test_user.role.value
     assert f"✅ Logged in as {test_user.first_name} {test_user.last_name}" in result.output
 
 
@@ -124,9 +130,14 @@ def test_session_file_content(session, test_user):
     with open(SESSION_FILE, "r") as f:
         session_data = json.load(f)
 
-    assert session_data["id"] == test_user.id
-    assert session_data["email"] == test_user.email
-    assert session_data["role"] == test_user.role.value
+    assert "token" in session_data
+
+    jwt_service = JWTService()
+    decoded_token = jwt_service.decode(session_data["token"])
+
+    assert decoded_token["id"] == test_user.id
+    assert decoded_token["email"] == test_user.email
+    assert decoded_token["role"] == test_user.role.value
 
 
 def test_multiple_logins_overwrite_session(session, test_user):
