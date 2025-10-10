@@ -9,6 +9,7 @@ from collaborators.infrastructure.cli.commands.customer import customer
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 
 SESSION_FILE = ".crm_session"
 
@@ -27,13 +28,15 @@ def cleanup_session_file():
 def test_user(session):
     """Creates a test user in the database"""
     repo = SqlalchemyCollaboratorRepository(session)
+    password_hasher = FakePasswordHasher()
+
     user = Collaborator(
         id="test-user-id",
         created_by_id="system",
         first_name="John",
         last_name="Doe",
         email="john.doe@example.com",
-        password="password123",  # Note: In production, use a hash
+        password=password_hasher.hash("password123"),
         phone_number="0123456789",
         role=Role.COMMERCIAL,
     )
@@ -46,7 +49,7 @@ def test_login_with_valid_credentials(session, test_user):
     runner = CliRunner()
     user_input = f"{test_user.email}\npassword123\n"
 
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
 
     assert result.exit_code == 0
     assert f"✅ Logged in as {test_user.first_name} {test_user.last_name}" in result.output
@@ -58,7 +61,7 @@ def test_login_with_invalid_email(session, test_user):
     runner = CliRunner()
     user_input = "wrong.email@example.com\npassword123\n"
 
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
 
     assert "❌ Invalid email or password" in result.output
     assert not os.path.exists(SESSION_FILE)
@@ -69,7 +72,7 @@ def test_login_with_invalid_password(session, test_user):
     runner = CliRunner()
     user_input = f"{test_user.email}\nwrongpassword\n"
 
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
 
     assert "❌ Invalid email or password" in result.output
     assert not os.path.exists(SESSION_FILE)
@@ -91,7 +94,7 @@ def test_login_creates_valid_session_file(session, test_user):
     runner = CliRunner()
     user_input = f"{test_user.email}\npassword123\n"
 
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
 
     assert result.exit_code == 0
     assert os.path.exists(SESSION_FILE)
@@ -112,7 +115,7 @@ def test_session_file_content(session, test_user):
     runner = CliRunner()
     user_input = f"{test_user.email}\npassword123\n"
 
-    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
 
     assert result.exit_code == 0
     assert os.path.exists(SESSION_FILE)
@@ -132,11 +135,11 @@ def test_multiple_logins_overwrite_session(session, test_user):
     user_input = f"{test_user.email}\npassword123\n"
 
     # First login
-    result1 = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result1 = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
     assert result1.exit_code == 0
 
     # Second login
-    result2 = runner.invoke(auth, ["login"], input=user_input, obj={"session": session})
+    result2 = runner.invoke(auth, ["login"], input=user_input, obj={"session": session, "test_env": True})
     assert result2.exit_code == 0
 
     # The session file must still exist and be valid
