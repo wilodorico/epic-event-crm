@@ -5,6 +5,7 @@ from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.infrastructure.security.password_hasher import BcryptPasswordHasher
 
 
 @click.command("login")
@@ -14,12 +15,13 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 def login(ctx, email, password):
     """Authenticate and store a session token locally."""
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
+    password_hasher = BcryptPasswordHasher()
 
     try:
         repo = SqlalchemyCollaboratorRepository(session)
         user = repo.find_by_email(email)
 
-        if not user or user.password != password:  # ⚠️ plus tard: hash
+        if not user or not password_hasher.verify(password, user.password):
             click.echo("❌ Invalid email or password")
             return
 
