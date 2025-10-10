@@ -5,6 +5,7 @@ from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
+from collaborators.infrastructure.security.jwt_service import JWTService
 from collaborators.infrastructure.security.password_hasher import BcryptPasswordHasher
 from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 
@@ -19,6 +20,7 @@ def login(ctx, email, password):
 
     # Use FakePasswordHasher in test env, BcryptPasswordHasher in production
     password_hasher = FakePasswordHasher() if (ctx.obj and ctx.obj.get("test_env")) else BcryptPasswordHasher()
+    jwt_service = JWTService()
 
     try:
         repo = SqlalchemyCollaboratorRepository(session)
@@ -28,7 +30,9 @@ def login(ctx, email, password):
             click.echo("❌ Invalid email or password")
             return
 
-        SessionManager.save_session({"id": user.id, "email": user.email, "role": user.role.value})
+        token = jwt_service.encode({"id": user.id, "email": user.email, "role": user.role.value})
+
+        SessionManager.save_session({"token": token})
         click.echo(f"✅ Logged in as {user.first_name} {user.last_name}")
 
     except Exception as e:
