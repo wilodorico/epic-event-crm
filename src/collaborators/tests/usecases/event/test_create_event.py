@@ -4,6 +4,7 @@ import pytest
 
 from collaborators.application.event.create_event_use_case import CreateEventUseCase
 from collaborators.application.services.auth_context import AuthContext
+from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import ContractStatus
 
 
@@ -115,3 +116,32 @@ def test_commercial_cannot_create_event_for_other_commercials_contract(
 
     with pytest.raises(PermissionError, match="You do not have permission to create an event for this contract"):
         use_case.execute(creator=john_commercial, **event_data)
+
+
+def test_non_commercial_cannot_create_event(
+    event_repository, contract_repository, bob_support, uuid_generator, karim_contract
+):
+    karim_contract.sign_contract(updater_id=bob_support.id)
+    contract_repository.create(karim_contract)
+    date_start = datetime(2025, 12, 15, 9, 0, 0)
+    date_end = datetime(2025, 12, 15, 17, 0, 0)
+    attendees = 150
+
+    event_data = {
+        "title": "Annual Meeting",
+        "contract_id": karim_contract.id,
+        "date_start": date_start,
+        "date_end": date_end,
+        "location": "Main Conference Hall",
+        "attendees": attendees,
+        "notes": "Bring your ID for entry",
+    }
+
+    auth_context = AuthContext(bob_support)
+    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+
+    with pytest.raises(
+        PermissionError,
+        match=f"User '{bob_support.email}' with role '{bob_support.role.name.capitalize()}' does not have permission '{Permissions.CREATE_EVENT.name}'",
+    ):
+        use_case.execute(creator=bob_support, **event_data)
