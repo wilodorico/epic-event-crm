@@ -44,6 +44,9 @@ class CreateEventUseCase:
         if not contract.is_signed():
             raise ValueError("Contract must be signed to create an event")
 
+        if contract.commercial_id != creator.id:
+            raise PermissionError("You do not have permission to create an event for this contract")
+
         event = Event(
             id=event_id,
             title=title,

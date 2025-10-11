@@ -89,3 +89,29 @@ def test_commercial_cannot_create_event_with_non_existent_contract(
 
     with pytest.raises(ValueError, match="Contract not found"):
         use_case.execute(creator=john_commercial, **event_data)
+
+
+def test_commercial_cannot_create_event_for_other_commercials_contract(
+    event_repository, contract_repository, john_commercial, uuid_generator, marie_contract, amel_commercial
+):
+    marie_contract.sign_contract(updater_id=amel_commercial.id)
+    contract_repository.create(marie_contract)
+    date_start = datetime(2025, 12, 15, 9, 0, 0)
+    date_end = datetime(2025, 12, 15, 17, 0, 0)
+    attendees = 150
+
+    event_data = {
+        "title": "Annual Meeting",
+        "contract_id": marie_contract.id,
+        "date_start": date_start,
+        "date_end": date_end,
+        "location": "Main Conference Hall",
+        "attendees": attendees,
+        "notes": "Bring your ID for entry",
+    }
+
+    auth_context = AuthContext(john_commercial)
+    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+
+    with pytest.raises(PermissionError, match="You do not have permission to create an event for this contract"):
+        use_case.execute(creator=john_commercial, **event_data)
