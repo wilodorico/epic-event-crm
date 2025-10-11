@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.domain.collaborator.collaborator import Collaborator
@@ -46,6 +46,12 @@ class CreateEventUseCase:
 
         if contract.commercial_id != creator.id:
             raise PermissionError("You do not have permission to create an event for this contract")
+
+        if date_end <= date_start:
+            raise ValueError("Event end date must be after start date")
+
+        if date_start < datetime.now():
+            raise ValueError("Event start date must be in the future")
 
         event = Event(
             id=event_id,
