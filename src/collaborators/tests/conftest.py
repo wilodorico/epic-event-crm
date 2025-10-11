@@ -12,6 +12,7 @@ from collaborators.infrastructure.database.models.base import Base
 from collaborators.infrastructure.repositories.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from collaborators.infrastructure.repositories.in_memory_contract_repository import InMemoryContractRepository
 from collaborators.infrastructure.repositories.in_memory_customer_repository import InMemoryCustomerRepository
+from collaborators.infrastructure.repositories.in_memory_event_repository import InMemoryEventRepository
 from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repository import (
     SqlalchemyCollaboratorRepository,
 )
@@ -56,6 +57,11 @@ def contract_repository(session):
     if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyContractRepository(session)
     return InMemoryContractRepository()
+
+
+@pytest.fixture
+def event_repository():
+    return InMemoryEventRepository()
 
 
 @pytest.fixture

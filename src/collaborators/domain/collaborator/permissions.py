@@ -12,3 +12,4 @@ class Permissions(Enum):
     UPDATE_CONTRACT = auto()
     READ_CONTRACTS = auto()
     SIGN_CONTRACT = auto()
+    CREATE_EVENT = auto()
