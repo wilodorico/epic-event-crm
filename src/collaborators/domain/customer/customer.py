@@ -10,6 +10,11 @@ class CustomerUpdateData(TypedDict, total=False):
     company: str
 
 
+class CustomerContactInfo(TypedDict):
+    email: str
+    phone_number: str
+
+
 class Customer:
     def __init__(
         self,
@@ -36,3 +41,9 @@ class Customer:
         for field, value in data.items():
             setattr(self, field, value)
         self.updated_at = datetime.now()
+
+    def get_contact_info(self) -> CustomerContactInfo:
+        return {
+            "email": self.email,
+            "phone_number": self.phone_number,
+        }
