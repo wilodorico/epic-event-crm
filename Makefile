@@ -26,4 +26,4 @@ e2e:
 	cd $(SRC_DIR) && USE_SQLALCHEMY_REPO=1 pytest $(TEST_DIR)/e2e
 
 all:
-	cd $(SRC_DIR) && USE_SQLALCHEMY_REPO=1 pytest $(TEST_DIR)
+	cd $(SRC_DIR) && USE_SQLALCHEMY_REPO=1 pytest -vvv $(TEST_DIR)
