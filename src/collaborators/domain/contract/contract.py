@@ -45,3 +45,6 @@ class Contract:
         self.status = ContractStatus.SIGNED
         self.updated_at = datetime.now()
         self.updated_by_id = updater_id
+
+    def is_signed(self) -> bool:
+        return self.status == ContractStatus.SIGNED
