@@ -38,6 +38,9 @@ class CreateEventUseCase:
         event_id = self._id_generator.generate()
         contract = self._contract_repository.find_by_id(contract_id)
 
+        if contract is None:
+            raise ValueError("Contract not found")
+
         if not contract.is_signed():
             raise ValueError("Contract must be signed to create an event")
 
