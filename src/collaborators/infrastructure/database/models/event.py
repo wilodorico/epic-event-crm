@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, String, func
+from sqlalchemy import Column, DateTime, Integer, String, func
 
 from .base import Base
 
@@ -13,7 +13,7 @@ class EventModel(Base):
     date_start = Column(DateTime(timezone=True), nullable=False)
     date_end = Column(DateTime(timezone=True), nullable=False)
     location = Column(String, nullable=False)
-    attendees = Column(String, nullable=False)
+    attendees = Column(Integer, nullable=False)
     notes = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
