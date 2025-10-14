@@ -20,7 +20,7 @@ from commons.uuid_generator import UuidGenerator
 )
 @click.option("--date-end", prompt=True, type=click.DateTime(formats=["%Y-%m-%d %H:%M"]), callback=validate_date_end)
 @click.option("--location", prompt=True, type=str)
-@click.option("--attendees", prompt=True, type=int)
+@click.option("--attendees", prompt=True, type=click.INT)
 @click.option("--notes", prompt=True, type=str)
 def create_event(ctx, contract_id, title, date_start, date_end, location, attendees, notes):
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
