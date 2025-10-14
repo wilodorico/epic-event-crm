@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.contract.contract import Contract
 from collaborators.domain.customer.customer import Customer
+from collaborators.domain.event.event import Event
 from collaborators.infrastructure.database.models.base import Base
 from collaborators.infrastructure.repositories.in_memory_collaborator_repository import InMemoryCollaboratorRepository
 from collaborators.infrastructure.repositories.in_memory_contract_repository import InMemoryContractRepository
@@ -208,4 +209,19 @@ def marie_contract(manager_alice, marie_customer, amel_commercial):
         created_by_id=manager_alice.id,
         total_amount=2000.00,
         remaining_amount=2000.00,
+    )
+
+
+@pytest.fixture
+def karim_event(karim_contract):
+    return Event(
+        id="karim-event-1",
+        customer_id=karim_contract.customer_id,
+        contract_id=karim_contract.id,
+        title="Karim's Event",
+        date_start="2025-12-01 10:00",
+        date_end="2025-12-01 18:00",
+        location="Karim's Venue",
+        attendees=50,
+        notes="Initial event setup",
     )
