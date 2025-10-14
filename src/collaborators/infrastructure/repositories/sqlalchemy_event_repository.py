@@ -1,10 +1,13 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from collaborators.domain.event.event import Event
+from collaborators.domain.event.event_repository_abc import EventRepositoryABC
+from collaborators.infrastructure.database.models.event import EventModel
 from collaborators.infrastructure.mappers.event import EventMapper
 
 
-class SqlalchemyEventRepository:
+class SqlalchemyEventRepository(EventRepositoryABC):
     def __init__(self, session: Session):
         self.session = session
 
@@ -13,3 +16,14 @@ class SqlalchemyEventRepository:
         self.session.add(model)
         self.session.commit()
         return event
+
+    def get_all(self) -> list[Event]:
+        stmt = select(EventModel)
+        result = self.session.execute(stmt)
+        event_models = result.scalars().all()
+        return [EventMapper.to_entity(model) for model in event_models]
+
+    def count(self) -> int:
+        stmt = select(EventModel)
+        result = self.session.execute(stmt)
+        return len(result.scalars().all())
