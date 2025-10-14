@@ -214,13 +214,15 @@ def marie_contract(manager_alice, marie_customer, amel_commercial):
 
 @pytest.fixture
 def karim_event(karim_contract):
+    from datetime import datetime
+
     return Event(
         id="karim-event-1",
         customer_id=karim_contract.customer_id,
         contract_id=karim_contract.id,
         title="Karim's Event",
-        date_start="2025-12-01 10:00",
-        date_end="2025-12-01 18:00",
+        date_start=datetime(2025, 12, 1, 10, 0),
+        date_end=datetime(2025, 12, 1, 18, 0),
         location="Karim's Venue",
         attendees=50,
         notes="Initial event setup",
