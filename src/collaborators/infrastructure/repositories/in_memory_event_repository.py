@@ -9,3 +9,9 @@ class InMemoryEventRepository(EventRepositoryABC):
     def create(self, event: Event) -> Event | None:
         self.events[event.id] = event
         return event
+
+    def get_all(self) -> list[Event]:
+        return list(self.events.values())
+
+    def count(self) -> int:
+        return len(self.events)
