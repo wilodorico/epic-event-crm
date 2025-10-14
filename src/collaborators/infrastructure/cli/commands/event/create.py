@@ -13,16 +13,40 @@ from commons.uuid_generator import UuidGenerator
 @click.command("create")
 @click.pass_context
 @require_auth(Permissions.CREATE_EVENT)
-@click.option("--contract-id", prompt=True, type=str)
-@click.option("--title", prompt=True, type=str)
+@click.option("--contract-id", prompt=True, type=str, help="ID of the contract to associate the event with")
+@click.option("--title", prompt=True, type=str, help="Title of the event")
 @click.option(
-    "--date-start", prompt=True, type=click.DateTime(formats=["%Y-%m-%d %H:%M"]), callback=validate_date_start
+    "--date-start",
+    prompt=True,
+    type=click.DateTime(formats=["%Y-%m-%d %H:%M"]),
+    callback=validate_date_start,
+    help="Start date and time of the event (format: YYYY-MM-DD HH:MM)",
 )
-@click.option("--date-end", prompt=True, type=click.DateTime(formats=["%Y-%m-%d %H:%M"]), callback=validate_date_end)
-@click.option("--location", prompt=True, type=str)
-@click.option("--attendees", prompt=True, type=click.INT)
-@click.option("--notes", prompt=True, type=str)
+@click.option(
+    "--date-end",
+    prompt=True,
+    type=click.DateTime(formats=["%Y-%m-%d %H:%M"]),
+    callback=validate_date_end,
+    help="End date and time of the event (format: YYYY-MM-DD HH:MM)",
+)
+@click.option("--location", prompt=True, type=str, help="Location of the event")
+@click.option("--attendees", prompt=True, type=click.INT, help="Number of attendees")
+@click.option("--notes", prompt=True, type=str, help="Additional notes about the event")
 def create_event(ctx, contract_id, title, date_start, date_end, location, attendees, notes):
+    """
+    Create a new event for a contract.
+    This command creates a new event associated with a specified contract in the system.
+    Example usage:
+        $ python app.py event create --contract-id <contract_id> --title <title> --date-start <date_start> --date-end <date_end> --location <location> --attendees <attendees> --notes <notes>
+    Arguments:
+        - contract_id: ID of the contract to associate the event with
+        - title: Title of the event
+        - date_start: Start date and time of the event
+        - date_end: End date and time of the event
+        - location: Location of the event
+        - attendees: Number of attendees
+        - notes: Additional notes about the event
+    """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
     current_user = ctx.obj.get("current_user")
     auth_context = ctx.obj.get("auth_context")
