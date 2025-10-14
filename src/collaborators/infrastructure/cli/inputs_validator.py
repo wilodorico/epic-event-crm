@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 import click
@@ -26,4 +27,27 @@ def validate_positive_decimal(ctx, param, value):
             raise click.BadParameter("Value must be a positive decimal number")
     except (ValueError, TypeError, InvalidOperation):
         raise click.BadParameter("Value must be a valid decimal number")
+    return value
+
+
+def validate_date_start(ctx, param, value):
+    """Callback to store date_start in context for later validation."""
+    if value:
+        # Check if date_start is in the future
+        if value <= datetime.now():
+            raise click.BadParameter("Event start date must be in the future. Please enter a future date.")
+
+        # Store date_start in context for date_end validation
+        if not hasattr(ctx, "meta"):
+            ctx.meta = {}
+        ctx.meta["date_start"] = value
+    return value
+
+
+def validate_date_end(ctx, param, value):
+    """Callback to validate that date_end is after date_start."""
+    if value and hasattr(ctx, "meta") and "date_start" in ctx.meta:
+        date_start = ctx.meta["date_start"]
+        if value <= date_start:
+            raise click.BadParameter("Event end date must be after start date. Please enter a future date.")
     return value

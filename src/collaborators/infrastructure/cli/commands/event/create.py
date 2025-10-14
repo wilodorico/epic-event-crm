@@ -1,10 +1,9 @@
-from datetime import datetime
-
 import click
 
 from collaborators.application.event.create_event_use_case import CreateEventUseCase
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.infrastructure.cli.decorators import require_auth
+from collaborators.infrastructure.cli.inputs_validator import validate_date_end, validate_date_start
 from collaborators.infrastructure.database.db import SessionLocal
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 from collaborators.infrastructure.repositories.sqlalchemy_event_repository import SqlalchemyEventRepository
@@ -16,8 +15,10 @@ from commons.uuid_generator import UuidGenerator
 @require_auth(Permissions.CREATE_EVENT)
 @click.option("--contract-id", prompt=True, type=str)
 @click.option("--title", prompt=True, type=str)
-@click.option("--date-start", prompt=True, type=str)
-@click.option("--date-end", prompt=True, type=str)
+@click.option(
+    "--date-start", prompt=True, type=click.DateTime(formats=["%Y-%m-%d %H:%M"]), callback=validate_date_start
+)
+@click.option("--date-end", prompt=True, type=click.DateTime(formats=["%Y-%m-%d %H:%M"]), callback=validate_date_end)
 @click.option("--location", prompt=True, type=str)
 @click.option("--attendees", prompt=True, type=int)
 @click.option("--notes", prompt=True, type=str)
@@ -31,17 +32,13 @@ def create_event(ctx, contract_id, title, date_start, date_end, location, attend
         contract_repository = SqlalchemyContractRepository(session)
         uuid_generator = UuidGenerator()
 
-        # Convert string dates to datetime objects
-        date_start_dt = datetime.strptime(date_start, "%Y-%m-%d %H:%M")
-        date_end_dt = datetime.strptime(date_end, "%Y-%m-%d %H:%M")
-
         use_case = CreateEventUseCase(repository, contract_repository, uuid_generator, auth_context)
         event = use_case.execute(
             creator=current_user,
             contract_id=contract_id,
             title=title,
-            date_start=date_start_dt,
-            date_end=date_end_dt,
+            date_start=date_start,
+            date_end=date_end,
             location=location,
             attendees=attendees,
             notes=notes,
