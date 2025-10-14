@@ -18,6 +18,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_collaborator_repositor
 )
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 from collaborators.infrastructure.repositories.sqlalchemy_customer_repository import SqlalchemyCustomerRepository
+from collaborators.infrastructure.repositories.sqlalchemy_event_repository import SqlalchemyEventRepository
 from collaborators.tests.fakes.fake_password_hasher import FakePasswordHasher
 from commons.uuid_generator import UuidGenerator
 
@@ -60,7 +61,9 @@ def contract_repository(session):
 
 
 @pytest.fixture
-def event_repository():
+def event_repository(session):
+    if os.getenv("USE_SQLALCHEMY_REPO") == "1":
+        return SqlalchemyEventRepository(session)
     return InMemoryEventRepository()
 
 

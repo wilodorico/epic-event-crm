@@ -4,6 +4,7 @@ from collaborators.infrastructure.cli.commands.auth import auth
 from collaborators.infrastructure.cli.commands.collaborator import collaborator
 from collaborators.infrastructure.cli.commands.contract import contract
 from collaborators.infrastructure.cli.commands.customer import customer
+from collaborators.infrastructure.cli.commands.event import event
 from collaborators.infrastructure.cli.commands.init_db import init_db_command
 
 
@@ -18,3 +19,4 @@ cli.add_command(collaborator)
 cli.add_command(customer)
 cli.add_command(contract)
 cli.add_command(auth)
+cli.add_command(event)
