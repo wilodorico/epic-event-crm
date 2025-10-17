@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from collaborators.domain.contract.contract import Contract
+from collaborators.domain.contract.contract import Contract, ContractStatus
 from collaborators.infrastructure.database.models.contract import ContractModel
 from collaborators.infrastructure.mappers.contract import ContractMapper
 
@@ -43,6 +43,16 @@ class SqlalchemyContractRepository:
     def get_all(self) -> list[Contract]:
         """Retrieve all contracts from the database."""
         stmt = select(ContractModel)
+        result = self.session.execute(stmt)
+        contract_models = result.scalars().all()
+        return [ContractMapper.to_entity(model) for model in contract_models]
+
+    def get_all_unsigned(self, commercial_id: str) -> list[Contract]:
+        """Retrieve all unsigned contracts for a given commercial from the database."""
+        stmt = select(ContractModel).where(
+            ContractModel.commercial_id == commercial_id,
+            ContractModel.status == ContractStatus.PENDING.value,
+        )
         result = self.session.execute(stmt)
         contract_models = result.scalars().all()
         return [ContractMapper.to_entity(model) for model in contract_models]
