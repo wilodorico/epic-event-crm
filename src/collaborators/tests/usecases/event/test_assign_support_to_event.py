@@ -28,3 +28,11 @@ def test_non_manager_cannot_assign_support_to_event(event_repository, john_comme
         match=f"User '{john_commercial.email}' with role 'Commercial' does not have permission 'ASSIGN_EVENT'",
     ):
         use_case.execute(collaborator=john_commercial, event_id="some_event_id", support_id="some_support_id")
+
+
+def test_manager_cannot_assign_support_to_non_existent_event(event_repository, manager_alice, bob_support):
+    auth_context = AuthContext(manager_alice)
+    use_case = GetAssignSupportToEventUseCase(event_repository, auth_context)
+
+    with pytest.raises(ValueError, match="Event not found."):
+        use_case.execute(collaborator=manager_alice, event_id="non_existent_event_id", support_id=bob_support.id)

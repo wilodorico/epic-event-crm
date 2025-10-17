@@ -14,6 +14,9 @@ class GetAssignSupportToEventUseCase:
 
         event = self._event_repository.find_by_id(event_id)
 
+        if not event:
+            raise ValueError("Event not found.")
+
         event.assign_support(collaborator.id, support_id)
 
         self._event_repository.update(event)
