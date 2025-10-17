@@ -23,6 +23,7 @@ class Event:
         self.location = location
         self.attendees = attendees
         self.notes = notes
+        self.contact_support_id = None
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.updated_by_id = None

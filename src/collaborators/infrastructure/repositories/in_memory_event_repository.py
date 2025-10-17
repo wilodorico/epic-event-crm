@@ -15,3 +15,6 @@ class InMemoryEventRepository(EventRepositoryABC):
 
     def count(self) -> int:
         return len(self.events)
+
+    def get_all_unassigned(self) -> list[Event]:
+        return [event for event in self.events.values() if not event.contact_support_id]

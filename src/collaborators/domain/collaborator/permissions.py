@@ -15,3 +15,4 @@ class Permissions(Enum):
     CREATE_EVENT = auto()
     READ_EVENTS = auto()
     FILTER_CONTRACTS = auto()
+    FILTER_EVENTS = auto()

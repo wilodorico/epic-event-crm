@@ -12,3 +12,6 @@ class EventRepositoryABC(ABC):
 
     @abstractmethod
     def count(self) -> int: ...
+
+    @abstractmethod
+    def get_all_unassigned(self) -> list[Event]: ...
