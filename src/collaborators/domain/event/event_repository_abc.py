@@ -15,3 +15,9 @@ class EventRepositoryABC(ABC):
 
     @abstractmethod
     def get_all_unassigned(self) -> list[Event]: ...
+
+    @abstractmethod
+    def find_by_id(self, event_id: str) -> Event | None: ...
+
+    @abstractmethod
+    def update(self, event: Event) -> None: ...

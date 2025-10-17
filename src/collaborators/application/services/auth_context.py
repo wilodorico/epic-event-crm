@@ -17,6 +17,7 @@ class AuthContext(AuthContextABC):
             Permissions.SIGN_CONTRACT,
             Permissions.READ_EVENTS,
             Permissions.FILTER_EVENTS,
+            Permissions.ASSIGN_EVENT,
         },
         Role.COMMERCIAL: {
             Permissions.CREATE_CUSTOMER,

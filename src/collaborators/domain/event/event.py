@@ -27,3 +27,8 @@ class Event:
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.updated_by_id = None
+
+    def assign_support(self, collaborator_id: str, support_id: str):
+        self.contact_support_id = support_id
+        self.updated_at = datetime.now()
+        self.updated_by_id = collaborator_id

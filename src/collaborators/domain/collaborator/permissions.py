@@ -16,3 +16,4 @@ class Permissions(Enum):
     READ_EVENTS = auto()
     FILTER_CONTRACTS = auto()
     FILTER_EVENTS = auto()
+    ASSIGN_EVENT = auto()
