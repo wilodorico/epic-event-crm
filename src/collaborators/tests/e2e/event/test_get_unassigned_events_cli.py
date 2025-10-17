@@ -1,11 +1,9 @@
-import pytest
 from click.testing import CliRunner
 
 from collaborators.infrastructure.cli.commands.event import event
 from collaborators.infrastructure.repositories.sqlalchemy_event_repository import SqlalchemyEventRepository
 
 
-@pytest.mark.skip(reason="Not yet implemented")
 def test_manager_can_get_unassigned_events_cli(session, manager_alice, karim_event):
     logged_user = manager_alice
     repo = SqlalchemyEventRepository(session)
