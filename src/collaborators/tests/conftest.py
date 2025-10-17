@@ -201,6 +201,18 @@ def karim_contract(manager_alice, karim_customer, john_commercial):
 
 
 @pytest.fixture
+def karim_paid_contract(manager_alice, karim_customer, john_commercial):
+    return Contract(
+        id="karim-contract-2",
+        customer_id=karim_customer.id,
+        commercial_id=john_commercial.id,
+        created_by_id=manager_alice.id,
+        total_amount=1500.00,
+        remaining_amount=0.00,
+    )
+
+
+@pytest.fixture
 def marie_contract(manager_alice, marie_customer, amel_commercial):
     return Contract(
         id="marie-contract-1",

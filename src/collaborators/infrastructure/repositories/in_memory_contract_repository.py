@@ -30,3 +30,10 @@ class InMemoryContractRepository(ContractRepositoryABC):
             for contract in self.contracts.values()
             if contract.commercial_id == commercial_id and not contract.is_signed()
         ]
+
+    def get_all_unpaid(self, commercial_id: str) -> list[Contract]:
+        return [
+            contract
+            for contract in self.contracts.values()
+            if contract.commercial_id == commercial_id and not contract.is_paid()
+        ]

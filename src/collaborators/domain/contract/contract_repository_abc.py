@@ -24,3 +24,6 @@ class ContractRepositoryABC(ABC):
 
     @abstractmethod
     def get_all_unsigned(self, commercial_id: str) -> list[Contract]: ...
+
+    @abstractmethod
+    def get_all_unpaid(self, commercial_id: str) -> list[Contract]: ...

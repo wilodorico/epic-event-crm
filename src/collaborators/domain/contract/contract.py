@@ -48,3 +48,6 @@ class Contract:
 
     def is_signed(self) -> bool:
         return self.status == ContractStatus.SIGNED
+
+    def is_paid(self) -> bool:
+        return self.remaining_amount == Decimal("0.00")
