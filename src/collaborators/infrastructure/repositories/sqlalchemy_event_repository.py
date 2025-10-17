@@ -33,3 +33,18 @@ class SqlalchemyEventRepository(EventRepositoryABC):
         result = self.session.execute(query)
         unassigned_event_models = result.scalars().all()
         return [EventMapper.to_entity(model) for model in unassigned_event_models]
+
+    def find_by_id(self, event_id: str) -> Event | None:
+        query = select(EventModel).where(EventModel.id == event_id)
+        result = self.session.execute(query)
+        event_model = result.scalars().first()
+        if event_model:
+            return EventMapper.to_entity(event_model)
+        return None
+
+    def update(self, event: Event) -> None:
+        """Update an existing event."""
+        model = EventMapper.to_model(event)
+        # Merge updates the existing record with the same primary key
+        self.session.merge(model)
+        self.session.commit()
