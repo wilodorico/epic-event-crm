@@ -23,3 +23,10 @@ class InMemoryContractRepository(ContractRepositoryABC):
 
     def get_all(self) -> list[Contract]:
         return list(self.contracts.values())
+
+    def get_all_unsigned(self, commercial_id: str) -> list[Contract]:
+        return [
+            contract
+            for contract in self.contracts.values()
+            if contract.commercial_id == commercial_id and not contract.is_signed()
+        ]
