@@ -2,6 +2,7 @@ import click
 
 from collaborators.infrastructure.cli.commands.event.create import create_event
 from collaborators.infrastructure.cli.commands.event.get_events import get_events
+from collaborators.infrastructure.cli.commands.event.get_unassigned_events import get_unassigned_events
 
 
 @click.group()
@@ -12,3 +13,4 @@ def event():
 
 event.add_command(create_event)
 event.add_command(get_events)
+event.add_command(get_unassigned_events)
