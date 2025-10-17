@@ -16,6 +16,8 @@ class EventMapper:
             attendees=model.attendees,
             notes=model.notes,
         )
+        event.contact_support_id = model.contact_support_id
+
         # Override the auto-generated timestamps with DB values
         event.created_at = model.created_at
         event.updated_at = model.updated_at
@@ -34,6 +36,7 @@ class EventMapper:
             location=entity.location,
             attendees=entity.attendees,
             notes=entity.notes,
+            contact_support_id=entity.contact_support_id,
             updated_by_id=entity.updated_by_id,
         )
         # Set timestamps manually if they exist
