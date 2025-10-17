@@ -1,20 +1,18 @@
-import pytest
 from click.testing import CliRunner
 
 from collaborators.infrastructure.cli.commands.contract import contract
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
-@pytest.mark.skip(reason="To be implemented")
 def test_commercial_can_get_contracts_unpaid_cli(
     session,
     john_commercial,
     karim_contract,
-    marie_contract,
+    karim_paid_contract,
 ):
     repo = SqlalchemyContractRepository(session)
     repo.create(karim_contract)
-    repo.create(marie_contract)
+    repo.create(karim_paid_contract)
 
     runner = CliRunner()
     result = runner.invoke(
@@ -26,4 +24,4 @@ def test_commercial_can_get_contracts_unpaid_cli(
     assert result.exit_code == 0
     assert "List of Unpaid Contracts:" in result.output
     assert karim_contract.id in result.output
-    assert marie_contract.id not in result.output
+    assert karim_paid_contract.id not in result.output
