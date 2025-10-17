@@ -16,15 +16,15 @@ class SqlalchemyCustomerRepository:
         self.session.commit()
 
     def find_by_email(self, email: str) -> Customer | None:
-        stmt = select(CustomerModel).where(CustomerModel.email == email)
-        customer_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(CustomerModel).where(CustomerModel.email == email)
+        customer_model = self.session.execute(query).scalar_one_or_none()
         if customer_model:
             return CustomerMapper.to_entity(customer_model)
         return None
 
     def find_by_id(self, customer_id: str) -> Customer | None:
-        stmt = select(CustomerModel).where(CustomerModel.id == customer_id)
-        customer_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(CustomerModel).where(CustomerModel.id == customer_id)
+        customer_model = self.session.execute(query).scalar_one_or_none()
         if customer_model:
             return CustomerMapper.to_entity(customer_model)
         return None
@@ -38,13 +38,13 @@ class SqlalchemyCustomerRepository:
 
     def count(self) -> int:
         """Count all customers in the database."""
-        stmt = select(CustomerModel)
-        result = self.session.execute(stmt)
+        query = select(CustomerModel)
+        result = self.session.execute(query)
         return len(result.scalars().all())
 
     def get_all(self) -> list[Customer]:
         """Retrieve all customers from the database."""
-        stmt = select(CustomerModel)
-        result = self.session.execute(stmt)
+        query = select(CustomerModel)
+        result = self.session.execute(query)
         customer_models = result.scalars().all()
         return [CustomerMapper.to_entity(model) for model in customer_models]

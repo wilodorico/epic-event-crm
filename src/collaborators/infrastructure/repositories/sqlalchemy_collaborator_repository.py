@@ -16,23 +16,23 @@ class SqlalchemyCollaboratorRepository:
         self.session.commit()
 
     def find_by_email(self, email: str) -> Collaborator | None:
-        stmt = select(CollaboratorModel).where(CollaboratorModel.email == email)
-        collaborator_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(CollaboratorModel).where(CollaboratorModel.email == email)
+        collaborator_model = self.session.execute(query).scalar_one_or_none()
         if collaborator_model:
             return CollaboratorMapper.to_entity(collaborator_model)
         return None
 
     def find_by_id(self, collaborator_id: str) -> Collaborator | None:
-        stmt = select(CollaboratorModel).where(CollaboratorModel.id == collaborator_id)
-        collaborator_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(CollaboratorModel).where(CollaboratorModel.id == collaborator_id)
+        collaborator_model = self.session.execute(query).scalar_one_or_none()
         if collaborator_model:
             return CollaboratorMapper.to_entity(collaborator_model)
         return None
 
     def count(self) -> int:
         """Count all collaborators in the database."""
-        stmt = select(CollaboratorModel)
-        result = self.session.execute(stmt)
+        query = select(CollaboratorModel)
+        result = self.session.execute(query)
         return len(result.scalars().all())
 
     def update(self, collaborator: Collaborator) -> None:
@@ -44,8 +44,8 @@ class SqlalchemyCollaboratorRepository:
 
     def delete(self, collaborator_id: str) -> None:
         """Delete a collaborator by ID."""
-        stmt = select(CollaboratorModel).where(CollaboratorModel.id == collaborator_id)
-        collaborator_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(CollaboratorModel).where(CollaboratorModel.id == collaborator_id)
+        collaborator_model = self.session.execute(query).scalar_one_or_none()
         if collaborator_model:
             self.session.delete(collaborator_model)
             self.session.commit()

@@ -16,15 +16,15 @@ class SqlalchemyContractRepository:
         self.session.commit()
 
     def find_by_id(self, contract_id: str) -> Contract | None:
-        stmt = select(ContractModel).where(ContractModel.id == contract_id)
-        contract_model = self.session.execute(stmt).scalar_one_or_none()
+        query = select(ContractModel).where(ContractModel.id == contract_id)
+        contract_model = self.session.execute(query).scalar_one_or_none()
         if contract_model:
             return ContractMapper.to_entity(contract_model)
         return None
 
     def find_by_customer_id(self, customer_id: str) -> list[Contract]:
-        stmt = select(ContractModel).where(ContractModel.customer_id == customer_id)
-        contract_models = self.session.execute(stmt).scalars().all()
+        query = select(ContractModel).where(ContractModel.customer_id == customer_id)
+        contract_models = self.session.execute(query).scalars().all()
         if contract_models:
             return [ContractMapper.to_entity(model) for model in contract_models]
         return []
@@ -36,33 +36,33 @@ class SqlalchemyContractRepository:
 
     def count(self) -> int:
         """Count all contracts in the database."""
-        stmt = select(ContractModel)
-        result = self.session.execute(stmt)
+        query = select(ContractModel)
+        result = self.session.execute(query)
         return len(result.scalars().all())
 
     def get_all(self) -> list[Contract]:
         """Retrieve all contracts from the database."""
-        stmt = select(ContractModel)
-        result = self.session.execute(stmt)
+        query = select(ContractModel)
+        result = self.session.execute(query)
         contract_models = result.scalars().all()
         return [ContractMapper.to_entity(model) for model in contract_models]
 
     def get_all_unsigned(self, commercial_id: str) -> list[Contract]:
         """Retrieve all unsigned contracts for a given commercial from the database."""
-        stmt = select(ContractModel).where(
+        query = select(ContractModel).where(
             ContractModel.commercial_id == commercial_id,
             ContractModel.status == ContractStatus.PENDING.value,
         )
-        result = self.session.execute(stmt)
+        result = self.session.execute(query)
         contract_models = result.scalars().all()
         return [ContractMapper.to_entity(model) for model in contract_models]
 
     def get_all_unpaid(self, commercial_id: str) -> list[Contract]:
         """Retrieve all unpaid contracts for a given commercial from the database."""
-        stmt = select(ContractModel).where(
+        query = select(ContractModel).where(
             ContractModel.commercial_id == commercial_id,
             ContractModel.remaining_amount > 0,
         )
-        result = self.session.execute(stmt)
+        result = self.session.execute(query)
         contract_models = result.scalars().all()
         return [ContractMapper.to_entity(model) for model in contract_models]

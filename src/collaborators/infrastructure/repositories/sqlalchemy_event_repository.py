@@ -18,12 +18,12 @@ class SqlalchemyEventRepository(EventRepositoryABC):
         return event
 
     def get_all(self) -> list[Event]:
-        stmt = select(EventModel)
-        result = self.session.execute(stmt)
+        query = select(EventModel)
+        result = self.session.execute(query)
         event_models = result.scalars().all()
         return [EventMapper.to_entity(model) for model in event_models]
 
     def count(self) -> int:
-        stmt = select(EventModel)
-        result = self.session.execute(stmt)
+        query = select(EventModel)
+        result = self.session.execute(query)
         return len(result.scalars().all())
