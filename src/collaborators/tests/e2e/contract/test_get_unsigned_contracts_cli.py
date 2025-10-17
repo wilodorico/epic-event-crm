@@ -1,11 +1,9 @@
-import pytest
 from click.testing import CliRunner
 
 from collaborators.infrastructure.cli.commands.contract import contract
 from collaborators.infrastructure.repositories.sqlalchemy_contract_repository import SqlalchemyContractRepository
 
 
-@pytest.mark.skip(reason="To be implemented")
 def test_commercial_can_get_contracts_unsigned_cli(
     session,
     john_commercial,
@@ -26,4 +24,4 @@ def test_commercial_can_get_contracts_unsigned_cli(
     assert result.exit_code == 0
     assert "List of Unsigned Contracts:" in result.output
     assert karim_contract.id in result.output
-    assert marie_contract.id in result.output
+    assert marie_contract.id not in result.output
