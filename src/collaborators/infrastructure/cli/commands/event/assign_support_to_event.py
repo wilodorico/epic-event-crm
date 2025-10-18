@@ -8,7 +8,7 @@ from collaborators.infrastructure.repositories.sqlalchemy_event_repository impor
 
 @click.command(name="assign-support", help="Assign a support collaborator to an event")
 @click.pass_context
-@require_auth(Permissions.READ_EVENTS)
+@require_auth(Permissions.ASSIGN_EVENT)
 @click.option("--event-id", prompt="Event ID", type=str, help="ID of the event to assign support to")
 @click.option("--support-id", prompt="Support ID", type=str, help="ID of the support collaborator")
 def assign_support(ctx, event_id, support_id):
