@@ -4,7 +4,7 @@ from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.event.event_repository_abc import EventRepositoryABC
 
 
-class GetAssignSupportToEventUseCase:
+class AssignSupportToEventUseCase:
     def __init__(self, event_repository: EventRepositoryABC, auth_context: AuthContextABC):
         self._event_repository = event_repository
         self._auth_context = auth_context

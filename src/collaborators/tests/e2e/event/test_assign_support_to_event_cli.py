@@ -1,11 +1,9 @@
-import pytest
 from click.testing import CliRunner
 
 from collaborators.infrastructure.cli.commands.event import event
 from collaborators.infrastructure.repositories.sqlalchemy_event_repository import SqlalchemyEventRepository
 
 
-@pytest.mark.skip(reason="To be implemented")
 def test_manager_can_assign_support_to_event_cli(session, manager_alice, bob_support, karim_event):
     logged_user = manager_alice
     repo = SqlalchemyEventRepository(session)
