@@ -16,7 +16,7 @@ def get_events(ctx):
 
     try:
         repository = SqlalchemyEventRepository(session)
-        use_case = GetEventsUseCase(repository, auth_context)
+        use_case = GetEventsUseCase(auth_context, repository)
 
         events = use_case.execute()
 

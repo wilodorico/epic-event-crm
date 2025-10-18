@@ -9,7 +9,7 @@ def test_collaborator_can_get_events(event_repository, request, collaborator_fix
     collaborator = request.getfixturevalue(collaborator_fixture)
 
     auth_context = AuthContext(collaborator)
-    use_case = GetEventsUseCase(event_repository, auth_context)
+    use_case = GetEventsUseCase(auth_context, event_repository)
     events = use_case.execute()
 
     assert event_repository.count() == 0
@@ -25,7 +25,7 @@ def test_collaborator_get_events_with_existing_events(
     event_repository.create(karim_event)
 
     auth_context = AuthContext(collaborator)
-    use_case = GetEventsUseCase(event_repository, auth_context)
+    use_case = GetEventsUseCase(auth_context, event_repository)
     events = use_case.execute()
 
     assert event_repository.count() == 1
