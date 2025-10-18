@@ -18,7 +18,7 @@ def assign_support(ctx, event_id, support_id):
 
     try:
         repository = SqlalchemyEventRepository(session)
-        use_case = AssignSupportToEventUseCase(repository, auth_context)
+        use_case = AssignSupportToEventUseCase(auth_context, repository)
         event = use_case.execute(current_user, event_id, support_id)
         click.echo(f"✅ Support assigned to '{event.title}' successfully.")
     except Exception as e:
