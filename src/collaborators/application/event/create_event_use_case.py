@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract_repository_abc import ContractRepositoryABC
@@ -9,20 +10,22 @@ from collaborators.domain.event.event_repository_abc import EventRepositoryABC
 from commons.id_generator_abc import IdGeneratorABC
 
 
-class CreateEventUseCase:
+class CreateEventUseCase(UseCaseABC):
+    permissions = Permissions.CREATE_EVENT
+
     def __init__(
         self,
+        auth_context: AuthContextABC,
         event_repository: EventRepositoryABC,
         contract_repository: ContractRepositoryABC,
         id_generator: IdGeneratorABC,
-        auth_context: AuthContextABC,
     ):
+        super().__init__(auth_context)
         self._event_repository = event_repository
         self._contract_repository = contract_repository
         self._id_generator = id_generator
-        self._auth_context = auth_context
 
-    def execute(
+    def _execute(
         self,
         creator: Collaborator,
         title: str,
@@ -33,8 +36,6 @@ class CreateEventUseCase:
         attendees: int,
         notes: str,
     ) -> Event:
-        self._auth_context.ensure(Permissions.CREATE_EVENT)
-
         event_id = self._id_generator.generate()
         contract = self._contract_repository.find_by_id(contract_id)
 

@@ -56,7 +56,7 @@ def test_commercial_can_create_event(
     event_data = {**base_event_data, "contract_id": karim_contract.id}
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
     created_event = use_case.execute(creator=john_commercial, **event_data)
 
     assert karim_contract.status == ContractStatus.SIGNED
@@ -84,7 +84,7 @@ def test_commercial_cannot_create_event_if_contract_not_signed(
     event_data = {**base_event_data, "contract_id": karim_contract.id}
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Contract must be signed to create an event"):
         use_case.execute(creator=john_commercial, **event_data)
@@ -100,7 +100,7 @@ def test_commercial_cannot_create_event_with_non_existent_contract(
     event_data = {**base_event_data, "contract_id": "non-existent-contract-id"}
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Contract not found"):
         use_case.execute(creator=john_commercial, **event_data)
@@ -121,7 +121,7 @@ def test_commercial_cannot_create_event_for_other_commercials_contract(
     event_data = {**base_event_data, "contract_id": marie_contract.id}
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(PermissionError, match="You do not have permission to create an event for this contract"):
         use_case.execute(creator=john_commercial, **event_data)
@@ -141,7 +141,7 @@ def test_non_commercial_cannot_create_event(
     event_data = {**base_event_data, "contract_id": karim_contract.id}
 
     auth_context = AuthContext(bob_support)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(
         PermissionError,
@@ -169,7 +169,7 @@ def test_commercial_cannot_create_event_with_date_end_lower_than_date_start(
     }
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Event end date must be after start date"):
         use_case.execute(creator=john_commercial, **invalid_event_data)
@@ -195,7 +195,7 @@ def test_commercial_cannot_create_event_in_past(
     }
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(event_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Event start date must be in the future"):
         use_case.execute(creator=john_commercial, **invalid_event_data)

@@ -56,7 +56,7 @@ def create_event(ctx, contract_id, title, date_start, date_end, location, attend
         contract_repository = SqlalchemyContractRepository(session)
         uuid_generator = UuidGenerator()
 
-        use_case = CreateEventUseCase(repository, contract_repository, uuid_generator, auth_context)
+        use_case = CreateEventUseCase(auth_context, repository, contract_repository, uuid_generator)
         event = use_case.execute(
             creator=current_user,
             contract_id=contract_id,
