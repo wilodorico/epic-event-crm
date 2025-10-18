@@ -22,7 +22,7 @@ def test_manager_can_assign_support_to_event_cli(session, manager_alice, bob_sup
     )
 
     assert result.exit_code == 0
-    assert "Support assigned successfully." in result.output
+    assert f"✅ Support assigned to '{karim_event.title}' successfully." in result.output
 
     updated_event = repo.find_by_id(karim_event.id)
     assert updated_event is not None
