@@ -1,13 +1,15 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.event.event_repository_abc import EventRepositoryABC
 
 
-class GetUnassignedEventsUseCase:
-    def __init__(self, event_repository: EventRepositoryABC, auth_context: AuthContextABC):
-        self._event_repository = event_repository
-        self._auth_context = auth_context
+class GetUnassignedEventsUseCase(UseCaseABC):
+    permissions = Permissions.FILTER_EVENTS
 
-    def execute(self):
-        self._auth_context.ensure(Permissions.FILTER_EVENTS)
+    def __init__(self, auth_context: AuthContextABC, event_repository: EventRepositoryABC):
+        super().__init__(auth_context)
+        self._event_repository = event_repository
+
+    def _execute(self):
         return self._event_repository.get_all_unassigned()

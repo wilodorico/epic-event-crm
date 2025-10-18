@@ -16,7 +16,7 @@ def get_unassigned_events(ctx):
 
     try:
         repository = SqlalchemyEventRepository(session)
-        use_case = GetUnassignedEventsUseCase(repository, auth_context)
+        use_case = GetUnassignedEventsUseCase(auth_context, repository)
         unassigned_events = use_case.execute()
         if not unassigned_events:
             click.echo("No events found.")

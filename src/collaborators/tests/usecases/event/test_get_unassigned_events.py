@@ -9,7 +9,7 @@ def test_manager_can_get_unassigned_events(event_repository, manager_alice, kari
     event_repository.create(karim_event)
 
     auth_context = AuthContext(manager_alice)
-    use_case = GetUnassignedEventsUseCase(event_repository, auth_context)
+    use_case = GetUnassignedEventsUseCase(auth_context, event_repository)
     unassigned_events = use_case.execute()
 
     assert event_repository.count() == 1
@@ -18,7 +18,7 @@ def test_manager_can_get_unassigned_events(event_repository, manager_alice, kari
 
 def test_commercial_cannot_get_unassigned_events(event_repository, john_commercial):
     auth_context = AuthContext(john_commercial)
-    use_case = GetUnassignedEventsUseCase(event_repository, auth_context)
+    use_case = GetUnassignedEventsUseCase(auth_context, event_repository)
 
     with pytest.raises(
         PermissionError,
