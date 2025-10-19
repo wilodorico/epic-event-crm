@@ -9,7 +9,7 @@ from collaborators.domain.collaborator.collaborator import Role
 def test_manager_can_update_collaborator_partial_success(collaborator_repository, manager_alice, john_commercial):
     collaborator_repository.create(john_commercial)
     auth_context = AuthContext(manager_alice)
-    use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
+    use_case = UpdateCollaboratorUseCase(auth_context, collaborator_repository)
     collaborator_to_update = collaborator_repository.find_by_id(john_commercial.id)
     updated_collaborator = use_case.execute(
         manager_alice, collaborator_to_update.id, {"first_name": "Johnny", "last_name": "Dep"}
@@ -22,7 +22,7 @@ def test_manager_can_update_collaborator_partial_success(collaborator_repository
 def test_manager_can_update_collaborator_full_success(collaborator_repository, manager_alice, john_commercial):
     collaborator_repository.create(john_commercial)
     auth_context = AuthContext(manager_alice)
-    use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
+    use_case = UpdateCollaboratorUseCase(auth_context, collaborator_repository)
     collaborator_to_update = collaborator_repository.find_by_id(john_commercial.id)
     updated_collaborator = use_case.execute(
         manager_alice,
@@ -46,7 +46,7 @@ def test_manager_can_update_collaborator_full_success(collaborator_repository, m
 def test_non_manager_cannot_update_collaborator(collaborator_repository, john_commercial, bob_support):
     collaborator_repository.create(john_commercial)
     auth_context = AuthContext(bob_support)
-    use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
+    use_case = UpdateCollaboratorUseCase(auth_context, collaborator_repository)
 
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(bob_support, john_commercial.id, {"first_name": "Robert", "last_name": "Builder"})
@@ -56,7 +56,7 @@ def test_non_manager_cannot_update_collaborator(collaborator_repository, john_co
 
 def test_update_non_existent_collaborator_raises_error(collaborator_repository, manager_alice):
     auth_context = AuthContext(manager_alice)
-    use_case = UpdateCollaboratorUseCase(collaborator_repository, auth_context)
+    use_case = UpdateCollaboratorUseCase(auth_context, collaborator_repository)
 
     with pytest.raises(ValueError, match="Collaborator not found."):
         use_case.execute(manager_alice, "non-existent-id", {"first_name": "Ghost", "last_name": "Walker"})

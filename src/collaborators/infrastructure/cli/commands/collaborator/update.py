@@ -59,7 +59,7 @@ def update_collaborator(ctx, id):
             type=click.Choice([r.value for r in Role]),
         )
 
-        use_case = UpdateCollaboratorUseCase(repository, auth_context)
+        use_case = UpdateCollaboratorUseCase(auth_context, repository)
 
         # Prepare update data (only include changed fields)
         update_data = {}
