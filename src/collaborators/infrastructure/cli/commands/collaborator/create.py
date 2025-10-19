@@ -47,7 +47,7 @@ def create_collaborator(ctx, first_name, last_name, email, password, phone_numbe
         id_generator = UuidGenerator()
         password_hasher = BcryptPasswordHasher()
 
-        use_case = CreateCollaboratorUseCase(repository, id_generator, auth_context, password_hasher)
+        use_case = CreateCollaboratorUseCase(auth_context, repository, id_generator, password_hasher)
         # Convert string role to Role enum
         role_enum = Role(role)
         use_case.execute(

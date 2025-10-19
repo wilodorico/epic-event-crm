@@ -22,7 +22,7 @@ def test_manager_can_create_collaborator(
     collaborator_repository, data_john_doe, manager_alice, uuid_generator, password_hasher
 ):
     auth_context = AuthContext(manager_alice)
-    use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context, password_hasher)
+    use_case = CreateCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator, password_hasher)
     use_case.execute(creator=manager_alice, **data_john_doe)
 
     collaborator = collaborator_repository.find_by_email(data_john_doe["email"])
@@ -40,7 +40,7 @@ def test_manager_cannot_create_collaborator_with_existing_email(
     collaborator_repository, data_john_doe, manager_alice, uuid_generator, password_hasher
 ):
     auth_context = AuthContext(manager_alice)
-    use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context, password_hasher)
+    use_case = CreateCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator, password_hasher)
     use_case.execute(creator=manager_alice, **data_john_doe)
     existing_email = data_john_doe["email"]
 
@@ -62,7 +62,7 @@ def test_support_cannot_create_collaborator(
     bob_support, collaborator_repository, data_john_doe, uuid_generator, password_hasher
 ):
     auth_context = AuthContext(bob_support)
-    use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context, password_hasher)
+    use_case = CreateCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator, password_hasher)
 
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=bob_support, **data_john_doe)
@@ -75,7 +75,7 @@ def test_commercial_cannot_create_collaborator(
     john_commercial, collaborator_repository, data_john_doe, uuid_generator, password_hasher
 ):
     auth_context = AuthContext(john_commercial)
-    use_case = CreateCollaboratorUseCase(collaborator_repository, uuid_generator, auth_context, password_hasher)
+    use_case = CreateCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator, password_hasher)
 
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=john_commercial, **data_john_doe)
