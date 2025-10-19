@@ -22,7 +22,7 @@ def test_manager_can_create_contract(
     customer_repository.create(karim_customer)
 
     auth_context = AuthContext(manager_alice)
-    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateContractUseCase(auth_context, customer_repository, contract_repository, uuid_generator)
 
     contract = use_case.execute(creator=manager_alice, **contract_data)
 
@@ -39,7 +39,7 @@ def test_manager_cannot_create_contract_non_existent_customer(
     customer_repository, contract_repository, manager_alice, uuid_generator
 ):
     auth_context = AuthContext(manager_alice)
-    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateContractUseCase(auth_context, customer_repository, contract_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Customer does not exist"):
         use_case.execute(
@@ -56,7 +56,7 @@ def test_non_manager_cannot_create_contract(
     customer_repository.create(karim_customer)
 
     auth_context = AuthContext(john_commercial)
-    use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
+    use_case = CreateContractUseCase(auth_context, customer_repository, contract_repository, uuid_generator)
 
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=john_commercial, **contract_data)

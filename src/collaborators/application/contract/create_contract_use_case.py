@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import Contract
@@ -9,28 +10,28 @@ from collaborators.domain.customer.customer_repository_abc import CustomerReposi
 from commons.id_generator_abc import IdGeneratorABC
 
 
-class CreateContractUseCase:
+class CreateContractUseCase(UseCaseABC):
+    permissions = Permissions.CREATE_CONTRACT
+
     def __init__(
         self,
+        auth_context: AuthContextABC,
         customer_repository: CustomerRepositoryABC,
         contract_repository: ContractRepositoryABC,
         id_generator: IdGeneratorABC,
-        auth_context: AuthContextABC,
     ):
+        super().__init__(auth_context)
         self._customer_repository = customer_repository
         self._contract_repository = contract_repository
         self._id_generator = id_generator
-        self._auth_context = auth_context
 
-    def execute(
+    def _execute(
         self,
         creator: Collaborator,
         customer_id: str,
         total_amount: Decimal,
         remaining_amount: Decimal,
     ) -> Contract:
-        self._auth_context.ensure(Permissions.CREATE_CONTRACT)
-
         customer = self._customer_repository.find_by_id(customer_id)
 
         if customer is None:

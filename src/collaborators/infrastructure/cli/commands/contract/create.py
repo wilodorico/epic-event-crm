@@ -34,7 +34,7 @@ def create_contract(ctx, customer_id, total_amount, remaining_amount):
         contract_repository = SqlalchemyContractRepository(session)
         id_generator = UuidGenerator()
 
-        use_case = CreateContractUseCase(customer_repository, contract_repository, id_generator, auth_context)
+        use_case = CreateContractUseCase(auth_context, customer_repository, contract_repository, id_generator)
 
         contract = use_case.execute(
             creator=current_user,

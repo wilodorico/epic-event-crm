@@ -13,7 +13,7 @@ def test_manager_can_update_contract(
     customer_repository.create(karim_customer)
     auth_context = AuthContext(manager_alice)
 
-    create_use_case = CreateContractUseCase(customer_repository, contract_repository, uuid_generator, auth_context)
+    create_use_case = CreateContractUseCase(auth_context, customer_repository, contract_repository, uuid_generator)
     contract = create_use_case.execute(
         creator=manager_alice,
         customer_id=karim_customer.id,
@@ -58,7 +58,7 @@ def test_commercial_can_update_contract_for_own_customer(
     auth_context_manager_alice = AuthContext(manager_alice)
 
     create_use_case = CreateContractUseCase(
-        customer_repository, contract_repository, uuid_generator, auth_context_manager_alice
+        auth_context_manager_alice, customer_repository, contract_repository, uuid_generator
     )
     contract = create_use_case.execute(
         creator=manager_alice,
@@ -95,7 +95,7 @@ def test_commercial_cannot_update_contract_for_other_customer(
     auth_context_manager_alice = AuthContext(manager_alice)
 
     create_use_case = CreateContractUseCase(
-        customer_repository, contract_repository, uuid_generator, auth_context_manager_alice
+        auth_context_manager_alice, customer_repository, contract_repository, uuid_generator
     )
     contract = create_use_case.execute(
         creator=manager_alice,
