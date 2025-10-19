@@ -11,7 +11,7 @@ class CreateCustomerUseCase(UseCaseABC):
     permissions = Permissions.CREATE_CUSTOMER
 
     def __init__(self, auth_context: AuthContextABC, repository: CustomerRepositoryABC, id_generator: IdGeneratorABC):
-        self._auth_context = auth_context
+        super().__init__(auth_context)
         self._repository = repository
         self._id_generator = id_generator
 
