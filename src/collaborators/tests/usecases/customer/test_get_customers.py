@@ -14,7 +14,7 @@ def test_all_collaborator_roles_can_get_customers(
     collaborator = request.getfixturevalue(collaborator_fixture)
     auth_context = AuthContext(collaborator)
 
-    use_case = GetCustomersUseCase(customer_repository, auth_context)
+    use_case = GetCustomersUseCase(auth_context, customer_repository)
     customers = use_case.execute()
 
     assert customer_repository.count() == 2
@@ -25,7 +25,7 @@ def test_all_collaborator_roles_can_get_customers(
 @pytest.mark.parametrize("collaborator_fixture", ["john_commercial", "manager_alice", "bob_support"])
 def test_all_collaborator_get_customers_empty_repository(customer_repository, request, collaborator_fixture):
     auth_context = AuthContext(request.getfixturevalue(collaborator_fixture))
-    use_case = GetCustomersUseCase(customer_repository, auth_context)
+    use_case = GetCustomersUseCase(auth_context, customer_repository)
 
     customers = use_case.execute()
 

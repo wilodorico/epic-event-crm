@@ -16,7 +16,7 @@ def get_customers(ctx):
 
     try:
         repository = SqlalchemyCustomerRepository(session)
-        use_case = GetCustomersUseCase(repository, auth_context)
+        use_case = GetCustomersUseCase(auth_context, repository)
         customers = use_case.execute()
 
         if not customers:
