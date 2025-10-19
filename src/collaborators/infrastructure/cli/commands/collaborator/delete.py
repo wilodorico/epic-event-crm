@@ -31,7 +31,7 @@ def delete_collaborator(ctx, collaborator_id: str):
             click.echo(f"❌ Collaborator with ID '{collaborator_id}' not found.")
             return
 
-        use_case = DeleteCollaboratorUseCase(repository, id_generator, auth_context)
+        use_case = DeleteCollaboratorUseCase(auth_context, repository, id_generator)
         use_case.execute(current_user, collaborator_id)
 
         click.echo(
