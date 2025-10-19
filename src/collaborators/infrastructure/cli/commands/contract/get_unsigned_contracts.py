@@ -18,7 +18,7 @@ def get_unsigned_contracts(ctx):
 
     try:
         repository = SqlalchemyContractRepository(session)
-        use_case = GetUnsignedContractsUseCase(repository, auth_context)
+        use_case = GetUnsignedContractsUseCase(auth_context, repository)
 
         unsigned_contracts = use_case.execute(current_user.id)
 

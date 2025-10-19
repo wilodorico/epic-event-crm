@@ -10,7 +10,7 @@ def test_commercial_can_get_unsigned_contracts(contract_repository, karim_contra
 
     auth_context = AuthContext(john_commercial)
 
-    use_case = GetUnsignedContractsUseCase(contract_repository, auth_context)
+    use_case = GetUnsignedContractsUseCase(auth_context, contract_repository)
     unsigned_contracts = use_case.execute(john_commercial.id)
     print("unsigned_contracts", unsigned_contracts)
 
@@ -22,7 +22,7 @@ def test_commercial_can_get_unsigned_contracts(contract_repository, karim_contra
 
 def test_non_commercial_cannot_get_unsigned_contracts(contract_repository, bob_support):
     auth_context = AuthContext(bob_support)
-    use_case = GetUnsignedContractsUseCase(contract_repository, auth_context)
+    use_case = GetUnsignedContractsUseCase(auth_context, contract_repository)
 
     with pytest.raises(
         PermissionError,

@@ -1,16 +1,17 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import Contract
 from collaborators.domain.contract.contract_repository_abc import ContractRepositoryABC
 
 
-class GetUnsignedContractsUseCase:
-    def __init__(self, repository: ContractRepositoryABC, auth_context: AuthContextABC):
+class GetUnsignedContractsUseCase(UseCaseABC):
+    permissions = Permissions.FILTER_CONTRACTS
+
+    def __init__(self, auth_context: AuthContextABC, repository: ContractRepositoryABC):
+        super().__init__(auth_context)
         self._repository = repository
-        self._auth_context = auth_context
 
-    def execute(self, commercial_id: str) -> list[Contract]:
-        self._auth_context.ensure(Permissions.FILTER_CONTRACTS)
-
+    def _execute(self, commercial_id: str) -> list[Contract]:
         unsigned_contracts = self._repository.get_all_unsigned(commercial_id)
         return unsigned_contracts
