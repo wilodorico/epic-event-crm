@@ -16,7 +16,7 @@ def get_contracts(ctx):
 
     try:
         repository = SqlalchemyContractRepository(session)
-        use_case = GetContractsUseCase(repository, auth_context)
+        use_case = GetContractsUseCase(auth_context, repository)
 
         contracts = use_case.execute()
 

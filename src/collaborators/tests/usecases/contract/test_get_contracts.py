@@ -14,7 +14,7 @@ def test_collaborator_can_get_contracts(
     collaborator = request.getfixturevalue(collaborator_fixture)
     auth_context = AuthContext(collaborator)
 
-    use_case = GetContractsUseCase(contract_repository, auth_context)
+    use_case = GetContractsUseCase(auth_context, contract_repository)
     contracts = use_case.execute()
 
     assert contract_repository.count() == 2
@@ -25,7 +25,7 @@ def test_collaborator_can_get_contracts(
 @pytest.mark.parametrize("collaborator_fixture", ["john_commercial", "manager_alice", "bob_support"])
 def test_collaborator_get_contracts_empty_repository(contract_repository, request, collaborator_fixture):
     auth_context = AuthContext(request.getfixturevalue(collaborator_fixture))
-    use_case = GetContractsUseCase(contract_repository, auth_context)
+    use_case = GetContractsUseCase(auth_context, contract_repository)
 
     contracts = use_case.execute()
 
