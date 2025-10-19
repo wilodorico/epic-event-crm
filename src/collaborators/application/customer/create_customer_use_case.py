@@ -1,4 +1,5 @@
 from collaborators.application.services.auth_context_abc import AuthContextABC
+from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.customer.customer import Customer
@@ -6,13 +7,15 @@ from collaborators.domain.customer.customer_repository_abc import CustomerReposi
 from commons.id_generator_abc import IdGeneratorABC
 
 
-class CreateCustomerUseCase:
-    def __init__(self, repository: CustomerRepositoryABC, id_generator: IdGeneratorABC, auth_context: AuthContextABC):
+class CreateCustomerUseCase(UseCaseABC):
+    permissions = Permissions.CREATE_CUSTOMER
+
+    def __init__(self, auth_context: AuthContextABC, repository: CustomerRepositoryABC, id_generator: IdGeneratorABC):
+        self._auth_context = auth_context
         self._repository = repository
         self._id_generator = id_generator
-        self._auth_context = auth_context
 
-    def execute(
+    def _execute(
         self,
         creator: Collaborator,
         first_name: str,
@@ -21,8 +24,6 @@ class CreateCustomerUseCase:
         phone_number: str,
         company: str,
     ) -> Customer:
-        self._auth_context.ensure(Permissions.CREATE_CUSTOMER)
-
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")
 

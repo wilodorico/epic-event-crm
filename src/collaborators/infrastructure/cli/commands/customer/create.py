@@ -26,7 +26,7 @@ def create_customer(ctx, first_name, last_name, email, phone_number, company):
         repository = SqlalchemyCustomerRepository(session)
         id_generator = UuidGenerator()
 
-        use_case = CreateCustomerUseCase(repository, id_generator, auth_context)
+        use_case = CreateCustomerUseCase(auth_context, repository, id_generator)
         customer = use_case.execute(
             creator=current_user,
             first_name=first_name,

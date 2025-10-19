@@ -18,7 +18,7 @@ def tariq_customer():
 
 def test_commercial_can_update_own_customer(customer_repository, john_commercial, uuid_generator, tariq_customer):
     auth_context = AuthContext(john_commercial)
-    create_use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    create_use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
     customer = create_use_case.execute(creator=john_commercial, **tariq_customer)
 
     update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)
@@ -39,7 +39,7 @@ def test_commercial_cannot_update_other_customer(
     tariq_customer,
 ):
     auth_context = AuthContext(jane_commercial)
-    create_use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    create_use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
     customer = create_use_case.execute(creator=john_commercial, **tariq_customer)
 
     update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)

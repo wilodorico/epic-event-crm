@@ -18,7 +18,7 @@ def tariq_customer():
 
 def test_commercial_can_create_customer(customer_repository, john_commercial, uuid_generator, tariq_customer):
     auth_context = AuthContext(john_commercial)
-    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
     created_customer = use_case.execute(creator=john_commercial, **tariq_customer)
 
     customer = customer_repository.find_by_email(created_customer.email)
@@ -35,7 +35,7 @@ def test_commercial_cannot_create_customer_with_existing_email(
     customer_repository, john_commercial, uuid_generator, tariq_customer
 ):
     auth_context = AuthContext(john_commercial)
-    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
 
     use_case.execute(creator=john_commercial, **tariq_customer)
 
@@ -45,7 +45,7 @@ def test_commercial_cannot_create_customer_with_existing_email(
 
 def test_non_commercial_cannot_create_customer(customer_repository, manager_alice, uuid_generator, tariq_customer):
     auth_context = AuthContext(manager_alice)
-    use_case = CreateCustomerUseCase(customer_repository, uuid_generator, auth_context)
+    use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
 
     with pytest.raises(AuthorizationError) as exc_info:
         use_case.execute(creator=manager_alice, **tariq_customer)
