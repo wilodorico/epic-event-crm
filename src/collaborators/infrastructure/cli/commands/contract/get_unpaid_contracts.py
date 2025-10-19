@@ -18,7 +18,7 @@ def get_unpaid_contracts(ctx):
 
     try:
         repository = SqlalchemyContractRepository(session)
-        use_case = GetUnpaidContractsUseCase(repository, auth_context)
+        use_case = GetUnpaidContractsUseCase(auth_context, repository)
         unpaid_contracts = use_case.execute(current_user.id)
 
         if not unpaid_contracts:

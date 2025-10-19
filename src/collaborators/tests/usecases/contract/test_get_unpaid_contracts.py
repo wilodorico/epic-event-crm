@@ -12,7 +12,7 @@ def test_commercial_can_get_unpaid_contracts(
 
     auth_context = AuthContext(john_commercial)
 
-    use_case = GetUnpaidContractsUseCase(contract_repository, auth_context)
+    use_case = GetUnpaidContractsUseCase(auth_context, contract_repository)
     unpaid_contracts = use_case.execute(john_commercial.id)
     print("unpaid_contracts", unpaid_contracts)
 
@@ -24,7 +24,7 @@ def test_commercial_can_get_unpaid_contracts(
 
 def test_non_commercial_cannot_get_unpaid_contracts(contract_repository, bob_support):
     auth_context = AuthContext(bob_support)
-    use_case = GetUnpaidContractsUseCase(contract_repository, auth_context)
+    use_case = GetUnpaidContractsUseCase(auth_context, contract_repository)
 
     with pytest.raises(
         PermissionError,
