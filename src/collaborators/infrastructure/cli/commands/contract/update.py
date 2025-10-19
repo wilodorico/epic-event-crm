@@ -43,7 +43,7 @@ def update_contract(ctx, id):
             click.echo(f"❌ {e}")
             return
 
-        use_case = UpdateContractUseCase(contract_repository, auth_context)
+        use_case = UpdateContractUseCase(auth_context, contract_repository)
 
         update_data = {}
         if new_total_amount != existing_contract.total_amount:

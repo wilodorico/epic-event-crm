@@ -21,7 +21,7 @@ def test_manager_can_update_contract(
         remaining_amount=Decimal("1000.00"),
     )
 
-    update_use_case = UpdateContractUseCase(contract_repository, auth_context)
+    update_use_case = UpdateContractUseCase(auth_context, contract_repository)
 
     updated_contract = update_use_case.execute(
         updater=manager_alice,
@@ -38,7 +38,7 @@ def test_manager_can_update_contract(
 
 def test_manager_cannot_update_non_existent_contract(contract_repository, manager_alice):
     auth_context = AuthContext(manager_alice)
-    update_use_case = UpdateContractUseCase(contract_repository, auth_context)
+    update_use_case = UpdateContractUseCase(auth_context, contract_repository)
 
     with pytest.raises(ValueError, match="Contract not found."):
         update_use_case.execute(
@@ -68,7 +68,7 @@ def test_commercial_can_update_contract_for_own_customer(
     )
 
     auth_context_john_commercial = AuthContext(john_commercial)
-    update_use_case = UpdateContractUseCase(contract_repository, auth_context_john_commercial)
+    update_use_case = UpdateContractUseCase(auth_context_john_commercial, contract_repository)
 
     updated_contract = update_use_case.execute(
         updater=john_commercial,
@@ -105,7 +105,7 @@ def test_commercial_cannot_update_contract_for_other_customer(
     )
 
     auth_context_amel_commercial = AuthContext(amel_commercial)
-    update_use_case = UpdateContractUseCase(contract_repository, auth_context_amel_commercial)
+    update_use_case = UpdateContractUseCase(auth_context_amel_commercial, contract_repository)
 
     with pytest.raises(PermissionError, match="Commercial can only update their own customers contracts"):
         update_use_case.execute(
