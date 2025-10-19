@@ -34,7 +34,7 @@ def sign_contract(ctx, id):
             click.echo("Signing operation cancelled.")
             return
 
-        use_case = SignContractUseCase(contract_repository, auth_context)
+        use_case = SignContractUseCase(auth_context, contract_repository)
 
         use_case.execute(current_user.id, existing_contract.id)
         click.echo(f"✅ Contract with ID '{id}' has been signed successfully.")

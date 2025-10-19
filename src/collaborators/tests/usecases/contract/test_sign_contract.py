@@ -14,7 +14,7 @@ def test_collaborator_can_sign_contract(
 
     auth_context = AuthContext(collaborator)
 
-    use_case = SignContractUseCase(contract_repository, auth_context)
+    use_case = SignContractUseCase(auth_context, contract_repository)
 
     use_case.execute(updater_id=manager_alice.id, contract_id=karim_contract.id)
 
@@ -27,7 +27,7 @@ def test_support_cannot_sign_contract(contract_repository, karim_contract, bob_s
     contract_repository.create(karim_contract)
     auth_context = AuthContext(bob_support)
 
-    use_case = SignContractUseCase(contract_repository, auth_context)
+    use_case = SignContractUseCase(auth_context, contract_repository)
 
     with pytest.raises(PermissionError) as exc_info:
         use_case.execute(updater_id=bob_support.id, contract_id=karim_contract.id)
@@ -42,7 +42,7 @@ def test_support_cannot_sign_contract(contract_repository, karim_contract, bob_s
 def test_manager_cannot_sign_non_existent_contract(contract_repository, manager_alice):
     auth_context = AuthContext(manager_alice)
 
-    use_case = SignContractUseCase(contract_repository, auth_context)
+    use_case = SignContractUseCase(auth_context, contract_repository)
 
     with pytest.raises(ValueError) as exc_info:
         use_case.execute(updater_id=manager_alice.id, contract_id="non-existent-id")
