@@ -21,7 +21,7 @@ def test_commercial_can_update_own_customer(customer_repository, john_commercial
     create_use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
     customer = create_use_case.execute(creator=john_commercial, **tariq_customer)
 
-    update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)
+    update_use_case = UpdateCustomerUseCase(auth_context, customer_repository)
     updated_customer = update_use_case.execute(
         updater=john_commercial,
         customer_id=customer.id,
@@ -42,7 +42,7 @@ def test_commercial_cannot_update_other_customer(
     create_use_case = CreateCustomerUseCase(auth_context, customer_repository, uuid_generator)
     customer = create_use_case.execute(creator=john_commercial, **tariq_customer)
 
-    update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)
+    update_use_case = UpdateCustomerUseCase(auth_context, customer_repository)
 
     with pytest.raises(PermissionError):
         update_use_case.execute(
@@ -54,7 +54,7 @@ def test_commercial_cannot_update_other_customer(
 
 def test_update_customer_not_found(customer_repository, john_commercial):
     auth_context = AuthContext(john_commercial)
-    update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)
+    update_use_case = UpdateCustomerUseCase(auth_context, customer_repository)
 
     with pytest.raises(ValueError, match="Customer not found."):
         update_use_case.execute(
@@ -62,7 +62,7 @@ def test_update_customer_not_found(customer_repository, john_commercial):
             customer_id="non-existent-id",
             data={"last_name": "Elamir"},
         )
-    update_use_case = UpdateCustomerUseCase(customer_repository, auth_context)
+    update_use_case = UpdateCustomerUseCase(auth_context, customer_repository)
 
     with pytest.raises(ValueError, match="Customer not found."):
         update_use_case.execute(

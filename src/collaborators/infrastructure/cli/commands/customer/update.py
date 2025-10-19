@@ -47,7 +47,7 @@ def update_customer(ctx, id):
 
         company = click.prompt("Company", default=existing_customer.company, show_default=True)
 
-        use_case = UpdateCustomerUseCase(repository, auth_context)
+        use_case = UpdateCustomerUseCase(auth_context, repository)
 
         update_data = {}
         if first_name != existing_customer.first_name:
