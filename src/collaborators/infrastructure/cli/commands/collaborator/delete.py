@@ -20,7 +20,6 @@ def delete_collaborator(ctx, collaborator_id: str):
 
     """
     session = ctx.obj.get("session") if ctx.obj and "session" in ctx.obj else SessionLocal()
-    current_user = ctx.obj.get("current_user")
     auth_context = ctx.obj.get("auth_context")
 
     try:
@@ -32,7 +31,7 @@ def delete_collaborator(ctx, collaborator_id: str):
             return
 
         use_case = DeleteCollaboratorUseCase(auth_context, repository, id_generator)
-        use_case.execute(current_user, collaborator_id)
+        use_case.execute(collaborator_id)
 
         click.echo(
             f"✅ Collaborator {existing_collaborator.first_name} {existing_collaborator.last_name} deleted successfully!"

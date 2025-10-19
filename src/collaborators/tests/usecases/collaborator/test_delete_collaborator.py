@@ -12,7 +12,7 @@ def test_manager_can_delete_collaborator_success(
     collaborator_repository.create(john_commercial)
     use_case = DeleteCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator)
     collaborator_to_delete = collaborator_repository.find_by_id(john_commercial.id)
-    use_case.execute(manager_alice, collaborator_to_delete.id)
+    use_case.execute(collaborator_to_delete.id)
     assert collaborator_repository.find_by_id(john_commercial.id) is None
 
 
@@ -22,7 +22,7 @@ def test_non_manager_cannot_delete_collaborator(collaborator_repository, uuid_ge
     use_case = DeleteCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator)
 
     with pytest.raises(AuthorizationError) as exc_info:
-        use_case.execute(bob_support, john_commercial.id)
+        use_case.execute(john_commercial.id)
 
     assert bob_support.email in str(exc_info.value)
 
@@ -32,4 +32,4 @@ def test_delete_non_existent_collaborator(collaborator_repository, uuid_generato
     use_case = DeleteCollaboratorUseCase(auth_context, collaborator_repository, uuid_generator)
 
     with pytest.raises(ValueError, match="Collaborator not found."):
-        use_case.execute(manager_alice, "non-existent-id")
+        use_case.execute("non-existent-id")
