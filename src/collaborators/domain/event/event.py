@@ -1,4 +1,14 @@
 from datetime import datetime
+from typing import TypedDict
+
+
+class EventUpdateData(TypedDict, total=False):
+    title: str
+    date_start: datetime
+    date_end: datetime
+    location: str
+    attendees: int
+    notes: str
 
 
 class Event:
@@ -32,3 +42,10 @@ class Event:
         self.contact_support_id = support_id
         self.updated_at = datetime.now()
         self.updated_by_id = collaborator_id
+
+    def update(self, data: EventUpdateData):
+        """Update allowed fields only"""
+        for field, value in data.items():
+            setattr(self, field, value)
+        self.updated_at = datetime.now()
+        self.updated_by_id = self.contact_support_id
