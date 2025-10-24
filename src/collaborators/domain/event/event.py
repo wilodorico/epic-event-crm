@@ -52,3 +52,6 @@ class Event:
 
     def is_assigned_to_support(self) -> bool:
         return self.contact_support_id is not None
+
+    def is_past_event(self) -> bool:
+        return self.date_end < datetime.now()
