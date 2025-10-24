@@ -11,7 +11,7 @@ class UpdateAssignedEventUseCase(UseCaseABC):
         super().__init__(auth_context)
         self._event_repository = event_repository
 
-    def _execute(self, event_id, **updates):
+    def _execute(self, event_id, support_id, **updates):
         event = self._event_repository.find_by_id(event_id)
 
         if not event:
@@ -19,6 +19,9 @@ class UpdateAssignedEventUseCase(UseCaseABC):
 
         if not event.is_assigned_to_support():
             raise PermissionError("Event not assigned to any support collaborator")
+
+        if event.contact_support_id != support_id:
+            raise PermissionError("Event not assigned to you")
 
         event.update(updates)
         self._event_repository.update(event)
