@@ -14,6 +14,9 @@ class UpdateAssignedEventUseCase(UseCaseABC):
     def _execute(self, event_id, **updates):
         event = self._event_repository.find_by_id(event_id)
 
+        if not event:
+            raise ValueError("Event not found")
+
         event.update(updates)
         self._event_repository.update(event)
 
