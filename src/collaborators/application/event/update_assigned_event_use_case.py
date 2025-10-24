@@ -22,9 +22,9 @@ class UpdateAssignedEventUseCase(UseCaseABC):
             raise PermissionError("Event not assigned to any support collaborator")
 
         if event.contact_support_id != support_id:
-            raise PermissionError("Event not assigned to you")
+            raise PermissionError("Event assigned to another support collaborator")
 
-        event.update(updates)
+        event.update(updates, updater_id=support_id)
         self._event_repository.update(event)
 
         return event

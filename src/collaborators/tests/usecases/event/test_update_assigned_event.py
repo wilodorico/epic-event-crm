@@ -55,7 +55,7 @@ def test_support_cannot_update_event_assigned_to_other_support(
     auth_context = AuthContext(bob_support)
     use_case = UpdateAssignedEventUseCase(auth_context, event_repository)
 
-    with pytest.raises(PermissionError, match="Event not assigned to you"):
+    with pytest.raises(PermissionError, match="Event assigned to another support collaborator"):
         use_case.execute(
             event_id=karim_event.id,
             title="Should Fail",

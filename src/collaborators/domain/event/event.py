@@ -43,12 +43,12 @@ class Event:
         self.updated_at = datetime.now()
         self.updated_by_id = collaborator_id
 
-    def update(self, data: EventUpdateData):
+    def update(self, data: EventUpdateData, updater_id: str):
         """Update allowed fields only"""
         for field, value in data.items():
             setattr(self, field, value)
         self.updated_at = datetime.now()
-        self.updated_by_id = self.contact_support_id
+        self.updated_by_id = updater_id
 
     def is_assigned_to_support(self) -> bool:
         return self.contact_support_id is not None
