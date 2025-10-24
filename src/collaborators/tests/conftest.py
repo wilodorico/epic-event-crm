@@ -149,6 +149,20 @@ def bob_support():
 
 
 @pytest.fixture
+def florence_support():
+    return Collaborator(
+        id="florence-support-1",
+        first_name="Florence",
+        last_name="bonumeur",
+        email="florence.bonumeur@test.com",
+        password="securepassword",
+        phone_number="1234567890",
+        role=Role.SUPPORT,
+        created_by_id="creator-id",
+    )
+
+
+@pytest.fixture
 def carol_marketing():
     return Collaborator(
         id="carol-marketing-1",
