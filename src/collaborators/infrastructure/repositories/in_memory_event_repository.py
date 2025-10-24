@@ -24,3 +24,6 @@ class InMemoryEventRepository(EventRepositoryABC):
 
     def update(self, event: Event) -> None:
         self.events[event.id] = event
+
+    def get_by_support_id(self, support_id: str) -> list[Event]:
+        return [event for event in self.events.values() if event.contact_support_id == support_id]
