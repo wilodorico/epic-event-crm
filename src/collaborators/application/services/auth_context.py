@@ -30,7 +30,12 @@ class AuthContext(AuthContextABC):
             Permissions.READ_EVENTS,
             Permissions.FILTER_CONTRACTS,
         },
-        Role.SUPPORT: {Permissions.READ_CUSTOMERS, Permissions.READ_CONTRACTS, Permissions.READ_EVENTS},
+        Role.SUPPORT: {
+            Permissions.READ_CUSTOMERS,
+            Permissions.READ_CONTRACTS,
+            Permissions.READ_EVENTS,
+            Permissions.UPDATE_EVENT,
+        },
     }
 
     def __init__(self, user: Collaborator):
