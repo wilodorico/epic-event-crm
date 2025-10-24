@@ -1,5 +1,6 @@
 import os
 from contextlib import closing
+from datetime import datetime
 
 import pytest
 from sqlalchemy import StaticPool, create_engine
@@ -240,8 +241,6 @@ def marie_contract(manager_alice, marie_customer, amel_commercial):
 
 @pytest.fixture
 def karim_event(karim_contract):
-    from datetime import datetime
-
     return Event(
         id="karim-event-1",
         customer_id=karim_contract.customer_id,
@@ -256,9 +255,22 @@ def karim_event(karim_contract):
 
 
 @pytest.fixture
-def marie_event(marie_contract):
-    from datetime import datetime
+def karim_past_event(karim_contract):
+    return Event(
+        id="karim-past-event-1",
+        customer_id=karim_contract.customer_id,
+        contract_id=karim_contract.id,
+        title="Karim's Past Event",
+        date_start=datetime(2024, 5, 1, 10, 0),
+        date_end=datetime(2024, 5, 1, 18, 0),
+        location="Karim's Old Venue",
+        attendees=50,
+        notes="Past event setup",
+    )
 
+
+@pytest.fixture
+def marie_event(marie_contract):
     return Event(
         id="marie-event-1",
         customer_id=marie_contract.customer_id,
