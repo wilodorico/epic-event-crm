@@ -21,3 +21,6 @@ class EventRepositoryABC(ABC):
 
     @abstractmethod
     def update(self, event: Event) -> None: ...
+
+    @abstractmethod
+    def get_by_support_id(self, support_id: str) -> list[Event]: ...
