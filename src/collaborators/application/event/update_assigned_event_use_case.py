@@ -11,7 +11,8 @@ class UpdateAssignedEventUseCase(UseCaseABC):
         super().__init__(auth_context)
         self._event_repository = event_repository
 
-    def _execute(self, event_id, support_id, **updates):
+    def _execute(self, event_id, **updates):
+        support_id = self._auth_context.user.id
         event = self._event_repository.find_by_id(event_id)
 
         if not event:

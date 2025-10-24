@@ -13,7 +13,6 @@ def test_support_can_update_assigned_event(event_repository, manager_alice, bob_
     updated_title = "Updated Event Title"
     updated_event = use_case.execute(
         event_id=karim_event.id,
-        support_id=bob_support.id,
         title=updated_title,
     )
     assert updated_event.title == updated_title
@@ -28,7 +27,6 @@ def test_support_cannot_update_non_existent_event(event_repository, bob_support)
     with pytest.raises(ValueError, match="Event not found"):
         use_case.execute(
             event_id=9999,  # Assuming this ID does not exist
-            support_id=bob_support.id,
             title="Should Fail",
         )
 
@@ -43,7 +41,6 @@ def test_support_cannot_update_unassigned_event(event_repository, manager_alice,
     with pytest.raises(PermissionError, match="Event not assigned to any support collaborator"):
         use_case.execute(
             event_id=karim_event.id,
-            support_id=bob_support.id,
             title="Should Fail",
         )
 
@@ -61,6 +58,5 @@ def test_support_cannot_update_event_assigned_to_other_support(
     with pytest.raises(PermissionError, match="Event not assigned to you"):
         use_case.execute(
             event_id=karim_event.id,
-            support_id=bob_support.id,
             title="Should Fail",
         )
