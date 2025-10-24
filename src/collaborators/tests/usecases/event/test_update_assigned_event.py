@@ -29,3 +29,17 @@ def test_support_cannot_update_non_existent_event(event_repository, bob_support)
             event_id=9999,  # Assuming this ID does not exist
             title="Should Fail",
         )
+
+
+def test_support_cannot_update_unassigned_event(event_repository, manager_alice, bob_support, karim_event):
+    # Event is not assigned to bob_support
+    event_repository.create(karim_event)
+
+    auth_context = AuthContext(bob_support)
+    use_case = UpdateAssignedEventUseCase(auth_context, event_repository)
+
+    with pytest.raises(PermissionError, match="Event not assigned to any support collaborator"):
+        use_case.execute(
+            event_id=karim_event.id,
+            title="Should Fail",
+        )

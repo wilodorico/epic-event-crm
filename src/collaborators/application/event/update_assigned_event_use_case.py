@@ -17,6 +17,9 @@ class UpdateAssignedEventUseCase(UseCaseABC):
         if not event:
             raise ValueError("Event not found")
 
+        if not event.is_assigned_to_support():
+            raise PermissionError("Event not assigned to any support collaborator")
+
         event.update(updates)
         self._event_repository.update(event)
 

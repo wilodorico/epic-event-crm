@@ -49,3 +49,6 @@ class Event:
             setattr(self, field, value)
         self.updated_at = datetime.now()
         self.updated_by_id = self.contact_support_id
+
+    def is_assigned_to_support(self) -> bool:
+        return self.contact_support_id is not None
