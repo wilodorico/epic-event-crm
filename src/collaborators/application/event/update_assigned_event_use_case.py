@@ -11,7 +11,7 @@ class UpdateAssignedEventUseCase(UseCaseABC):
         super().__init__(auth_context)
         self._event_repository = event_repository
 
-    def _execute(self, event_id, **updates):
+    def _execute(self, event_id, **data):
         support_id = self._auth_context.user.id
         event = self._event_repository.find_by_id(event_id)
 
@@ -24,7 +24,10 @@ class UpdateAssignedEventUseCase(UseCaseABC):
         if event.contact_support_id != support_id:
             raise PermissionError("Event assigned to another support collaborator")
 
-        event.update(updates, updater_id=support_id)
+        if event.is_past_event():
+            raise PermissionError("Cannot update past events")
+
+        event.update(data, updater_id=support_id)
         self._event_repository.update(event)
 
         return event

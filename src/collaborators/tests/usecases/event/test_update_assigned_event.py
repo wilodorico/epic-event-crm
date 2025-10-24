@@ -31,6 +31,20 @@ def test_support_cannot_update_non_existent_event(event_repository, bob_support)
         )
 
 
+def test_support_cannot_update_past_event(event_repository, manager_alice, bob_support, karim_past_event):
+    karim_past_event.assign_support(manager_alice.id, bob_support.id)
+    event_repository.create(karim_past_event)
+
+    auth_context = AuthContext(bob_support)
+    use_case = UpdateAssignedEventUseCase(auth_context, event_repository)
+
+    with pytest.raises(PermissionError, match="Cannot update past events"):
+        use_case.execute(
+            event_id=karim_past_event.id,
+            title="Should Fail",
+        )
+
+
 def test_support_cannot_update_unassigned_event(event_repository, manager_alice, bob_support, karim_event):
     # Event is not assigned to bob_support
     event_repository.create(karim_event)
