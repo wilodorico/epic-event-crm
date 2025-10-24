@@ -5,6 +5,7 @@ from collaborators.infrastructure.cli.commands.event.create import create_event
 from collaborators.infrastructure.cli.commands.event.get_events import get_events
 from collaborators.infrastructure.cli.commands.event.get_my_events import get_my_events
 from collaborators.infrastructure.cli.commands.event.get_unassigned_events import get_unassigned_events
+from collaborators.infrastructure.cli.commands.event.update_assigned_event import update_assigned_event
 
 
 @click.group()
@@ -18,3 +19,4 @@ event.add_command(get_events)
 event.add_command(get_unassigned_events)
 event.add_command(assign_support)
 event.add_command(get_my_events)
+event.add_command(update_assigned_event)
