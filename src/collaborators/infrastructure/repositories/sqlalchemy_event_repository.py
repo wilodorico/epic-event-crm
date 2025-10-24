@@ -48,3 +48,9 @@ class SqlalchemyEventRepository(EventRepositoryABC):
         # Merge updates the existing record with the same primary key
         self.session.merge(model)
         self.session.commit()
+
+    def get_by_support_id(self, support_id: str) -> list[Event]:
+        query = select(EventModel).where(EventModel.contact_support_id == support_id)
+        result = self.session.execute(query)
+        event_models = result.scalars().all()
+        return [EventMapper.to_entity(model) for model in event_models]
