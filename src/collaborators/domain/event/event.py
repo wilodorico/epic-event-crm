@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import TypedDict
 
+from commons.clock_abc import ClockABC
+
 
 class EventUpdateData(TypedDict, total=False):
     title: str
@@ -23,6 +25,7 @@ class Event:
         location: str,
         attendees: int,
         notes: str,
+        clock: ClockABC | None = None,
     ):
         self.id = id
         self.title = title
@@ -34,20 +37,21 @@ class Event:
         self.attendees = attendees
         self.notes = notes
         self.contact_support_id = None
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = clock.now() if clock else datetime.now()
+        self.updated_at = clock.now() if clock else datetime.now()
         self.updated_by_id = None
+        self._clock = clock
 
     def assign_support(self, collaborator_id: str, support_id: str):
         self.contact_support_id = support_id
-        self.updated_at = datetime.now()
+        self.updated_at = self._clock.now() if self._clock else datetime.now()
         self.updated_by_id = collaborator_id
 
     def update(self, data: EventUpdateData, updater_id: str):
         """Update allowed fields only"""
         for field, value in data.items():
             setattr(self, field, value)
-        self.updated_at = datetime.now()
+        self.updated_at = self._clock.now() if self._clock else datetime.now()
         self.updated_by_id = updater_id
 
     def is_assigned_to_support(self) -> bool:

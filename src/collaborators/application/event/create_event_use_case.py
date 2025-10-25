@@ -7,6 +7,7 @@ from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract_repository_abc import ContractRepositoryABC
 from collaborators.domain.event.event import Event
 from collaborators.domain.event.event_repository_abc import EventRepositoryABC
+from commons.clock_abc import ClockABC
 from commons.id_generator_abc import IdGeneratorABC
 
 
@@ -19,11 +20,13 @@ class CreateEventUseCase(UseCaseABC):
         event_repository: EventRepositoryABC,
         contract_repository: ContractRepositoryABC,
         id_generator: IdGeneratorABC,
+        clock: ClockABC | None = None,
     ):
         super().__init__(auth_context)
         self._event_repository = event_repository
         self._contract_repository = contract_repository
         self._id_generator = id_generator
+        self._clock = clock
 
     def _execute(
         self,
@@ -64,6 +67,7 @@ class CreateEventUseCase(UseCaseABC):
             location=location,
             attendees=attendees,
             notes=notes,
+            clock=self._clock,
         )
 
         self._event_repository.create(event)

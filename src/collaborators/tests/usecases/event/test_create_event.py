@@ -6,6 +6,7 @@ from collaborators.application.event.create_event_use_case import CreateEventUse
 from collaborators.application.services.auth_context import AuthContext
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract import ContractStatus
+from collaborators.infrastructure.common.fake_clock import FakeClock
 
 
 @pytest.fixture
@@ -55,8 +56,10 @@ def test_commercial_can_create_event(
 
     event_data = {**base_event_data, "contract_id": karim_contract.id}
 
+    clock = FakeClock(datetime(2024, 6, 1, 10, 0, 0))
+
     auth_context = AuthContext(john_commercial)
-    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator)
+    use_case = CreateEventUseCase(auth_context, event_repository, contract_repository, uuid_generator, clock)
     created_event = use_case.execute(creator=john_commercial, **event_data)
 
     assert karim_contract.status == ContractStatus.SIGNED
@@ -69,6 +72,8 @@ def test_commercial_can_create_event(
     assert created_event.location == "Main Conference Hall"
     assert created_event.attendees == event_attendees
     assert created_event.notes == "Bring your ID for entry"
+    assert created_event.created_at == datetime(2024, 6, 1, 10, 0, 0)
+    assert created_event.updated_at == datetime(2024, 6, 1, 10, 0, 0)
 
 
 def test_commercial_cannot_create_event_if_contract_not_signed(
