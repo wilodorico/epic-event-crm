@@ -4,12 +4,21 @@ from typing import TypedDict
 
 
 class Role(Enum):
+    """Enumeration of possible collaborator roles."""
+
     COMMERCIAL = "Commercial"
     MANAGEMENT = "Management"
     SUPPORT = "Support"
 
 
 class CollaboratorUpdateData(TypedDict, total=False):
+    """Typed dictionary for updating collaborator data.
+
+    Used to pass partial updates to a `Collaborator` instance.
+    All fields are optional.
+
+    """
+
     first_name: str
     last_name: str
     email: str
@@ -18,6 +27,13 @@ class CollaboratorUpdateData(TypedDict, total=False):
 
 
 class Collaborator:
+    """Domain entity representing a system collaborator with role-based permissions.
+
+    A collaborator is a user of the CRM system who can perform operations based on their
+    assigned role (Commercial, Management, or Support). This entity tracks personal information,
+    authentication credentials, and audit metadata for creation and updates.
+    """
+
     def __init__(
         self,
         id: str,
@@ -42,6 +58,16 @@ class Collaborator:
         self.updated_by_id = None
 
     def update(self, data: CollaboratorUpdateData, updater_id: str):
+        """Updates the collaborator's data with the provided fields.
+
+        Args:
+            data: Fields to update (as `CollaboratorUpdateData`).
+            updater_id: ID of the user performing the update.
+
+        Note:
+            Automatically handles string-to-`Role` conversion for the `role` field.
+            Updates `updated_at` and `updated_by_id` on success.
+        """
         for field, value in data.items():
             if field == "role" and isinstance(value, str):
                 value = Role(value)
