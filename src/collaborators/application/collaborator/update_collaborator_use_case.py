@@ -3,6 +3,7 @@ from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator import Collaborator
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.sentry_config import capture_message
 
 
 class UpdateCollaboratorUseCase(UseCaseABC):
@@ -40,5 +41,15 @@ class UpdateCollaboratorUseCase(UseCaseABC):
 
         collaborator.update(data, updater.id)
         self._repository.update(collaborator)
+
+        # Log collaborator update to Sentry
+        capture_message(
+            f"Collaborator updated: {collaborator.email}",
+            level="info",
+            collaborator_id=collaborator_id,
+            collaborator_email=collaborator.email,
+            updated_fields=list(data.keys()),
+            updated_by=updater.id,
+        )
 
         return collaborator
