@@ -5,6 +5,14 @@ from collaborators.domain.contract.contract_repository_abc import ContractReposi
 
 
 class GetContractsUseCase(UseCaseABC):
+    """Handles the retrieval of all contracts.
+
+    This use case ensures that only authorized users can view all contracts in the system.
+    It fetches and returns the complete list of contracts from the repository.
+
+    Requires the READ_CONTRACTS permission to execute.
+    """
+
     permissions = Permissions.READ_CONTRACTS
 
     def __init__(self, auth_context: AuthContextABC, repository: ContractRepositoryABC):
@@ -12,5 +20,16 @@ class GetContractsUseCase(UseCaseABC):
         self.repository = repository
 
     def _execute(self):
+        """Retrieves all contracts.
+
+        Args:
+            None
+
+        Raises:
+            PermissionError: If the user lacks permissions.
+
+        Returns:
+            list[Contract]: A list of all contract entities in the system.
+        """
         contracts = self.repository.get_all()
         return contracts

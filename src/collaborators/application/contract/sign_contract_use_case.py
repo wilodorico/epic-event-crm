@@ -5,6 +5,15 @@ from collaborators.domain.contract.contract_repository_abc import ContractReposi
 
 
 class SignContractUseCase(UseCaseABC):
+    """Handles the signing of a contract by an authorized user.
+
+    This use case ensures that only authorized users can sign contracts. It validates
+    the contract's existence, checks that it has not been signed already, marks it as
+    signed, and persists the updated contract in the repository.
+
+    Requires the SIGN_CONTRACT permission to execute.
+    """
+
     permissions = Permissions.SIGN_CONTRACT
 
     def __init__(self, auth_context: AuthContextABC, repository: ContractRepositoryABC):
@@ -12,6 +21,19 @@ class SignContractUseCase(UseCaseABC):
         self.repository = repository
 
     def _execute(self, updater_id: str, contract_id: str) -> None:
+        """Signs a contract.
+
+        Args:
+            updater_id: The unique identifier of the collaborator signing the contract.
+            contract_id: The unique identifier of the contract to sign.
+
+        Raises:
+            ValueError: If the contract is not found or is already signed.
+            PermissionError: If the user lacks permissions.
+
+        Returns:
+            None. The contract is marked as signed and persisted in the repository.
+        """
         contract = self.repository.find_by_id(contract_id)
         if not contract:
             raise ValueError("Contract not found.")

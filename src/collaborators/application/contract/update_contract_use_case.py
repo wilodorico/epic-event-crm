@@ -7,6 +7,16 @@ from collaborators.domain.contract.contract_repository_abc import ContractReposi
 
 
 class UpdateContractUseCase(UseCaseABC):
+    """Handles the update of a contract by an authorized collaborator.
+
+    This use case ensures that only authorized collaborators can update contracts. For commercial
+    contacts, it restricts updates to their own customers' contracts only. It validates
+    the contract's existence, applies the provided changes, and persists the updated
+    contract in the repository.
+
+    Requires the UPDATE_CONTRACT permission to execute.
+    """
+
     permissions = Permissions.UPDATE_CONTRACT
 
     def __init__(
@@ -18,6 +28,21 @@ class UpdateContractUseCase(UseCaseABC):
         self._contract_repository = contract_repository
 
     def _execute(self, updater: Collaborator, contract_id: str, data: dict) -> Contract | None:
+        """Updates a contract's information.
+
+        Args:
+            updater: The collaborator performing the update (manager or commercial contact).
+            contract_id: The unique identifier of the contract to update.
+            data: Dictionary containing the fields to update and their new values.
+
+        Raises:
+            ValueError: If the contract is not found.
+            PermissionError: If the user lacks permissions or if a commercial contact
+                attempts to update a contract not assigned to them.
+
+        Returns:
+            Contract | None: The updated contract entity persisted in the repository.
+        """
         contract = self._contract_repository.find_by_id(contract_id)
 
         if not contract:

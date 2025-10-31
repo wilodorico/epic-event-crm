@@ -11,6 +11,15 @@ from commons.id_generator_abc import IdGeneratorABC
 
 
 class CreateContractUseCase(UseCaseABC):
+    """Handles the creation of a new contract by a manager.
+
+    This use case ensures that only authorized managers can create contracts for existing customers.
+    It validates the customer's existence, associates the contract with the customer's commercial contact,
+    and persists the new contract record in the repository.
+
+    Requires the CREATE_CONTRACT permission to execute.
+    """
+
     permissions = Permissions.CREATE_CONTRACT
 
     def __init__(
@@ -32,6 +41,21 @@ class CreateContractUseCase(UseCaseABC):
         total_amount: Decimal,
         remaining_amount: Decimal,
     ) -> Contract:
+        """Creates a new contract for a customer.
+
+        Args:
+            creator: The collaborator performing the creation (usually a manager).
+            customer_id: The unique identifier of the customer for whom the contract is created.
+            total_amount: The total contract value.
+            remaining_amount: The outstanding amount to be paid.
+
+        Raises:
+            ValueError: If the customer does not exist.
+            PermissionError: If the creator lacks permissions.
+
+        Returns:
+            Contract: The newly created contract entity.
+        """
         customer = self._customer_repository.find_by_id(customer_id)
 
         if customer is None:
