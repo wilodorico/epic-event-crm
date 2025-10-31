@@ -8,6 +8,15 @@ from commons.id_generator_abc import IdGeneratorABC
 
 
 class CreateCustomerUseCase(UseCaseABC):
+    """Handles the creation of a new customer by an authorized collaborator.
+
+    This use case ensures that the customer email is unique, automatically assigns
+    the creator as the commercial contact, and saves the new customer record to
+    the repository.
+
+    Requires the CREATE_CUSTOMER permission to execute.
+    """
+
     permissions = Permissions.CREATE_CUSTOMER
 
     def __init__(self, auth_context: AuthContextABC, repository: CustomerRepositoryABC, id_generator: IdGeneratorABC):
@@ -24,6 +33,23 @@ class CreateCustomerUseCase(UseCaseABC):
         phone_number: str,
         company: str,
     ) -> Customer:
+        """Creates and persists a new customer entity.
+
+        Args:
+            creator: The collaborator performing the operation.
+            first_name: The customer's first name.
+            last_name: The customer's last name.
+            email: The customer's unique email address.
+            phone_number: The customer's phone number.
+            company: The name of the company the customer belongs to.
+
+        Raises:
+            ValueError: If the email address already exists.
+            PermissionError: If the user lacks permissions.
+
+        Returns:
+            Customer: The newly created customer with the creator as commercial contact.
+        """
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")
 
