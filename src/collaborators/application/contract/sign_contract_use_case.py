@@ -2,6 +2,7 @@ from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.permissions import Permissions
 from collaborators.domain.contract.contract_repository_abc import ContractRepositoryABC
+from collaborators.infrastructure.sentry_config import capture_message
 
 
 class SignContractUseCase(UseCaseABC):
@@ -44,3 +45,14 @@ class SignContractUseCase(UseCaseABC):
         contract.sign_contract(updater_id)
 
         self.repository.update(contract)
+
+        # Log contract signature to Sentry
+        capture_message(
+            f"Contract signed: {contract_id}",
+            level="info",
+            contract_id=contract_id,
+            customer_id=contract.customer_id,
+            commercial_id=contract.commercial_id,
+            total_amount=str(contract.total_amount),
+            signed_by=updater_id,
+        )
