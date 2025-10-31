@@ -43,6 +43,7 @@ def session():
 
 @pytest.fixture
 def collaborator_repository(session):
+    """Repository fixture switching between in-memory and SQLAlchemy based on env var USE_SQLALCHEMY_REPO."""
     if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyCollaboratorRepository(session)
     return InMemoryCollaboratorRepository()
@@ -50,6 +51,7 @@ def collaborator_repository(session):
 
 @pytest.fixture
 def customer_repository(session):
+    """Repository fixture switching between in-memory and SQLAlchemy based on env var USE_SQLALCHEMY_REPO."""
     if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyCustomerRepository(session)
     return InMemoryCustomerRepository()
@@ -57,6 +59,7 @@ def customer_repository(session):
 
 @pytest.fixture
 def contract_repository(session):
+    """Repository fixture switching between in-memory and SQLAlchemy based on env var USE_SQLALCHEMY_REPO."""
     if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyContractRepository(session)
     return InMemoryContractRepository()
@@ -64,6 +67,7 @@ def contract_repository(session):
 
 @pytest.fixture
 def event_repository(session):
+    """Repository fixture switching between in-memory and SQLAlchemy based on env var USE_SQLALCHEMY_REPO."""
     if os.getenv("USE_SQLALCHEMY_REPO") == "1":
         return SqlalchemyEventRepository(session)
     return InMemoryEventRepository()
