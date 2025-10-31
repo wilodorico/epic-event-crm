@@ -3,6 +3,7 @@ from typing import Optional
 
 from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.sentry_config import capture_exception
 
 
 class UseCaseABC(ABC):
@@ -13,6 +14,7 @@ class UseCaseABC(ABC):
       - Validates user permissions through the AuthContext.
       - Delegates the actual business logic to the `_execute` method,
         which must be implemented by subclasses.
+      - Captures and logs any unexpected exceptions to Sentry.
 
     Subclasses should:
       - Define the required `permissions` class attribute.
@@ -40,7 +42,34 @@ class UseCaseABC(ABC):
         pass
 
     def execute(self, *args, **kwargs):
-        # TODO: Implement Log with Sentry
-        # self.__class__.__name__
-        self._auth_context.ensure(self.permissions)
-        return self._execute(*args, **kwargs)
+        """Executes the use case with permission validation and error tracking.
+
+        This method orchestrates the use case execution by:
+        1. Validating user permissions
+        2. Executing the business logic
+        3. Capturing any unexpected exceptions to Sentry
+
+        Args:
+            *args: Positional arguments passed to the _execute method.
+            **kwargs: Keyword arguments passed to the _execute method.
+
+        Returns:
+            The result of the _execute method.
+
+        Raises:
+            AuthorizationError: If the user lacks required permissions.
+            Exception: Any exception raised by the _execute method (after logging to Sentry).
+        """
+        try:
+            self._auth_context.ensure(self.permissions)
+            return self._execute(*args, **kwargs)
+        except Exception as e:
+            # Capture unexpected exceptions to Sentry with use case context
+            capture_exception(
+                e,
+                use_case=self.__class__.__name__,
+                permission=self.permissions.value if self.permissions else None,
+                user_id=getattr(self._auth_context.user, "id", None) if hasattr(self._auth_context, "user") else None,
+            )
+            # Re-raise the exception to maintain normal error handling flow
+            raise
