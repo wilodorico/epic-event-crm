@@ -2,6 +2,8 @@ from enum import Enum, auto
 
 
 class Permissions(Enum):
+    """Enumeration of system permissions for role-based access control."""
+
     CREATE_COLLABORATOR = auto()
     UPDATE_COLLABORATOR = auto()
     DELETE_COLLABORATOR = auto()

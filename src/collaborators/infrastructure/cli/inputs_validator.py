@@ -6,6 +6,7 @@ import click
 
 
 def validate_email(ctx, param, value):
+    """Validate that the input is a valid email address."""
     email_regex = r"[^@]+@[^@]+\.[^@]+"
     if not re.match(email_regex, value):
         raise click.BadParameter("Invalid email address")
@@ -13,6 +14,7 @@ def validate_email(ctx, param, value):
 
 
 def validate_phone(ctx, param, value):
+    """Validate that the input is a valid phone number."""
     phone_regex = r"^\d{10}$"  # Exemple : numéro français à 10 chiffres
     if not re.match(phone_regex, value):
         raise click.BadParameter("Invalid phone number (10 digits expected)")
