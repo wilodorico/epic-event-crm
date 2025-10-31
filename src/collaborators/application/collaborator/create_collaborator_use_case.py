@@ -8,6 +8,13 @@ from commons.id_generator_abc import IdGeneratorABC
 
 
 class CreateCollaboratorUseCase(UseCaseABC):
+    """Handles the creation of a new collaborator by a manager.
+
+    This use case ensures that only authorized managers can create new collaborators.
+    It validates email uniqueness, hashes the password securely, and persists the new
+    collaborator record in the repository.
+    """
+
     permissions = Permissions.CREATE_COLLABORATOR
 
     def __init__(
@@ -32,6 +39,24 @@ class CreateCollaboratorUseCase(UseCaseABC):
         phone_number: str,
         role: str,
     ) -> None:
+        """Creates a new collaborator.
+
+        Args:
+            creator: The collaborator performing the creation (usually a manager).
+            first_name: First name of the new collaborator.
+            last_name: Last name of the new collaborator.
+            email: Unique email address for the collaborator.
+            password: Plain text password (will be hashed before persistence).
+            phone_number: Collaborator’s phone number.
+            role: Role of the collaborator (e.g., commercial, support, management).
+
+        Raises:
+            ValueError: If the email already exists.
+            PermissionError: If the creator lacks permissions.
+
+        Returns:
+            None. The collaborator is persisted in the repository.
+        """
         if self._repository.find_by_email(email):
             raise ValueError("Email already exists")
 
