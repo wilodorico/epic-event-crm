@@ -2,6 +2,7 @@ from collaborators.application.services.auth_context_abc import AuthContextABC
 from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.sentry_config import capture_message
 from commons.id_generator_abc import IdGeneratorABC
 
 
@@ -39,4 +40,18 @@ class DeleteCollaboratorUseCase(UseCaseABC):
         if not collaborator:
             raise ValueError("Collaborator not found.")
 
+        # Capture collaborator info before deletion for logging
+        collaborator_email = collaborator.email
+        collaborator_role = collaborator.role.value
+
         self._repository.delete(collaborator.id)
+
+        # Log collaborator deletion to Sentry
+        capture_message(
+            f"Collaborator deleted: {collaborator_email}",
+            level="warning",
+            collaborator_id=collaborator_id,
+            collaborator_email=collaborator_email,
+            collaborator_role=collaborator_role,
+            deleted_by=self._auth_context.user.id if hasattr(self._auth_context, "user") else None,
+        )
