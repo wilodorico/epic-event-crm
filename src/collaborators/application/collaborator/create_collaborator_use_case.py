@@ -4,6 +4,7 @@ from collaborators.application.use_case_abc import UseCaseABC
 from collaborators.domain.collaborator.collaborator import Collaborator, Role
 from collaborators.domain.collaborator.collaborator_repository_abc import CollaboratorRepositoryABC
 from collaborators.domain.collaborator.permissions import Permissions
+from collaborators.infrastructure.sentry_config import capture_message
 from commons.id_generator_abc import IdGeneratorABC
 
 
@@ -75,3 +76,13 @@ class CreateCollaboratorUseCase(UseCaseABC):
             role=role_enum,
         )
         self._repository.create(collaborator)
+
+        # Log collaborator creation to Sentry
+        capture_message(
+            f"Collaborator created: {email}",
+            level="info",
+            collaborator_id=id,
+            collaborator_email=email,
+            collaborator_role=role_enum.value,
+            created_by=creator.id,
+        )
