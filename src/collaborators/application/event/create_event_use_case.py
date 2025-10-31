@@ -11,6 +11,15 @@ from commons.id_generator_abc import IdGeneratorABC
 
 
 class CreateEventUseCase(UseCaseABC):
+    """Handles the creation of a new event by a commercial contact.
+
+    This use case ensures that only the commercial contact assigned to a signed contract
+    can create events. It validates the contract's existence and signature status, checks
+    date consistency, and saves the new event record to the repository.
+
+    Requires the CREATE_EVENT permission to execute.
+    """
+
     permissions = Permissions.CREATE_EVENT
 
     def __init__(
@@ -36,6 +45,27 @@ class CreateEventUseCase(UseCaseABC):
         attendees: int,
         notes: str,
     ) -> Event:
+        """Creates and persists a new event entity.
+
+        Args:
+            creator: The collaborator performing the operation.
+            title: The event's title.
+            contract_id: The unique identifier of the signed contract.
+            date_start: The event's start date and time.
+            date_end: The event's end date and time.
+            location: The event's physical location.
+            attendees: The expected number of attendees.
+            notes: Additional notes or instructions for the event.
+
+        Raises:
+            ValueError: If the contract is not found, not signed, if dates are invalid
+                (end before start or start in the past).
+            PermissionError: If the user lacks permissions or attempts to create an event
+                for a contract not assigned to them.
+
+        Returns:
+            Event: The newly created event entity linked to the contract and customer.
+        """
         event_id = self._id_generator.generate()
         contract = self._contract_repository.find_by_id(contract_id)
 
