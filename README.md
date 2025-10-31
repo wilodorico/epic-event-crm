@@ -5,6 +5,46 @@
 
 
 
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Configure Environment Variables (Optional)
+
+For error tracking and monitoring with Sentry:
+
+```bash
+cp .env.example .env
+# Edit .env and add your Sentry DSN
+```
+
+See [SENTRY_SETUP.md](SENTRY_SETUP.md) for detailed Sentry configuration instructions.
+
+**Note**: The application works without Sentry configuration. If no `.env` file is provided or `SENTRY_ENABLED=false`, the application will run normally without error tracking.
+
+### 3. Initialize Database
+
+```bash
+make init-db
+# or
+python src/app.py init-db
+```
+
+## Features
+
+- ✅ Role-based access control (Management, Commercial, Support)
+- ✅ Collaborator management (CRUD operations)
+- ✅ Customer management
+- ✅ Contract management with signing workflow
+- ✅ Event management with support assignment
+- ✅ Secure authentication with JWT
+- ✅ Error tracking and monitoring with Sentry (optional)
+- ✅ Comprehensive audit logging
+
 ## Cli commands
 ```
 init-db // initialize the database
