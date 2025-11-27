@@ -1,5 +1,5 @@
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from collaborators.domain.customer.customer import Customer
 from collaborators.infrastructure.database.models.customer import CustomerModel
@@ -48,3 +48,22 @@ class SqlalchemyCustomerRepository:
         result = self.session.execute(query)
         customer_models = result.scalars().all()
         return [CustomerMapper.to_entity(model) for model in customer_models]
+
+    def get_all_with_commercial(self) -> list[Customer]:
+        """Retrieve all customers with their commercial contact (optimized)."""
+        query = select(CustomerModel).options(joinedload(CustomerModel.commercial_contact))
+        result = self.session.execute(query)
+        customer_models = result.scalars().unique().all()
+        return [CustomerMapper.to_entity(model) for model in customer_models]
+
+    def find_by_id_with_relations(self, customer_id: str) -> Customer | None:
+        """Find customer by ID with contracts and commercial (optimized)."""
+        query = (
+            select(CustomerModel)
+            .options(joinedload(CustomerModel.commercial_contact), selectinload(CustomerModel.contracts))
+            .where(CustomerModel.id == customer_id)
+        )
+        customer_model = self.session.execute(query).scalar_one_or_none()
+        if customer_model:
+            return CustomerMapper.to_entity(customer_model)
+        return None

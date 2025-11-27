@@ -1,5 +1,5 @@
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from collaborators.domain.event.event import Event
 from collaborators.domain.event.event_repository_abc import EventRepositoryABC
@@ -55,3 +55,51 @@ class SqlalchemyEventRepository(EventRepositoryABC):
         result = self.session.execute(query)
         event_models = result.scalars().all()
         return [EventMapper.to_entity(model) for model in event_models]
+
+    def get_all_with_relations(self) -> list[Event]:
+        """Retrieve all events with customer, contract and support data (optimized)."""
+        query = select(EventModel).options(
+            joinedload(EventModel.customer), joinedload(EventModel.contract), joinedload(EventModel.support_contact)
+        )
+        result = self.session.execute(query)
+        event_models = result.scalars().unique().all()
+        return [EventMapper.to_entity(model) for model in event_models]
+
+    def get_all_unassigned_with_relations(self) -> list[Event]:
+        """Retrieve unassigned events with customer and contract data (optimized)."""
+        query = (
+            select(EventModel)
+            .options(joinedload(EventModel.customer), joinedload(EventModel.contract))
+            .where(EventModel.contact_support_id.is_(None))
+        )
+        result = self.session.execute(query)
+        event_models = result.scalars().unique().all()
+        return [EventMapper.to_entity(model) for model in event_models]
+
+    def get_by_support_id_with_relations(self, support_id: str) -> list[Event]:
+        """Get support's events with customer and contract data (optimized)."""
+        query = (
+            select(EventModel)
+            .options(joinedload(EventModel.customer), joinedload(EventModel.contract))
+            .where(EventModel.contact_support_id == support_id)
+        )
+        result = self.session.execute(query)
+        event_models = result.scalars().unique().all()
+        return [EventMapper.to_entity(model) for model in event_models]
+
+    def find_by_id_with_relations(self, event_id: str) -> Event | None:
+        """Find event by ID with all related data (optimized)."""
+        query = (
+            select(EventModel)
+            .options(
+                joinedload(EventModel.customer),
+                joinedload(EventModel.contract),
+                joinedload(EventModel.support_contact),
+            )
+            .where(EventModel.id == event_id)
+        )
+        result = self.session.execute(query)
+        event_model = result.scalars().unique().first()
+        if event_model:
+            return EventMapper.to_entity(event_model)
+        return None

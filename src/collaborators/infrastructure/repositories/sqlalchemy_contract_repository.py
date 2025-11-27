@@ -1,5 +1,5 @@
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from collaborators.domain.contract.contract import Contract, ContractStatus
 from collaborators.infrastructure.database.models.contract import ContractModel
@@ -65,4 +65,43 @@ class SqlalchemyContractRepository:
         )
         result = self.session.execute(query)
         contract_models = result.scalars().all()
+        return [ContractMapper.to_entity(model) for model in contract_models]
+
+    def get_all_with_relations(self) -> list[Contract]:
+        """Retrieve all contracts with customer and commercial data (optimized)."""
+        query = select(ContractModel).options(
+            joinedload(ContractModel.customer),
+            joinedload(ContractModel.commercial),
+            joinedload(ContractModel.created_by),
+        )
+        result = self.session.execute(query)
+        contract_models = result.scalars().unique().all()
+        return [ContractMapper.to_entity(model) for model in contract_models]
+
+    def get_all_unsigned_with_relations(self, commercial_id: str) -> list[Contract]:
+        """Retrieve unsigned contracts with customer data for performance."""
+        query = (
+            select(ContractModel)
+            .options(joinedload(ContractModel.customer))
+            .where(
+                ContractModel.commercial_id == commercial_id,
+                ContractModel.status == ContractStatus.PENDING.value,
+            )
+        )
+        result = self.session.execute(query)
+        contract_models = result.scalars().unique().all()
+        return [ContractMapper.to_entity(model) for model in contract_models]
+
+    def get_all_unpaid_with_relations(self, commercial_id: str) -> list[Contract]:
+        """Retrieve unpaid contracts with customer data for performance."""
+        query = (
+            select(ContractModel)
+            .options(joinedload(ContractModel.customer))
+            .where(
+                ContractModel.commercial_id == commercial_id,
+                ContractModel.remaining_amount > 0,
+            )
+        )
+        result = self.session.execute(query)
+        contract_models = result.scalars().unique().all()
         return [ContractMapper.to_entity(model) for model in contract_models]
