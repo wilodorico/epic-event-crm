@@ -24,9 +24,25 @@ def init_db_command():
             click.echo("ℹ️ Default manager already exists.")
             return
 
+        # Créer d'abord l'utilisateur système (auto-référent)
+        system_user = Collaborator(
+            id="system",
+            created_by_id="system",  # Auto-référent pour le premier utilisateur
+            first_name="System",
+            last_name="User",
+            email="system@crm.com",
+            password=password_hasher.hash("system"),
+            phone_number="0000000000",
+            role=Role.MANAGEMENT,
+        )
+
+        repo.create(system_user)
+        session.commit()
+
+        # Ensuite créer l'administrateur
         manager = Collaborator(
             id="default-manager",
-            created_by_id="system",
+            created_by_id="system",  # Maintenant "system" existe
             first_name="Admin",
             last_name="Manager",
             email="admin@crm.com",
@@ -38,10 +54,11 @@ def init_db_command():
         repo.create(manager)
         session.commit()
 
-        click.echo("👑 Default manager created:")
-        click.echo("   Email: admin@crm.com")
-        click.echo("   Password: admin")
-        click.echo("   Role: MANAGEMENT")
+        click.echo("👑 Default users created:")
+        click.echo("   System User: system@crm.com")
+        click.echo("   Admin Email: admin@crm.com")
+        click.echo("   Admin Password: admin")
+        click.echo("   Admin Role: MANAGEMENT")
 
     except Exception as e:
         click.echo(f"❌ Error creating default manager: {str(e)}")

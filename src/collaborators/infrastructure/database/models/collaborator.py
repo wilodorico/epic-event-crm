@@ -7,17 +7,17 @@ from .base import Base
 class CollaboratorModel(Base):
     __tablename__ = "collaborators"
 
-    id = Column(String, primary_key=True, index=True)
-    created_by_id = Column(String, ForeignKey("collaborators.id"), nullable=False)
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False, index=True)
-    password = Column(String, nullable=False)
-    phone_number = Column(String, nullable=False)
-    role = Column(String, nullable=False)
+    id = Column(String(36), primary_key=True, index=True)
+    created_by_id = Column(String(36), ForeignKey("collaborators.id"), nullable=False)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    password = Column(String(255), nullable=False)
+    phone_number = Column(String(20), nullable=False)
+    role = Column(String(50), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
-    updated_by_id = Column(String, ForeignKey("collaborators.id"), nullable=True)
+    updated_by_id = Column(String(36), ForeignKey("collaborators.id"), nullable=True)
 
     # Relations
     created_by = relationship("CollaboratorModel", remote_side=[id], foreign_keys=[created_by_id], post_update=True)
