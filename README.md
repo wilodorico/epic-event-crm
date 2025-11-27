@@ -50,15 +50,15 @@ Epic Events CRM is a command-line application designed to manage customers, cont
 - ✅ Link customers to their assigned commercial representative
 
 ### 📄 Contract Management
-- ✅ Create contracts for customers
+- ✅ Create contracts for customers (Management only)
 - ✅ Track total and remaining amounts
 - ✅ Sign contracts (prerequisite for event creation)
 - ✅ Filter by unsigned contracts or unpaid contracts
 - ✅ Commercial can only update their own contracts
 
 ### 🎉 Event Management
-- ✅ Create events from signed contracts
-- ✅ Assign support contacts to events
+- ✅ Create events from signed contracts (Commercial only)
+- ✅ Assign support contacts to events (Management only)
 - ✅ Support can update their assigned events
 - ✅ Filter unassigned events
 - ✅ Prevent updates to past events
@@ -141,7 +141,7 @@ The system implements fine-grained role-based access control:
 **Event Management:**
 - ✅ Assign support to events
 - ✅ Read all events
-- ✅ Filter events
+- ✅ Filter unassigned events
 
 **Customer Access:**
 - ✅ Read all customers
@@ -180,15 +180,15 @@ The system implements fine-grained role-based access control:
 | Create Collaborator | ✅ | ❌ | ❌ |
 | Update Collaborator | ✅ | ❌ | ❌ |
 | Delete Collaborator | ✅ | ❌ | ❌ |
-| Create Customer | ❌ | ✅ | ❌ |
-| Update Customer | ❌ | ✅ (own) | ❌ |
+| Create Customer | ✅ (read-only)| ✅ | ❌ |
+| Update Customer | ✅ (read-only)| ✅ (own) | ❌ |
 | Create Contract | ✅ | ❌ | ❌ |
 | Update Contract | ✅ | ✅ (own) | ❌ |
 | Sign Contract | ✅ | ✅ | ❌ |
 | Create Event | ❌ | ✅ | ❌ |
 | Assign Support to Event | ✅ | ❌ | ❌ |
 | Update Event | ❌ | ❌ | ✅ (assigned) |
-| Read All | ✅ | ✅ | ✅ (limited) |
+| Read All Data | ✅ | ✅ (limited) | ✅ (read-only) |
 
 ---
 
@@ -342,18 +342,18 @@ python src/app.py contract sign-contract --id <contract_id>
 # List all contracts
 python src/app.py contract get-contracts
 
-# List unsigned contracts (Commercial)
-python src/app.py contract get-unsigned-contracts --commercial-id <commercial_id>
+# List unsigned contracts
+python src/app.py contract get-unsigned-contracts
 
-# List unpaid contracts (Commercial)
-python src/app.py contract get-unpaid-contracts --commercial-id <commercial_id>
+# List unpaid contracts
+python src/app.py contract get-unpaid-contracts
 ```
 
 ### Event Commands
 
 ```bash
 # Create an event (Commercial - from signed contract)
-python src/app.py event create-event --contract-id <contract_id>
+python src/app.py event create --contract-id <contract_id>
 
 # Assign support to event (Management)
 python src/app.py event assign-support --event-id <event_id> --support-id <support_id>
@@ -368,7 +368,7 @@ python src/app.py event get-events
 python src/app.py event get-unassigned-events
 
 # List support's assigned events (Support)
-python src/app.py event get-support-events --support-id <support_id>
+python src/app.py event get-my-events
 ```
 
 ### Database Management
@@ -600,7 +600,7 @@ The following operations are automatically logged to Sentry:
 
 ## 👤 Author
 
-**Wilfried Dorico**
+**Wilfried Odorico**
 - GitHub: [@wilodorico](https://github.com/wilodorico)
 
 ---
