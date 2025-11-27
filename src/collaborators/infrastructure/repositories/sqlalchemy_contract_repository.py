@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from collaborators.domain.contract.contract import Contract, ContractStatus
@@ -36,9 +36,9 @@ class SqlalchemyContractRepository:
 
     def count(self) -> int:
         """Count all contracts in the database."""
-        query = select(ContractModel)
+        query = select(func.count(ContractModel.id))
         result = self.session.execute(query)
-        return len(result.scalars().all())
+        return result.scalar()
 
     def get_all(self) -> list[Contract]:
         """Retrieve all contracts from the database."""

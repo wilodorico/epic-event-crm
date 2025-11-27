@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from collaborators.domain.customer.customer import Customer
@@ -38,9 +38,9 @@ class SqlalchemyCustomerRepository:
 
     def count(self) -> int:
         """Count all customers in the database."""
-        query = select(CustomerModel)
+        query = select(func.count(CustomerModel.id))
         result = self.session.execute(query)
-        return len(result.scalars().all())
+        return result.scalar()
 
     def get_all(self) -> list[Customer]:
         """Retrieve all customers from the database."""

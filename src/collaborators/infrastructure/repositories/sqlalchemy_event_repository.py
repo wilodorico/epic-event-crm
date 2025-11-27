@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from collaborators.domain.event.event import Event
@@ -24,9 +24,10 @@ class SqlalchemyEventRepository(EventRepositoryABC):
         return [EventMapper.to_entity(model) for model in event_models]
 
     def count(self) -> int:
-        query = select(EventModel)
+        """Count all events in the database."""
+        query = select(func.count(EventModel.id))
         result = self.session.execute(query)
-        return len(result.scalars().all())
+        return result.scalar()
 
     def get_all_unassigned(self) -> list[Event]:
         query = select(EventModel).where(EventModel.contact_support_id.is_(None))

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from collaborators.domain.collaborator.collaborator import Collaborator
@@ -31,9 +31,9 @@ class SqlalchemyCollaboratorRepository:
 
     def count(self) -> int:
         """Count all collaborators in the database."""
-        query = select(CollaboratorModel)
+        query = select(func.count(CollaboratorModel.id))
         result = self.session.execute(query)
-        return len(result.scalars().all())
+        return result.scalar()
 
     def update(self, collaborator: Collaborator) -> None:
         """Update an existing collaborator."""
