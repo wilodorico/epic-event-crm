@@ -503,7 +503,6 @@ epic-event-crm/
 │   │       ├── usecases/             # Unit tests
 │   │       └── e2e/                  # E2E tests
 │   └── commons/                       # Shared utilities
-│       ├── clock_abc.py
 │       ├── id_generator_abc.py
 │       └── uuid_generator.py
 ├── .env.example                       # Environment template
