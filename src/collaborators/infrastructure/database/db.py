@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from .models.base import Base
 
 # Configuration MySQL
+# TODO: Externalize DATABASE_URL in environment variables
 DATABASE_URL = "mysql+pymysql://root:root@localhost/epic"
 engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
