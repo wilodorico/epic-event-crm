@@ -10,6 +10,7 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Architecture](#architecture)
+- [Database Schema](#database-schema)
 - [Role-Based Permissions](#role-based-permissions)
 - [Installation](#installation)
 - [Configuration](#configuration)
@@ -118,6 +119,36 @@ This project follows **Clean Architecture** principles, separating concerns into
 - **Repository Pattern**: Abstract data access
 - **Dependency Injection**: Decouple components
 - **Use Case Pattern**: Encapsulate business operations
+
+---
+
+## 📊 Database Schema
+
+The application uses a well-structured relational database with the following entities and relationships:
+
+![Class Diagram](docs/class_diagram.jpg)
+
+### Core Entities
+
+- **👤 Collaborator**: System users with role-based permissions (Management, Commercial, Support)
+- **🏢 Customer**: Epic Events clients managed by commercial contacts
+- **📋 Contract**: Agreements between Epic Events and customers with financial tracking
+- **🎉 Event**: Organized events linked to signed contracts with support assignment
+
+### Key Relationships
+
+- **Commercial → Customer**: One commercial manages multiple customers (1:*)
+- **Customer → Contract**: One customer can have multiple contracts (1:*)  
+- **Contract → Event**: One contract can generate multiple events (1:*)
+- **Support → Event**: One support can be assigned to multiple events (1:*)
+- **Audit Trail**: All entities track creation and modification with `created_by_id` and `updated_by_id`
+
+### Security Features
+
+- **Password Security**: BCrypt hashing with salt (no plain text storage)
+- **UUID Primary Keys**: Enhanced security and distribution compatibility
+- **Foreign Key Constraints**: Data integrity enforcement
+- **Role-based Access**: Permissions controlled at application level
 
 ---
 
