@@ -1,6 +1,6 @@
 import os
 from contextlib import closing
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from sqlalchemy import StaticPool, create_engine
@@ -250,8 +250,8 @@ def karim_event(karim_contract):
         customer_id=karim_contract.customer_id,
         contract_id=karim_contract.id,
         title="Karim's Event",
-        date_start=datetime(2025, 12, 1, 10, 0),
-        date_end=datetime(2025, 12, 1, 18, 0),
+        date_start=datetime.now() + timedelta(days=30),
+        date_end=datetime.now() + timedelta(days=30, hours=8),
         location="Karim's Venue",
         attendees=50,
         notes="Initial event setup",
@@ -280,8 +280,8 @@ def marie_event(marie_contract):
         customer_id=marie_contract.customer_id,
         contract_id=marie_contract.id,
         title="Marie's Event",
-        date_start=datetime(2025, 11, 15, 9, 0),
-        date_end=datetime(2025, 11, 15, 17, 0),
+        date_start=datetime.now() + timedelta(days=30),
+        date_end=datetime.now() + timedelta(days=30, hours=8),
         location="Marie's Venue",
         attendees=100,
         notes="Initial event setup for Marie",
